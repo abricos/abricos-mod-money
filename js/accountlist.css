@@ -1,0 +1,96 @@
+.aw-money .aclist {
+	border: 1px solid #8C8D8E;
+	min-width: 250px;
+}
+.aw-money .aclist .gtl {
+	position: relative;
+	background-color: #E3E3D7;
+	border-bottom: 1px solid #8C8D8E;	
+	padding: 5px;
+}
+.aw-money .aclist .gtl .bc {
+	position: absolute;
+	height: 14px;
+    width: 12px;
+	cursor: pointer;
+}
+.aw-money .aclist .gtl .baccnew {
+	top: 6px; right: 8px;
+	background: url("/modules/money/images/icons001.png") no-repeat scroll -57px -24px transparent;
+}
+.aw-money .aclist .gtl .bgpedt {
+	top: 7px; right: 28px;
+	 background: url("/modules/botask/images/icons001.png") no-repeat scroll -29px -24px transparent;
+}
+
+/* * * * * AGroup Row * * * * */
+.aw-money .aclist .agtl {
+	background-color: #F4F4EE;
+	border-bottom: 1px solid #E3E3D7;
+	cursor: pointer;
+	padding: 5px 5px;
+}
+.aw-money .aclist .agtl {
+	margin-bottom: 7px;
+}
+
+/* * * * * Group Sum * * * * */
+.aw-money .aclist .gsmrow {
+	text-align: right;
+}
+.aw-money .aclist .gsmrow .cc {
+	width: 30px;
+}
+
+.aw-money .aclist .mlst table {
+	width: 100%;
+}
+
+
+/* * * * * Account Row * * * * */
+.aw-money .aclist .arow {
+	position: relative;
+	cursor: pointer;
+	margin-bottom: 7px;
+	padding: 0 3px;
+}
+.aw-money .aclist .arow:hover {
+	background-color: #FFF0C6;
+}
+.aw-money .aclist .arow .sel {
+	font-weight: bold;
+}
+
+/* * * * * * Menu * * * * */
+.aw-money .aclist .arow .amenu {
+	position: absolute;
+	right: 1px; 
+	top: 3px;
+	background-color: #FFF;
+	border: 1px solid #dadada;
+	display: none;
+}
+.aw-money .aclist .arow:hover .amenu {
+	display: inherit;
+}
+
+.aw-money .aclist .arow .amenu .b {
+ 	border-right: 1px solid #DADADA;
+    cursor: pointer;
+    float: left;
+    height: 18px;
+    padding-left: 5px;
+    padding-top: 4px;
+    width: 18px;
+}
+.aw-money .aclist .arow .amenu .badd {
+	background: url("/modules/money/images/icons001.png") no-repeat scroll -57px -24px transparent;	
+}
+
+.aw-money .aclist .arow .amenu .bedit {
+	background: url("/modules/botask/images/icons001.png") no-repeat scroll -29px -24px transparent;
+}
+.aw-money .aclist .arow .amenu .bc {
+	height: 14px;
+    width: 12px;
+}

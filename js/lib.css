@@ -1,0 +1,73 @@
+.aw-money .clear { clear: both; }
+.aw-money .right { text-align: right; }
+.aw-money .mtp10 { margin-top: 10px; }
+.aw-money .red { color: red; }
+.aw-money .green { color: green; }
+.aw-money a.abtn {
+	text-decoration: none;
+	border-bottom: 1px dotted;
+}
+.aw-money .bdrbtn {
+	border-bottom: 1px solid #E3E3D7;
+}
+.aw-money .hide {
+	display: none;
+} 
+.aw-money .w100 { width: 100%; }
+
+.aw-money .vline { 
+	border-left: 1px solid #D9D9D9;
+}
+.aw-money .hline { 
+	border-bottom: 1px solid #D9D9D9;
+}
+
+.aw-money .w300px {
+	width: 300px;
+}
+
+.aw-money .fld dl {
+	clear: left;
+	margin: 0 0 10px;
+}
+.aw-money .fld dt {
+	float: left;
+	font-weight: bold;
+	width: 11em;
+	padding-right: .5em;
+	font-weight: normal;
+	color: #555555;
+}
+.aw-money .fld dd {
+    margin: 0 0 0 11em;
+    padding: 0 0 7px 12px;
+    text-align: left;
+}
+.aw-money .fld dd dd {
+	padding-bottom: 1px;
+}
+.aw-money .fld dd input.w300,
+.aw-money .fld dd textarea.w300 {
+	width: 300px;
+}
+.aw-money .fld dd textarea {
+	height: 100px;
+}
+.aw-money .fld dd input.btn {
+	width: auto;
+}
+
+/* * * * * Fixed Row * * * * */
+.aw-money .fixrw {
+	position: relative;
+	overflow: hidden;
+	white-space: nowrap;
+}
+.aw-money .fixrw .shadow {
+	background: url("/modules/money/images/shadow.png") repeat-y scroll 0 0 transparent;
+    height: 1.3em;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 16px;
+}

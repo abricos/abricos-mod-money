@@ -1,0 +1,99 @@
+<!--{widget}-->
+<div id="{i#id}" class="operlog">
+	<div class="olgtl">
+		Журнал операций <img id="{i#loading}" src="/images/loading.gif" />
+	</div>
+	
+	<table class="period"><tbody><tr>
+	<td>
+		
+	</td>
+	<td>
+		<div id="{i#period}"></div>
+	</td>
+	</tr></tbody></table>
+	
+	
+	<div class="listw" id="{i#list}"></div>
+</div>
+
+
+<!--{list}-->
+<div id="{i#id}" class="operlist">
+	<div class="pgwrp">
+		<div id="{i#pagtop}" class="pgel"></div>
+	</div>
+	<div id="{i#table}"></div>
+</div>
+
+<!--{table}-->
+<table><thead><tr>
+	<th class="d">Дата</th>
+	<th class="tp">Тип</th>
+	<th class="v">Сумма</th>
+	<th class="acc">Счет</th>
+	<th class="cat">Категория</th>
+	<th class="dsc">Комментарий</th>
+	<th class="" colspan="2"></th>
+</tr></thead>
+<tbody>{v#rows}</tbody>
+</table>
+
+<!--{row}-->
+<tr>
+	<td class="d">{v#d}</td>
+	{v#td}
+	<td class="dsc">
+		<div class="fixrw">
+			{v#dsc}
+			<div class="shadow"></div>
+		</div>
+	</td>
+	{v#btns}
+</tr>
+
+<!--{rowtdbase}-->
+<td class="tp">{v#tp}</td>
+<td class="v"><span class="{v#expcls}">{v#v} </span> {v#cc}</td>
+<td class="acc">
+	<div class="fixrw">
+		{v#acc}
+		<div class="shadow"></div>
+	</div>
+</td>
+<td class="cat">
+	<div class="fixrw">
+		{v#cat}
+		<div class="shadow"></div>
+	</div>
+</td>
+
+<!--{rowtdmove}-->
+<td class="tp"><span title="Перемещение средств между счетами">П</span></td>
+<td class="v">{v#v} {v#cc}</td>
+<td colspan="2" class="mv">
+	<div class="fixrw">
+		{v#facc} -&gt; {v#tacc}
+		<div class="shadow"></div>
+	</div>
+</td>
+
+
+<!--{rbtnsn}-->
+<td class="emp"></td><td class="emp"></td>
+
+<!--{rbtns}-->
+<td class="bt btedit">
+	<div id="{i#bedit}-{v#id}" class="b bedit" title="Редактировать операцию"></div>
+</td>
+<td class="bt btrem">
+	<div id="{i#bremove}-{v#id}" class="b bremove" title="Удалить операцию"></div>
+</td>
+
+<!--{rowsum}-->
+<tr class="summa {v#first}">
+	<td class="v" colspan="3">
+		<span class="{v#expcls}">{v#v}</span> {v#cc}
+	</td>
+	<td colspan="5"></td>
+</tr>

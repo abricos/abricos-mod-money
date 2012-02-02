@@ -1,0 +1,47 @@
+.aw-money .accountinfo {
+	border: 1px solid #8C8D8E;
+	width: 350px;
+}
+.aw-money .accountinfo .hdline {
+	position: relative;
+	background-color: #E3E3D7;
+	padding: 5px;
+	border-bottom: 1px solid #8C8D8E;
+}
+.aw-money .accountinfo .aiwrp {
+	padding: 10px;
+	padding-bottom: 0;
+}
+.aw-money .accountinfo .r {
+	margin-bottom: 10px;
+}
+.aw-money .accountinfo .r .rh {
+	margin-top: 15px;
+	/* 
+	background-color: #F4F4EE;
+	/**/
+	font-weight: bold;
+	color: #555555;
+	padding-bottom: 3px;
+	border-bottom: 1px solid #E3E3D7;
+}
+.aw-money .accountinfo .oneline {
+	position: relative;
+}
+.aw-money .accountinfo .onetext {
+	position: absolute;
+	top: 0; right: 0;
+}
+
+.aw-money .accountinfo .atl {
+	font-size: 1.3em;
+}
+.aw-money .accountinfo .adsc {
+	font-style: italic;
+}
+
+.aw-money .accountinfo .abcval {
+	text-align: right;
+	font-size: 1.2em;
+	top: -1px;
+}

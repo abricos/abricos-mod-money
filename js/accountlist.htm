@@ -1,0 +1,61 @@
+<!--{widget}-->
+<div id="{i#id}" class="aclist">
+	<div class="gtl">
+		<span id="{i#gtl}">{v#gtl}&nbsp;</span>
+		<div id="{i#bgpedt}" class="bc bgpedt" title="Редактировать бухгалтерию">
+			&nbsp;
+		</div>
+		<div id="{i#bcreate}" class="bc baccnew" title="Добавить новый счет">
+			&nbsp;
+		</div>
+	</div>
+	
+	<div id="{i#list}" class="mlst"></div>
+
+</div>
+
+<!--{grow}--><div id="{i#id}" class="agrow" style="display: none">
+	<div class="agtl">
+		<table><tbody><tr>
+			<td class="c1">
+				{v#tl}
+			</td>
+			<td class="c2">
+				<div id="{i#sumlist}"></div>
+			</td>
+		</tr></tbody></table>
+	</div>
+
+	<div id="{i#list}"></div>
+</div>
+
+<!--{gsmrow}-->
+<div class="gsmrow">
+	<span class="{v#ise}">{v#sm}</span>
+	<span class="cc">{v#cc}</span>
+</div>
+
+<!--{row}--><div id="{i#id}" class="arow">
+	<div id="{i#sel}">
+		<div class="atl" id="{i#tl}"></div>
+		<div class="abc">
+			<span id="{i#val}"></span>
+			<span id="{i#cc}"></span>
+		</div>
+	</div>
+	<div class="amenu">
+		<div id="{i#bedit}" class="b" title="Редактировать счет">
+			<div id="{i#beditc}" class="bedit bc"> </div>
+		</div>
+		<div id="{i#badd}" class="b" title="Добавить операцию">
+			<div id="{i#baddc}" class="badd bc"> </div>
+		</div>
+	</div>
+</div>
+
+
+<!--{select}-->
+<select id="{i#id}" class="accountselect">{v#rows}</select>
+
+<!--{selrow}-->
+<option value="{v#id}">{v#tl}</option>

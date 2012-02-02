@@ -1,0 +1,55 @@
+<!--{panel}-->
+<div class='hd'>Финансы</div>
+<div class='bd aw-money'>
+
+	<div id="{i#gmenu}"></div>
+	
+	<div id="{i#loading}" class="ws-loading">
+		<img src="/images/loading.gif" /> Идет загрузка данных<br />
+		Пожалуйста, подождите...
+	</div>
+	
+	<div id="{i#board}" class="board" style="display: none">
+	
+	</div>
+</div>
+
+<!--{page}-->
+<div id="{i#id}" class='wspage'></div>
+
+<!--{home}-->
+<div id="{i#id}" class='wspage'>Добро пожаловать</div>
+
+<!--{gbmenu}-->
+<div class="gheadermenu">
+	<h2>Финансы</h2>
+	
+	<img class="logo" src="/modules/money/images/logo-96x96.png" />
+	
+	<ul class="topmenu">
+		<li class="sel" id="{i#gmhome}"><a href="{v#url}" title="Финансы - главная страница">Счета</a></li>
+		<li id="{i#gmnewgroup}"><a href="{v#urlgroupnew}" title="Создать бухгалтерию">+ Создать</a></li>
+		<li id="{i#gmabout}"><a href="{v#urlabout}" title="">О приложении</a></li>
+	</ul>
+	<div class="clear"></div>
+</div>
+
+<div class="gbmenu">
+
+	<div id="{i#mhome}" class="gbitems">
+	</div>
+	
+	<div id="{i#maccountd}" class="gbitems" style="display: none;">
+		<a id="{i#miaccount}" class="gbitem" href="{v#urlaws}">Бухгалтерия</a>
+		<a id="{i#miaccountnew}" class="gbitem" href="{v#urlawsnew}">+ Создать бухгалтерию</a>
+	</div>
+	
+	<br class="clear" />
+	<div class="line"></div>
+</div>
+
+<!--{gmitemhome}-->
+<a id="{i#id}" class="gbitem" href="{v#url}" style="display: none">Главная</a>
+
+<!--{gmitem}-->
+<a id="{i#id}-{v#id}" class="gbitem" href="{v#url}">{v#tl}</a>

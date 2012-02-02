@@ -1,0 +1,64 @@
+<!--{urlist}-->
+<div id="{i#id}" class="urlist">
+	<div id="{i#v}">
+		<div id="{i#list}"></div>
+		<div id="{i#btns}" class="btns">
+			<a id="{i#bedit}" href="#" title="Изменить состав участников">Изменить состав</a>
+		</div>
+	</div>
+
+	<div id="{i#e}" style="display: none">
+		<span>Доступ другим дользователям</span>
+		<div class="mtp10">
+			<i>
+			Для добавления нового пользователя найдите его по кнопке 
+			"Нет в списке? Найти..." и двойным кликом переместите его в 
+			правую колонку
+			</i>
+		</div>
+		<div class="mtp10" id="{i#users}"></div>
+		<div class="right mtp10">
+			<input id="{i#bok}" type="button" value="OK" class="btn" />
+			<input id="{i#bcancel}" type="button" value="Отмена" class="btn" />
+		</div>
+	</div>
+</div>
+
+<!--{urrow}--><div id="{i#id}" class="urrow">
+	<a href="#" class="show-user-profile user-{v#uid}">{v#unm}</a>
+	<span id="{i#r}"> - <select id="{i#rs}">
+			<option value="0" style="font-style: italic;"></option>
+			<option value="3">Администратор</option>
+			<option value="2">Запись</option>
+			<option value="1">Чтение</option>
+		</select>
+		<span id="{i#ro}"></span>
+	</span> <a href="#" id="{i#binfo}" class="binfo" title="Просмотреть подробную информацию о возможностях этой роли">?</a>
+	<div id="{i#hlp}"></div>
+</div>
+
+<!--{help}-->
+<div id="{i#id}" class="rhlp">
+	<div id="{i#bclose}" class="hclose" title="Свернуть подсказку"></div>
+	<div id="{i#wrp}" class="rhlpwrp">
+		<div class="h" id="{i#h}"></div>
+		<div class="p">
+			Пользователю доступны следующие возможности:
+		</div>
+		{v#lst} 
+	</div>
+</div>
+
+<!--{hacc}-->
+<ul class="">
+	<li class="r3">Редактировать/удалить счет</li>
+	<li class="r3 r2">Вести запись операций по счету</li>
+	<li class="r3 r2 r1">Просматривать операции по счету</li>
+</ul>
+
+<!--{hgroup}-->
+<ul class="">
+	<li class="r3">Редактировать/удалить бухгалтерию</li>
+	<li class="r3 r2">Редактировать список категорий</li>
+	<li class="r3 r2 r1">Создавать новые счета</li>
+</ul>

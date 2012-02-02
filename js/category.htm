@@ -1,0 +1,38 @@
+<!--{select}-->
+<select id="{i#id}" class="categories">
+	{v#crow}
+	{v#nrow}
+	{v#rtrow}
+	{v#rows}
+</div>
+
+<!--{scrow}-->
+<option value="0">-- Выберите категорию --</option>
+
+<!--{snrow}-->
+<option value="-1" class="red">-- Создать новую категорию --</option>
+
+<!--{srtrow}-->
+<option value="0" >Корневая категория</option>
+
+<!--{srow}-->
+<option value="{v#id}">{v#tab}{v#tl}</option>
+
+<!--{stab}-->&nbsp;&nbsp;&nbsp;
+
+
+<!--{create}-->
+<div id="{i#id}" class="catcreate">
+	<table><tbody>
+		<tr>
+			<td class="ccr1">Вложенность</td>
+			<td id="{i#sel}"></td>
+		</tr>
+		<tr>
+			<td class="ccr1">Название</td>
+			<td>
+				<input id="{i#val}" type="text" />
+			</td>
+		</tr>
+	</tbody></table>
+</div>

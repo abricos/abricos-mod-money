@@ -1,0 +1,68 @@
+<!--{widget}-->
+<div id="{i#id}" class="groupview">
+
+	<table id="{i#ws}" class="gvboard"><tbody><tr>
+	<td class="gvcol1">
+	
+		<div id="{i#acclist}"></div>
+	
+	</td>
+	<td class="gvcol2">
+
+
+		<div id="{i#acceditor}" style="display: none">
+			<div class="loadeditor">
+				<img src="/images/loading.gif" /> Загрузка редактора...
+			</div>
+		</div>
+		
+		<table class="opacin"><tbody><tr>
+			<td><div id="{i#oper}"></div></td>
+			<td><div id="{i#accinfo}"></div></td>
+		</tr></tbody></table>
+		
+		<div id="{i#operlog}"></div>
+	
+	</td>
+	</tr></tbody></table>
+	
+	<div id="{i#notfound}" class="notfound" style="display: none">
+		<p>
+			Не удается открыть бухгалтерию с идентификатором №{v#groupid}.
+		</p>
+		<p>
+			Возможно она была удалена автором или у Вас нет прав на ее просмотр.
+		</p>
+		<p>
+			<a href="{v#newgroupurl}">Создать новую бухгалтерию</a>
+		</p>
+	</div>
+
+</div>
+
+<!--{orempanel}-->
+<div class='hd'>Удаление операции</div>
+<div class='bd aw-ьщтун'>
+	<div id="{i#dialogremove}" class="field">
+		<h4>Удаление операции</h4>
+		<p>
+			Внимание! <br />
+			Вы действительно хотите удалить операцию?
+		</p>
+		<p>
+			Тип операции: {v#otp}<br />
+			Счет: {v#acc} <br />
+			Дата операции: {v#d} <br />
+			Сумма операции: {v#v} <br />
+		</p>
+		<div class="buttons right">
+			<span id="{i#btns}">
+				<input id="{i#bremove}" value="Подтверждаю" type="button" />
+				<input id="{i#bcancel}" value="Отмена" type="button" />
+			</span>
+			<span id="{i#bloading}" style="display: none">
+				<img src="/images/loading.gif" /> Удаление...
+			</span>
+		</div>
+	</div>
+</div>

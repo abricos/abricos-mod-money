@@ -1,0 +1,91 @@
+<!--{widget}-->
+<div id="{i#id}" class="accountedit">
+	<div class="aewrp">
+		<div class="bslst" id="{i#bslst}">
+			<a href="#" id="{i#bcreate}">Добавить счет</a>
+		</div>
+		<div id="{i#list}"></div>
+	</div>
+</div>
+
+<!--{editor}-->
+<div id="{i#id}" class="accountedit fld">
+	<div class="{v#stclass}">
+		<div class="aehd">
+			<span class="stedt">Редактирование счета</span>
+			<span class="stnew">Создание счета</span>
+		</div>
+	
+		<div id="{i#editor}" class="aewrp"></div>
+		
+		<div class="ln"></div>
+		
+		<div class="right bact">
+			<span id="{i#pcsave}" class="pcsave" style="display: none">
+				<img src="/images/loading.gif" />
+			</span>
+			<input id="{i#bsave}" value="Сохранить" type="button" class="btn" />
+			<input id="{i#bcancel}" value="Отмена" type="button" class="btn" />
+			<input id="{i#bclose}" value="Закрыть" type="button" class="btn" />
+		</div>
+	</div>
+</div>
+
+<!--{row}--><div id="{i#id}" class="row">
+<div id="{i#id}" class="acedform">
+	<a id="{i#bremove}" href="#" class="brmacc" title="Удалить этот счет">Удалить</a>
+	<dl>
+		<dt>Тип счета</dt>
+		<dd>
+			<select id="{i#tp}">
+				<option value="1">{#mod.money.account.type.1}</option>
+				<option value="2">{#mod.money.account.type.2}</option>
+				<option value="3">{#mod.money.account.type.3}</option>
+				<option value="4">{#mod.money.account.type.4}</option>
+				<option value="5">{#mod.money.account.type.5}</option>
+				<option value="6">{#mod.money.account.type.6}</option>
+				<option value="7">{#mod.money.account.type.7}</option>
+				<option value="8">{#mod.money.account.type.8}</option>
+				<option value="9">{#mod.money.account.type.9}</option>
+			</select>
+		</dd>
+	</dl>
+	
+	<dl>
+		<dt>Название</dt>
+		<dd>
+			<input id="{i#tl}" type="text" class="atl" value="" />
+		</dd>
+	</dl>
+
+	<dl>
+		<dt>Примечание</dt>
+		<dd>
+			<textarea id="{i#dsc}" class="adsc"></textarea>
+		</dd>
+	</dl>
+
+	<dl>
+		<dt>Начальный баланс</dt>
+		<dd>
+			<input id="{i#bc}" type="text" class="abc" value="" />
+		</dd>
+	</dl>
+
+	<dl>
+		<dt>Валюта</dt>
+		<dd>
+			<div id="{i#cc}"></div>
+		</dd>
+	</dl>
+
+	<dl class="endfld">
+		<dt>Участники счета</dt>
+		<dd>
+			<div id="{i#ulst}">
+				&nbsp;
+			</div>
+		</dd>
+	</dl>
+	
+</div></div>

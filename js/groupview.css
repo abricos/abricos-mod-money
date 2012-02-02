@@ -1,0 +1,27 @@
+.aw-money .groupview table.gvboard, 
+.aw-money .groupview table.opacin {
+	width: 100%;
+}
+
+.aw-money .groupview td.gvcol1 {
+	width: 270px;
+	padding-right: 10px;
+}
+
+.aw-money .groupview .oper {
+	margin-right: 10px;
+}
+.aw-money .groupview .operlog {
+	margin-top: 10px;
+}
+
+.aw-money .groupview .notfound {
+	margin: 115px auto;
+}
+.aw-money .groupview .notfound p {
+	text-align: center;
+}
+
+.aw-money .groupview .loadeditor {
+	padding: 10px;
+}

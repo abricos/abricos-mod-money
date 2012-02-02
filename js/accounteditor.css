@@ -1,0 +1,61 @@
+.aw-money .accountedit .bslst {
+	text-align: right;
+}
+
+.aw-money .accountedit {
+	border: 1px solid #8C8D8E;
+	background-color: #F9F5DF;
+	max-width: 620px;
+}
+.aw-money .accountedit dl.endfld {
+	margin-bottom: 0;
+}
+.aw-money .accountedit .ln {
+	border-top: 1px solid #E3E3D7;
+	height: 2px;
+	margin: 0 10px;
+}
+.aw-money .accountedit .bact {
+	padding-right: 20px;
+	margin: 10px 0;
+}
+.aw-money .accountedit .aewrp {
+	padding: 10px;
+}
+.aw-money .accountedit .aehd {
+	background-color: #E3E3D7;
+	border-bottom: 1px solid #8C8D8E;
+	padding: 5px;
+}
+
+.aw-money .accountedit .acedform {
+	position: relative;
+}
+.aw-money .accountedit .acedform .brmacc {
+	position: absolute; top: 0; right: 0;
+}
+
+.aw-money .accountedit input.atl {
+	width: 450px;
+}
+.aw-money .accountedit input.abc {
+	width: 120px;
+}
+.aw-money .accountedit textarea.adsc {
+	width: 450px;
+	height: 50px;
+}
+
+.aw-money .groupedit .accountedit .row {
+	margin-top: 10px;
+	padding-top: 10px;
+	border-top: 1px solid #E3E3D7;
+}
+
+/* * * * * Статус редактора * * * * */
+.aw-money .accountedit .isedit .stnew {
+	display: none;
+}
+.aw-money .accountedit .isnew .stedt {
+	display: none;
+}
