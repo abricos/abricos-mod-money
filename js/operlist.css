@@ -27,6 +27,9 @@
 .aw-money .operlist table {
 	width: 100%;
 }
+.aw-money .operlist a {
+	text-decoration: none;
+}
 .aw-money .operlist th {
 	font-size: .95em;
 	background-color: #F4F4EE;
@@ -75,6 +78,11 @@
 	width: 130px;
 }
 
+.aw-money .operlist td.mv,
+.aw-money .operlist td.mv div.fixrw {
+	width: 270px;
+}
+
 .aw-money .operlist td {
 	padding: 4px 8px;
 	border-right: 1px solid #E3E3D7;
@@ -111,12 +119,34 @@
 .aw-money .operlist td.bt .bedit {
     margin: 4px 0 0 5px;
 	height: 14px;
-    width: 12px;
+    width: 15px;
 	background: url("/modules/botask/images/icons001.png") no-repeat scroll -29px -24px transparent;
 }
 .aw-money .operlist td.bt .bremove {
-	margin: 6px 0 0 6px;
+	width: 24px;
+	height: 24px;
+	background: url("/modules/money/images/remove.gif") no-repeat scroll 7px 7px transparent;
+}
+
+/* * * * * Filter Clear * * * * */
+.aw-money .operlist th .ft {
+	position: relative;
+	color: #555555;
+}
+.aw-money .operlist th .ft .bclear {
+	position: absolute;
+	cursor: pointer;
+	top: 2px; right: 0;
 	width: 9px;
 	height: 9px;
 	background: url("/modules/money/images/remove.gif") no-repeat scroll 0 0 transparent;
+}
+
+.aw-money .operlist th.acc .ft {
+	width: 136px;
+}
+
+.aw-money .operlist th.acc .ft .tl {
+	margin-right: 14px;
+	overflow: hidden;
 }

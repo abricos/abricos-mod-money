@@ -13,7 +13,6 @@
 	</td>
 	</tr></tbody></table>
 	
-	
 	<div class="listw" id="{i#list}"></div>
 </div>
 
@@ -36,12 +35,38 @@
 	<th class="dsc">Комментарий</th>
 	<th class="" colspan="2"></th>
 </tr></thead>
+{v#filter}
 <tbody>{v#rows}</tbody>
 </table>
 
+<!--{rowfilter}-->
+<thead><tr>
+	<th class="d">{v#d}</th>
+	<th class="tp">{v#tp}</th>
+	<th class="v">{v#v}</th>
+	<th class="acc">{v#acc}</th>
+	<th class="cat">{v#cat}</th>
+	<th class="dsc"></th>
+	<th colspan="2"></th>
+</tr></thead>
+
+<!--{filterval}-->
+<div class="ft">
+	<div class="tl" title="Установлен фильтр по значению: {v#v}">
+		{v#v}
+	</div>
+	<div id="{i#bclear}--{v#tp}" class="bclear" title="Отменить фильтр по этому значению"></div>
+</div>
+
 <!--{row}-->
 <tr>
-	<td class="d">{v#d}</td>
+	<td class="d">
+		<a id="{i#bfd}-{v#id}"
+			href="#"  
+			title='Установить фильтр: дата "{v#dtl}"'>
+			{v#d}
+		</a>
+	</td>
 	{v#td}
 	<td class="dsc">
 		<div class="fixrw">
@@ -57,13 +82,21 @@
 <td class="v"><span class="{v#expcls}">{v#v} </span> {v#cc}</td>
 <td class="acc">
 	<div class="fixrw">
-		{v#acc}
+		<a id="{i#bfacc}-{v#id}"
+			href="#"  
+			title='Установить фильтр: счет "{v#acc}"'>
+			{v#acc}
+		</a>
 		<div class="shadow"></div>
 	</div>
 </td>
 <td class="cat">
 	<div class="fixrw">
-		{v#cat}
+		<a id="{i#bfcat}-{v#id}"
+			href="#"  
+			title='Установить фильтр: категория "{v#cat}"'>
+			{v#cat}
+		</a>
 		<div class="shadow"></div>
 	</div>
 </td>
@@ -77,7 +110,6 @@
 		<div class="shadow"></div>
 	</div>
 </td>
-
 
 <!--{rbtnsn}-->
 <td class="emp"></td><td class="emp"></td>
