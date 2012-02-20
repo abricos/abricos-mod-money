@@ -1,5 +1,5 @@
 Brick.util.Language.add('ru',{'mod':{'money': {
-	'title': 'Задачи',
+	'title': 'Финансы',
 	'roles':{
 		'10': 'Чтение',
 		'30': 'Запись',
