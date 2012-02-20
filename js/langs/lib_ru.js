@@ -58,6 +58,11 @@ Brick.util.Language.add('ru',{'mod': {'money':{
 			'id': 'BYR',
 			'tl': 'Белорусский руль',
 			's': 'BYR'
+		},
+		'AZN': {
+			'id': 'AZN',
+			'tl': 'Азербайджанский манат',
+			's': 'AZN'
 		}
 	}
 }}});

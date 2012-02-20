@@ -111,7 +111,8 @@ Component.entryPoint = function(NS){
 		CLNG['USD'],
 		CLNG['EUR'],
 		CLNG['UAH'],
-		CLNG['BYR']
+		CLNG['BYR'],
+		CLNG['AZN']
 	]);
 	
 	var OperMethod = function(d){
