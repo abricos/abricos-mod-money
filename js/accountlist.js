@@ -95,6 +95,9 @@ Component.entryPoint = function(NS){
 			
 			case tp['badd']:
 			case tp['baddc']: this.onMenuAddOperClick(); return true;
+
+			case tp['brem']:
+			case tp['bremc']: this.onMenuRemoveClick(); return true;
 			}
 			
 			var TM = this._TM, findClick = false;
@@ -123,6 +126,7 @@ Component.entryPoint = function(NS){
 			
 			if (!acc.isEditRole()){
 				Dom.setStyle(gel('bedit'), 'display', 'none');
+				Dom.setStyle(gel('brem'), 'display', 'none');
 			}
 			if (!acc.isOperRole()){
 				Dom.setStyle(gel('badd'), 'display', 'none');
@@ -130,6 +134,9 @@ Component.entryPoint = function(NS){
 		},
 		onMenuEditClick: function(){
 			NS.life(this.cfg['onEditCallback'], this);
+		},
+		onMenuRemoveClick: function(){
+			NS.life(this.cfg['onRemoveCallback'], this);
 		},
 		onMenuAddOperClick: function(){
 			NS.life(this.cfg['onAddOperCallback'], this);
@@ -193,6 +200,9 @@ Component.entryPoint = function(NS){
 					'onEditCallback': function(row){
 						__self.onMenuEditClick(row);
 					},
+					'onRemoveCallback': function(row){
+						__self.onMenuRemoveClick(row);
+					},
 					'onAddOperCallback': function(row){
 						__self.onSelectByClick(row);
 					},
@@ -234,6 +244,9 @@ Component.entryPoint = function(NS){
 		onMenuEditClick: function(row){
 			NS.life(this.cfg['onEditCallback'], row);
 		},
+		onMenuRemoveClick: function(row){
+			NS.life(this.cfg['onRemoveCallback'], row);
+		},
 		onSelectByClick: function(rowWidget){
 			NS.life(this.cfg['onSelCallback'], rowWidget);
 		},
@@ -267,6 +280,7 @@ Component.entryPoint = function(NS){
 			this.clickCreateEvent = new CE('clickCreateEvent');
 			this.clickGroupEditEvent = new CE('clickGroupEditEvent');
 			this.clickEditEvent = new CE('clickEditEvent');
+			this.clickRemoveEvent = new CE('clickRemoveEvent');
 			this.clickGroupRemoveEvent = new CE('clickGroupRemoveEvent');
 
 			container.innerHTML = TM.replace('widget');
@@ -278,6 +292,9 @@ Component.entryPoint = function(NS){
 					new AccountGroupRowWidget(TM.getEl('widget.list'), i, {
 						'onEditCallback': function(row){
 							__self.onClickEdit(row.account);
+						},
+						'onRemoveCallback': function(row){
+							__self.onClickRemove(row.account);
 						},
 						'onSelCallback': function(row){
 							__self.selectAccountById(row.account.id);
@@ -369,7 +386,11 @@ Component.entryPoint = function(NS){
 			}
 		},
 		selectAccount: function(account){
-			this.selectAccountById(account.id);
+			if (L.isNull(account)){
+				this.selectAccountById(null);
+			}else{
+				this.selectAccountById(account.id);
+			}
 		},
 		selectAccountById: function(accountid){
 			
@@ -395,6 +416,9 @@ Component.entryPoint = function(NS){
 		},
 		onClickEdit: function(acc){
 			this.clickEditEvent.fire(acc);
+		},
+		onClickRemove: function(acc){
+			this.clickRemoveEvent.fire(acc);
 		},
 		onClickGroupRemove: function(){
 			this.clickGroupRemoveEvent.fire(this.group);

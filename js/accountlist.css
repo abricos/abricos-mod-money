@@ -95,6 +95,11 @@
 .aw-money .aclist .arow .amenu .bedit {
 	background: url("/modules/botask/images/icons001.png") no-repeat scroll -29px -24px transparent;
 }
+.aw-money .aclist .arow .amenu .brem {
+	background: url("/modules/money/images/icons001.png") no-repeat scroll -42px -24px transparent;
+}
+
+
 .aw-money .aclist .arow .amenu .bc {
 	height: 14px;
     width: 12px;

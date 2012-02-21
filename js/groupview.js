@@ -54,6 +54,7 @@ Component.entryPoint = function(NS){
 			this.accountsWidget.clickGroupRemoveEvent.subscribe(this.onAccountsClickGroupRemove, this, true);
 			this.accountsWidget.clickCreateEvent.subscribe(this.onAccountsClickCreate, this, true);
 			this.accountsWidget.clickEditEvent.subscribe(this.onAccountsClickEdit, this, true);
+			this.accountsWidget.clickRemoveEvent.subscribe(this.onAccountsClickRemove, this, true);
 			
 			this.operLogWidget = new NS.OperLogWidget(gel('operlog'), group);
 			this.operLogWidget.onRowClickEdit = function(oper){
@@ -63,13 +64,16 @@ Component.entryPoint = function(NS){
 				__self.onOperLorRowClickRemove(oper);
 			};
 			
-			var acc = group.accounts.getByIndex(0);
-			this.accountsWidget.selectAccount(acc);
+			this.setFirstAccount();
 		},
 		destroy: function(){
 			if(this.accountsWidget){
 				this.accountsWidget.selectChangedEvent.unsubscribe(this.onAccountsSelectChanged);
+				this.accountsWidget.clickGroupEditEvent.unsubscribe(this.onAccountsClickGroupEdit);
+				this.accountsWidget.clickGroupRemoveEvent.unsubscribe(this.onAccountsClickGroupRemove);
 				this.accountsWidget.clickCreateEvent.unsubscribe(this.onAccountsClickCreate);
+				this.accountsWidget.clickEditEvent.unsubscribe(this.onAccountsClickEdit);
+				this.accountsWidget.clickRemoveEvent.unsubscribe(this.onAccountsClickRemove);
 				this.accountsWidget.destroy();
 				
 				this.operLogWidget.destroy();
@@ -86,12 +90,26 @@ Component.entryPoint = function(NS){
 			var el = this._TM.getEl('widget.id');
 			el.parentNode.removeChild(el);
 		},
+		setFirstAccount: function(){
+			var acc = this.group.accounts.getByIndex(0);
+			this.accountsWidget.selectAccount(acc);
+			return acc;
+		},
 		onAccountsClickCreate: function(){
 			this.showAccountEditor(0);
 		},
 		onAccountsClickEdit: function(evt, prm){
 			var account = prm[0];
 			this.showAccountEditor(account.id);
+		},
+		onAccountsClickRemove: function(evt, prm){
+			var account = prm[0], __self = this;
+			new AccountRemovePanel(account, function(){
+				var acc = __self.setFirstAccount();
+				if (L.isNull(acc)){
+					Brick.Page.reload(NS.navigator.ws);
+				}
+			});
 		},
 		onAccountsClickGroupEdit: function(evt, prm){
 			var uri = NS.navigator.group.edit(this.group.id);
@@ -196,6 +214,39 @@ Component.entryPoint = function(NS){
 	};
 	NS.GroupViewWidget = GroupViewWidget;
 	
+	var AccountRemovePanel = function(account, callback){
+		this.account = account;
+		this.callback = callback;
+		AccountRemovePanel.superclass.constructor.call(this, {fixedcenter: true});
+	};
+	YAHOO.extend(AccountRemovePanel, Brick.widget.Dialog, {
+		initTemplate: function(){
+			return buildTemplate(this, 'accremovepanel').replace('accremovepanel', {
+				'tl': this.account.getTitle()
+			});
+		},
+		onClick: function(el){
+			var tp = this._TId['accremovepanel'];
+			switch(el.id){
+			case tp['bcancel']: this.close(); return true;
+			case tp['bremove']: this.accRemove(); return true;
+			}
+			return false;
+		},
+		accRemove: function(){
+			var TM = this._TM, gel = function(n){ return  TM.getEl('accremovepanel.'+n); },
+				__self = this;
+			Dom.setStyle(gel('btns'), 'display', 'none');
+			Dom.setStyle(gel('bloading'), 'display', '');
+			
+			NS.moneyManager.accountRemove(this.account.id, function(){
+				__self.close();
+				NS.life(__self.callback);
+			});
+		}
+	});
+	NS.AccountRemovePanel = AccountRemovePanel;
+
 	var GroupRemovePanel = function(group, callback){
 		this.group = group;
 		this.callback = callback;

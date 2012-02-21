@@ -667,6 +667,7 @@ Component.entryPoint = function(NS){
 				if (!L.isNull(r) && r['account']){
 					var ad = r['account'];
 						group = __self.groups.get(ad['gid']);
+					
 					if (!L.isNull(group)){
 						group.accounts.update([ad]);
 						var acc = __self.findAccount(ad['id']);
@@ -683,13 +684,23 @@ Component.entryPoint = function(NS){
 			});
 		},
 		accountRemove: function(accountid, callback){
+			var account = this.findAccount(accountid);
+			if (L.isNull(account)){ return; }
+			var group = this.groups.get(account.groupid);
+
 			var __self = this;
 			this.ajax({
 				'do': 'accountremove',
 				'accountid': accountid
 			}, function(r){
 				if (!L.isNull(r) && r['deldate']>0){
-					__self.onAccountRemoved(accountid);
+					group.accounts.remove(accountid);
+					if (group.accounts.count() == 0){
+						__self.groups.remove(group.id);
+						__self.onGroupRemoved(group.id);
+					}else{
+						__self.onAccountRemoved(accountid);
+					}
 				}				
 				NS.life(callback);
 			});

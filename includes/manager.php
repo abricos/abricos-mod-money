@@ -48,6 +48,7 @@ class MoneyManager extends Ab_ModuleManager {
 			case 'groupsave': return $this->GroupSave($d->group);
 			case 'groupremove': return $this->GroupRemove($d->groupid);
 			case 'accountsave': return $this->AccountSave($d->account);
+			case 'accountremove': return $this->AccountRemove($d->accountid);
 			case 'opersave': return $this->OperSave($d->oper);
 			case 'operremove': return $this->OperRemove($d->operid);
 			case 'opermovesave': return $this->OperMoveSave($d->oper);
@@ -212,12 +213,14 @@ class MoneyManager extends Ab_ModuleManager {
 	public function AccountRemove($accountid){
 		if (!$this->IsWriteRole()){ return null; }
 		$dbAccount = MoneyQuery::Account($this->db, $this->userid, $accountid);
-		if (empty($dbAccount)){ return null; }
-		
-		if ($dbAccount['r'] != MoneyAccountRole::ADMIN){ return null; }
+
+		if (empty($dbAccount) || $dbAccount['r'] != MoneyAccountRole::ADMIN){ return null; }
 		
 		MoneyQuery::AccountRemove($this->db, $accountid);
-		return $accountid;
+		
+		$ret = new stdClass();
+		$ret->deldate = TIMENOW;
+		return $ret;
 	}
 	
 	public function AccountSave($ad){
