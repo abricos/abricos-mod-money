@@ -453,8 +453,8 @@ Component.entryPoint = function(NS){
 		onGroupChanged: function(groupid){
 			this.groupChangedEvent.fire(groupid);
 		},
-		onGroupRemoved: function(){
-			this.groupRemovedEvent.fire();
+		onGroupRemoved: function(groupid){
+			this.groupRemovedEvent.fire(groupid);
 		},
 		onBalanceChanged: function(account, byRemoveOper){
 			this.balanceChangedEvent.fire(account, byRemoveOper);
@@ -567,6 +567,19 @@ Component.entryPoint = function(NS){
 					}
 				}
 				NS.life(callback, groupid);
+			});
+		},
+		groupRemove: function(groupid, callback){
+			var __self = this;
+			this.ajax({
+				'do': 'groupremove',
+				'groupid': groupid
+			}, function(r){
+				if (!L.isNull(r) && r['deldate']>0){
+					__self.groups.remove(groupid);
+					__self.onGroupRemoved(groupid);
+				}				
+				NS.life(callback);
 			});
 		},
 		_operSaveCallback: function(r, byRemoveOper){

@@ -52,14 +52,17 @@ Component.entryPoint = function(NS){
 			this.selectGroupMItem(0);
 			mgr.groupCreatedEvent.subscribe(this.onGroupChanged, this, true);
 			mgr.groupChangedEvent.subscribe(this.onGroupChanged, this, true);
-			mgr.groupRemovedEvent.subscribe(this.onGroupChanged, this, true);
+			mgr.groupRemovedEvent.subscribe(this.onGroupRemoved, this, true);
 		},
 		destroy: function(){
 			NS.moneyManager.groupCreatedEvent.unsubscribe(this.onGroupChanged);
 			NS.moneyManager.groupChangedEvent.unsubscribe(this.onGroupChanged);
-			NS.moneyManager.groupRemovedEvent.unsubscribe(this.onGroupChanged);
+			NS.moneyManager.groupRemovedEvent.unsubscribe(this.onGroupRemoved);
 		},
 		onGroupChanged: function(){
+			this.renderItems();
+		},
+		onGroupRemoved: function(){
 			this.renderItems();
 		},
 		setParam: function(bosapp, page){

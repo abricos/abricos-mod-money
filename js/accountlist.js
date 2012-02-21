@@ -267,6 +267,7 @@ Component.entryPoint = function(NS){
 			this.clickCreateEvent = new CE('clickCreateEvent');
 			this.clickGroupEditEvent = new CE('clickGroupEditEvent');
 			this.clickEditEvent = new CE('clickEditEvent');
+			this.clickGroupRemoveEvent = new CE('clickGroupRemoveEvent');
 
 			container.innerHTML = TM.replace('widget');
 
@@ -330,6 +331,7 @@ Component.entryPoint = function(NS){
 			switch(el.id){
 			case tp['bcreate']: this.onClickCreate(); return true;
 			case tp['bgpedt']: this.onClickGroupEdit(); return true;
+			case tp['bgprem']: this.onClickGroupRemove(); return true;
 			}
 			
 			return false;
@@ -393,6 +395,9 @@ Component.entryPoint = function(NS){
 		},
 		onClickEdit: function(acc){
 			this.clickEditEvent.fire(acc);
+		},
+		onClickGroupRemove: function(){
+			this.clickGroupRemoveEvent.fire(this.group);
 		}
 	};
 	NS.AccountListWidget = AccountListWidget;

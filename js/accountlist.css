@@ -15,12 +15,17 @@
 	cursor: pointer;
 }
 .aw-money .aclist .gtl .baccnew {
-	top: 6px; right: 8px;
+	top: 6px; right: 19px;
 	background: url("/modules/money/images/icons001.png") no-repeat scroll -57px -24px transparent;
 }
 .aw-money .aclist .gtl .bgpedt {
-	top: 7px; right: 28px;
+	top: 7px; right: 35px;
 	 background: url("/modules/botask/images/icons001.png") no-repeat scroll -29px -24px transparent;
+}
+
+.aw-money .aclist .gtl .bgrem {
+	top: 6px; right: 5px;
+	background: url("/modules/money/images/icons001.png") no-repeat scroll -42px -24px transparent;
 }
 
 /* * * * * AGroup Row * * * * */

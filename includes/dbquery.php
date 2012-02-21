@@ -86,12 +86,21 @@ class MoneyQuery {
 		return $db->insert_id();
 	}
 	
-	public static function GroupUpdate(Ab_Database $db, $userid, $groupid, $gd){
+	public static function GroupUpdate(Ab_Database $db, $groupid, $gd){
 		$sql = "
 			UPDATE ".$db->prefix."money_group
 			SET title='".bkstr($gd->tl)."',
 				upddate=".TIMENOW."
-			WHERE groupid=".bkint($groupid)." AND userid=".bkint($userid)."
+			WHERE groupid=".bkint($groupid)."
+		";
+		$db->query_write($sql);
+	}
+	
+	public static function GroupRemove(Ab_Database $db, $groupid){
+		$sql = "
+			UPDATE ".$db->prefix."money_group
+			SET upddate=".TIMENOW.", deldate=".TIMENOW."
+			WHERE groupid=".bkint($groupid)."
 		";
 		$db->query_write($sql);
 	}
@@ -159,7 +168,8 @@ class MoneyQuery {
 				a.upddate as upd
 			FROM ".$db->prefix."money_auserrole ur
 			INNER JOIN ".$db->prefix."money_account a ON a.accountid=ur.accountid
-			WHERE ur.userid=".bkint($userid)." AND ur.role>0  
+			INNER JOIN ".$db->prefix."money_group g ON g.groupid=a.groupid
+			WHERE g.deldate=0 AND ur.userid=".bkint($userid)." AND ur.role>0  
 				".($groupid>0?" AND a.groupid=".bkint($groupid):"")."
 				".($accountid>0?" AND a.accountid=".bkint($accountid):"")."
 		";

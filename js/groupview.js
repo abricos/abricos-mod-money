@@ -51,6 +51,7 @@ Component.entryPoint = function(NS){
 			this.accountsWidget = new NS.AccountListWidget(gel('acclist'), group);
 			this.accountsWidget.selectChangedEvent.subscribe(this.onAccountsSelectChanged, this, true);
 			this.accountsWidget.clickGroupEditEvent.subscribe(this.onAccountsClickGroupEdit, this, true);
+			this.accountsWidget.clickGroupRemoveEvent.subscribe(this.onAccountsClickGroupRemove, this, true);
 			this.accountsWidget.clickCreateEvent.subscribe(this.onAccountsClickCreate, this, true);
 			this.accountsWidget.clickEditEvent.subscribe(this.onAccountsClickEdit, this, true);
 			
@@ -95,6 +96,11 @@ Component.entryPoint = function(NS){
 		onAccountsClickGroupEdit: function(evt, prm){
 			var uri = NS.navigator.group.edit(this.group.id);
 			Brick.Page.reload(uri);
+		},
+		onAccountsClickGroupRemove: function(evt, prm){
+			new GroupRemovePanel(this.group, function(){
+				Brick.Page.reload(NS.navigator.ws);
+			});
 		},
 		onAccountsSelectChanged: function(evt, prm){
 			var TM = this._TM, account = prm[0];
@@ -190,10 +196,41 @@ Component.entryPoint = function(NS){
 	};
 	NS.GroupViewWidget = GroupViewWidget;
 	
+	var GroupRemovePanel = function(group, callback){
+		this.group = group;
+		this.callback = callback;
+		GroupRemovePanel.superclass.constructor.call(this, {fixedcenter: true});
+	};
+	YAHOO.extend(GroupRemovePanel, Brick.widget.Dialog, {
+		initTemplate: function(){
+			return buildTemplate(this, 'groupremovepanel').replace('groupremovepanel');
+		},
+		onClick: function(el){
+			var tp = this._TId['groupremovepanel'];
+			switch(el.id){
+			case tp['bcancel']: this.close(); return true;
+			case tp['bremove']: this.groupRemove(); return true;
+			}
+			return false;
+		},
+		groupRemove: function(){
+			var TM = this._TM, gel = function(n){ return  TM.getEl('groupremovepanel.'+n); },
+				__self = this;
+			Dom.setStyle(gel('btns'), 'display', 'none');
+			Dom.setStyle(gel('bloading'), 'display', '');
+			
+			NS.moneyManager.groupRemove(this.group.id, function(){
+				__self.close();
+				NS.life(__self.callback);
+			});
+		}
+	});
+	NS.GroupRemovePanel = GroupRemovePanel;
+	
 	var OperRemovePanel = function(oper, opers, callback){
 		this.oper = oper;
 		this.opers = opers;
-		this.callback = L.isFunction(callback) ? callback : function(){};
+		this.callback = callback;
 		OperRemovePanel.superclass.constructor.call(this, {fixedcenter: true});
 	};
 	YAHOO.extend(OperRemovePanel, Brick.widget.Dialog, {
@@ -233,12 +270,12 @@ Component.entryPoint = function(NS){
 			var tp = this._TId['orempanel'];
 			switch(el.id){
 			case tp['bcancel']: this.close(); return true;
-			case tp['bremove']: this.taskRemove(); return true;
+			case tp['bremove']: this.operRemove(); return true;
 			}
 			
 			return false;
 		},
-		taskRemove: function(){
+		operRemove: function(){
 			var TM = this._TM, gel = function(n){ return  TM.getEl('orempanel.'+n); },
 				__self = this;
 			Dom.setStyle(gel('btns'), 'display', 'none');
@@ -247,7 +284,7 @@ Component.entryPoint = function(NS){
 			var onremo = function(){
 				__self.opers.remove();
 				__self.close();
-				__self.callback();
+				NS.life(__self.callback);
 			};
 			
 			if (this.oper.methodid > 0){

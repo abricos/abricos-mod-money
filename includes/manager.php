@@ -46,6 +46,7 @@ class MoneyManager extends Ab_ModuleManager {
 		switch($d->do){
 			case 'init': return $this->BoardData();
 			case 'groupsave': return $this->GroupSave($d->group);
+			case 'groupremove': return $this->GroupRemove($d->groupid);
 			case 'accountsave': return $this->AccountSave($d->account);
 			case 'opersave': return $this->OperSave($d->oper);
 			case 'operremove': return $this->OperRemove($d->operid);
@@ -133,7 +134,7 @@ class MoneyManager extends Ab_ModuleManager {
 			
 			if ($dbGroup['r'] == MoneyAccountRole::ADMIN){
 				// Только админ может: изменять данные по бухгалтерии (название, роли пользователей)
-				MoneyQuery::GroupUpdate($this->db, $this->userid, $gd->id, $gd);
+				MoneyQuery::GroupUpdate($this->db, $gd->id, $gd);
 				
 				$rows = MoneyQuery::GUserRoleListByGId($this->db, array($gd->id));
 				
@@ -189,6 +190,22 @@ class MoneyManager extends Ab_ModuleManager {
 		$ret = $this->BoardData();
 		$ret->groupid = $gd->id;
 		
+		return $ret;
+	}
+	
+	public function GroupRemove($groupid){
+		if (!$this->IsWriteRole()){
+			return null;
+		}
+		$dbGroup = MoneyQuery::GroupById($this->db, $groupid, $this->userid);
+			
+		if (empty($dbGroup) || $dbGroup['r'] != MoneyAccountRole::ADMIN){
+			return null;
+		}
+		MoneyQuery::GroupRemove($this->db, $groupid);
+		
+		$ret = new stdClass();
+		$ret->deldate = TIMENOW;
 		return $ret;
 	}
 	
