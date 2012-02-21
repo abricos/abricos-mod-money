@@ -169,7 +169,7 @@ class MoneyQuery {
 			FROM ".$db->prefix."money_auserrole ur
 			INNER JOIN ".$db->prefix."money_account a ON a.accountid=ur.accountid
 			INNER JOIN ".$db->prefix."money_group g ON g.groupid=a.groupid
-			WHERE g.deldate=0 AND a.deldate=0 AND ur.userid=".bkint($userid)." AND ur.role>0  
+			WHERE a.deldate=0 AND g.deldate=0 AND ur.userid=".bkint($userid)." AND ur.role>0  
 				".($groupid>0?" AND a.groupid=".bkint($groupid):"")."
 				".($accountid>0?" AND a.accountid=".bkint($accountid):"")."
 		";

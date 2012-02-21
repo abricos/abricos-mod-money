@@ -166,7 +166,7 @@ class MoneyManager extends Ab_ModuleManager {
 			return null; // мистика какая то, но все же
 		}
 		
-		$rows = MoneyQuery::AccountList($this->db, $this->userid);
+		$rows = MoneyQuery::AccountList($this->db, $this->userid, $gd->id);
 		$dbAccounts = $this->ToArrayId($rows);
 		
 		// Добавить/обновить счета
