@@ -232,7 +232,7 @@ class MoneyQuery {
 		$sm = empty($row) ? 0 : $row['sm'];
 		$sql = "
 			UPDATE ".$db->prefix."money_account
-			SET balance = initbalance + ".bkint($sm)."
+			SET balance = initbalance + ".doubleval($sm)."
 			WHERE accountid=".bkint($accountid)."
 			LIMIT 1
 		";

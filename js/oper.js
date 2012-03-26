@@ -147,11 +147,16 @@ Component.entryPoint = function(NS){
 			
 			gel('bsave').disabled = "disabled";
 			Dom.setStyle(gel('pcsave'), 'display', '');
+			
+			var val = gel('in').value + '';
+			val = val.replace(/\s/gi, '');
+			val = val.replace(/,/gi, '.');
+			
 			var sd = {
 				'id': L.isNull(this.oper) ? 0 : this.oper.id,
 				'ise': this.isExpense, 
 				'aid': this.account.id,
-				'v': gel('in').value,
+				'v': val,
 				'd': dt.getTime()/1000,
 				'cid': this.catsWidget.getValue(),
 				'dsc': gel('dsc').value

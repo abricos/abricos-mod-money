@@ -293,7 +293,18 @@ Component.entryPoint = function(NS){
 	var AccountList = function(d){
 		AccountList.superclass.constructor.call(this, d, Account);
 	};
-	YAHOO.extend(AccountList, NS.ItemList, {});
+	YAHOO.extend(AccountList, NS.ItemList, {
+		update: function(d){
+			AccountList.superclass.update.call(this, d);
+			
+			this.list = this.list.sort(function(o1, o2){
+				var d1 = L.trim(o1.title), d2 = L.trim(o2.title);
+				if (d1 > d2){ return 1; }
+				if (d1 < d2){ return -1; }
+				return 0;
+			});
+		}		
+	});
 	NS.AccountList = AccountList;
 	
 	var AURole =  function(d){
