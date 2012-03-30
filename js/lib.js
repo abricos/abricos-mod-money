@@ -756,6 +756,7 @@ Component.entryPoint = function(NS){
 	NS.navigator = {
 		'ws': WS,
 		'about': WS+'about/AboutWidget/',
+		'accessdenied': WS+'about/AccessDeniedWidget/',
 		'group': {
 			'view': function(groupid){ return WS+'groupview/GroupViewWidget/'+groupid+'/'; },
 			'create': WS+'groupeditor/GroupEditWidget/0/',

@@ -36,7 +36,7 @@ class MoneyModule extends Ab_Module {
 	}
 
 	public function GetContentName(){
-		return '';
+		return 'index';
 	}
 	
 	/*

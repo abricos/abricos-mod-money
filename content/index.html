@@ -1,0 +1,22 @@
+<!--[*]
+[tt=main][/tt]
+[*]-->
+
+<div id="bos" class="mod-money">
+	<div class="static">
+		<div id="mod-money-container" style="min-height: 220px;">
+			<div style="width: 300px; margin: 150px auto; text-align: center">
+				Идет загрузка приложения "Финансы" <br />
+				<img src="/images/loading.gif" />  Пожалуйста, подождите...
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+
+	Brick.ff('bos', 'os', function(){
+		var el = document.getElementById('mod-money-container');
+		new Brick.mod.bos.PageManagerWidget(el, 'money/wspace/ws');
+	});
+
+</script>

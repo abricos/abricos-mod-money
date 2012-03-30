@@ -15,7 +15,8 @@ Component.entryPoint = function(NS){
 
 	var Dom = YAHOO.util.Dom,
 		E = YAHOO.util.Event,
-		L = YAHOO.lang;
+		L = YAHOO.lang,
+		R = NS.roles;
 
 	var TMG = this.template, initCSS = false, buildTemplate = function(w, ts){
 		if (!initCSS){
@@ -169,6 +170,21 @@ Component.entryPoint = function(NS){
 	};
 	NS.HomeWidget = HomeWidget;
 
+	var AccessDeniedWidget = function(container){
+		this.init(container);
+	};
+	AccessDeniedWidget.prototype = {
+		init: function(container){
+			buildTemplate(this, 'accessdenied');
+			container.innerHTML = this._TM.replace('accessdenied');
+		},
+		destroy: function(){
+			var el = this._TM.getEl('accessdenied.id');
+			el.parentNode.removeChild(el);
+		}
+	};
+	NS.AccessDeniedWidget = AccessDeniedWidget;
+
 
 	var WSPanel = function(pgInfo){
 		this.pgInfo = pgInfo || [];
@@ -200,6 +216,15 @@ Component.entryPoint = function(NS){
 			}, p || {});
 
 			if (L.isNull(NS.moneyManager)){ return; }
+			
+			if ((!R.isView || Brick.env.user.id == 0) && p['wname'] != 'AboutWidget'){
+				if (p['wname'] != 'AccessDeniedWidget'){
+					var uri = NS.navigator.accessdenied;
+					Brick.Page.reload(uri);
+					return;
+				}
+				// p['wname'] = 'AccessDeniedWidget';
+			}
 			
 			var __self = this, TM = this._TM, gel = function(n){ return TM.getEl('panel.'+n); };
 			Dom.setStyle(gel('board'), 'display', 'none');
