@@ -57,6 +57,7 @@ Component.entryPoint = function(NS){
 		cfg = L.merge({
 			'showChoiseRow': true,
 			'showNewRow': false,
+			'showEditRow': false,
 			'showRootRow': false,
 			'userid': UID
 		}, cfg || {});
@@ -68,7 +69,7 @@ Component.entryPoint = function(NS){
 			this.list = list;
 			this.isExpense = isExpense;
 			this.cfg = cfg;
-			buildTemplate(this, 'select,srow,stab,scrow,snrow,srtrow');
+			buildTemplate(this, 'select,srow,stab,scrow,snrow,serow,srtrow');
 			
 			this.changedEvent = new YAHOO.util.CustomEvent('changeEvent');
 			
@@ -102,6 +103,7 @@ Component.entryPoint = function(NS){
 			this.container.innerHTML = TM.replace('select', {
 				'crow': cfg['showChoiseRow'] ? TM.replace('scrow') : '',
 				'nrow': cfg['showNewRow'] ? TM.replace('snrow') : '',
+				'erow': cfg['showEditRow'] ? TM.replace('serow') : '',
 				'rtrow': cfg['showRootRow'] ? TM.replace('srtrow') : '',
 				'rows': lst
 			});
