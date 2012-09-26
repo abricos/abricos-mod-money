@@ -18,7 +18,7 @@ class MoneyModule extends Ab_Module {
 	 * Конструктор
 	 */
 	public function __construct(){
-		$this->version = "0.1.0.2";
+		$this->version = "0.1.1";
 		$this->name = "money";
 		$this->takelink = "money";
 		$this->permission = new MoneyPermission($this);

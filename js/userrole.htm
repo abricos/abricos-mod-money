@@ -1,64 +1,54 @@
-<!--{urlist}-->
-<div id="{i#id}" class="urlist">
+<!--{urlist}--><div id="{i#id}" class="urlist">
 	<div id="{i#v}">
 		<div id="{i#list}"></div>
 		<div id="{i#btns}" class="btns">
-			<a id="{i#bedit}" href="#" title="Изменить состав участников">Изменить состав</a>
+			<a id="{i#bedit}" href="#" title="{#mod.money.userrole.urlist.1a}">{#mod.money.userrole.urlist.1}</a>
 		</div>
 	</div>
 
 	<div id="{i#e}" style="display: none">
-		<span>Доступ другим дользователям</span>
+		<span>{#mod.money.userrole.urlist.2}</span>
 		<div class="mtp10">
 			<i>
-			Для добавления нового пользователя найдите его по кнопке 
-			"Нет в списке? Найти..." и двойным кликом переместите его в 
-			правую колонку
+			{#mod.money.userrole.urlist.3}
 			</i>
 		</div>
 		<div class="mtp10" id="{i#users}"></div>
 		<div class="right mtp10">
-			<input id="{i#bok}" type="button" value="OK" class="btn" />
-			<input id="{i#bcancel}" type="button" value="Отмена" class="btn" />
+			<input id="{i#bok}" type="button" value="{#mod.money.userrole.urlist.4}" class="btn" />
+			<input id="{i#bcancel}" type="button" value="{#mod.money.userrole.urlist.5}" class="btn" />
 		</div>
 	</div>
 </div>
-
 <!--{urrow}--><div id="{i#id}" class="urrow">
 	<a href="#" class="show-user-profile user-{v#uid}">{v#unm}</a>
 	<span id="{i#r}"> - <select id="{i#rs}">
 			<option value="0" style="font-style: italic;"></option>
-			<option value="3">Администратор</option>
-			<option value="2">Запись</option>
-			<option value="1">Чтение</option>
+			<option value="3">{#mod.money.userrole.urrow.1}</option>
+			<option value="2">{#mod.money.userrole.urrow.2}</option>
+			<option value="1">{#mod.money.userrole.urrow.3}</option>
 		</select>
 		<span id="{i#ro}"></span>
-	</span> <a href="#" id="{i#binfo}" class="binfo" title="Просмотреть подробную информацию о возможностях этой роли">?</a>
+	</span> <a href="#" id="{i#binfo}" class="binfo" title="{#mod.money.userrole.urrow.4}">?</a>
 	<div id="{i#hlp}"></div>
 </div>
-
-<!--{help}-->
-<div id="{i#id}" class="rhlp">
-	<div id="{i#bclose}" class="hclose" title="Свернуть подсказку"></div>
+<!--{help}--><div id="{i#id}" class="rhlp">
+	<div id="{i#bclose}" class="hclose" title="{#mod.money.userrole.help.1}"></div>
 	<div id="{i#wrp}" class="rhlpwrp">
 		<div class="h" id="{i#h}"></div>
 		<div class="p">
-			Пользователю доступны следующие возможности:
+			{#mod.money.userrole.help.2}:
 		</div>
 		{v#lst} 
 	</div>
 </div>
-
-<!--{hacc}-->
-<ul class="">
-	<li class="r3">Редактировать/удалить счет</li>
-	<li class="r3 r2">Вести запись операций по счету</li>
-	<li class="r3 r2 r1">Просматривать операции по счету</li>
+<!--{hacc}--><ul class="">
+	<li class="r3">{#mod.money.userrole.hacc.1}</li>
+	<li class="r3 r2">{#mod.money.userrole.hacc.2}</li>
+	<li class="r3 r2 r1">{#mod.money.userrole.hacc.3}</li>
 </ul>
-
-<!--{hgroup}-->
-<ul class="">
-	<li class="r3">Редактировать/удалить бухгалтерию</li>
-	<li class="r3 r2">Редактировать список категорий</li>
-	<li class="r3 r2 r1">Создавать новые счета</li>
+<!--{hgroup}--><ul class="">
+	<li class="r3">{#mod.money.userrole.hgroup.1}</li>
+	<li class="r3 r2">{#mod.money.userrole.hgroup.2}</li>
+	<li class="r3 r2 r1">{#mod.money.userrole.hgroup.3}</li>
 </ul>

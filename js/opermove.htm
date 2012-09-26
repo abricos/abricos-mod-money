@@ -1,19 +1,18 @@
-<!--{editor}-->
-<div id="{i#id}" class="tabitem opermove">
+<!--{editor}--><div id="{i#id}" class="tabitem opermove">
 
 	<div class="r accsel">
-		Счет источник (откуда):
+		{#mod.money.opermove.editor.1}:
 		<div id="{i#fromacc}"></div>
 	</div>
 	
 	<div class="r accsel">
-		Счет назначение (куда): 
+		{#mod.money.opermove.editor.2}:
 		<div id="{i#toacc}"></div>
 	</div>
 		
 	<div class="r">
 		<table><tbody><tr>
-		<td><span class="dttl">Дата</span></td>
+		<td><span class="dttl">{#mod.money.opermove.editor.3}</span></td>
 		<td><div id="{i#dt}"></div></td>
 		</tr></tbody></table>
 	</div>
@@ -31,14 +30,14 @@
 	</div>
 	<div class="r cmt">
 		<div>
-			Комментарий
+			{#mod.money.opermove.editor.4}
 		</div>
 		<textarea id="{i#dsc}"></textarea>
 	</div>
 	
 	<div class="r btns right">
-		<input id="{i#bcreate}" value="Переместить" type="button" class="btn" />
-		<input id="{i#bsave}" value="Сохранить изменения" type="button" class="btn" />
-		<input id="{i#bcancel}" value="Отмена" type="button" class="btn" />
+		<input id="{i#bcreate}" value="{#mod.money.opermove.editor.5}" type="button" class="btn" />
+		<input id="{i#bsave}" value="{#mod.money.opermove.editor.6}" type="button" class="btn" />
+		<input id="{i#bcancel}" value="{#mod.money.opermove.editor.7}" type="button" class="btn" />
 	</div>
 </div>

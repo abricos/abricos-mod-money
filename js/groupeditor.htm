@@ -1,42 +1,38 @@
-<!--{editor}-->
-<dl>
-	<dt>Название</dt>
+<!--{editor}--><dl>
+	<dt>{#mod.money.groupeditor.editor.1}</dt>
 	<dd>
 		<input id="{i#tl}" type="text" class="gtl" value="" />
 	</dd>
 </dl>
 
 <dl>
-	<dt>Возможности участников</dt>
+	<dt>{#mod.money.groupeditor.editor.2}</dt>
 	<dd>
 		<div id="{i#ulst}"></div>
 	</dd>
 </dl>
 
 <dl>
-	<dt>Счета</dt>
+	<dt>{#mod.money.groupeditor.editor.3}</dt>
 	<dd>
 	</dd>
 </dl>
 
 <div id="{i#accountlist}"></div>
-
-
-<!--{widget}-->
-<div id="{i#id}" class="groupedit {v#gstclass}">
+<!--{widget}--><div id="{i#id}" class="groupedit {v#gstclass}">
 	
 	<table class="w100"><tbody><tr>
 	<td class="fld">
-		<h3 class="stgnew">Создание новой бухгалтерии</h3>
-		<h3 class="stgedt">Редактировать бухгалтерию</h3>
+		<h3 class="stgnew">{#mod.money.groupeditor.widget.1}</h3>
+		<h3 class="stgedt">{#mod.money.groupeditor.widget.2}</h3>
 
 		<div id="{i#editor}" class="mtp10"></div>
 		
 		<div class="right mtp10">
-			<input id="{i#bcreate}" type="button" value="Создать" class="btn stgnew"/>
-			<input id="{i#bsave}" type="button" value="Сохранить" class="btn stgedt"/>
-			<input id="{i#bcancel}" type="button" value="Отмена" class="btn"/>
-			<input id="{i#bclose}" type="button" value="Закрыть" class="btn"/>
+			<input id="{i#bcreate}" type="button" value="{#mod.money.groupeditor.widget.3}" class="btn stgnew"/>
+			<input id="{i#bsave}" type="button" value="{#mod.money.groupeditor.widget.4}" class="btn stgedt"/>
+			<input id="{i#bcancel}" type="button" value="{#mod.money.groupeditor.widget.5}" class="btn"/>
+			<input id="{i#bclose}" type="button" value="{#mod.money.groupeditor.widget.6}" class="btn"/>
 		</div>
 	
 	</td>
@@ -44,118 +40,22 @@
 		&nbsp;
 	</td>
 	<td class="aw-page-content mn-hlp">
-		<p>
-			<strong>Бухгалтерия</strong> - это группа из одного или нескольких счетов.
-		</p>
-		<p>
-			Это сделано для того, чтобы можно было вести сразу несколько независимых друг от друга 
-			финансовых отчетов.
-		</p>
-		<p>
-			Например: создать две бухгалтерии <i>"Семья"</i> и <i>"Дизайн студия"</i>.
-			<br />
-			В бухгалтерию <i>"Семья"</i> добавить членов семьи с необходимыми счетами, 
-			а в бухгалтерию <i>"Дизайн студия"</i> добавить уже участников вашей команды. 
-		</p>
-		
-<!-- 
+		<p>{#mod.money.groupeditor.widget.7}</p>
+		<p>{#mod.money.groupeditor.widget.8}</p>
+		<p>{#mod.money.groupeditor.widget.9}</p>
+
 		<p class="mtp10">
-			<strong>Доступ участника к бухгалтерии</strong>
+			{#mod.money.groupeditor.widget.10}
 		</p>
-		 
-		<table class="sv"><thead><tr>
-			<th>Возможность \ Уровень доступа</th><th>Админ</th><th>Запись</th><th>Чтение</th>
-			</tr></thead><tbody>
-			
-			<tr>
-				<td class="rh">Изменение/удаление бухглатерии</td>
-				<td> + </td><td> - </td><td> - </td>
-			</tr>
-
-			<tr>
-				<td class="rh">Управление доступом участников</td>
-				<td> + </td><td> - </td><td> - </td>
-			</tr>
-
-			<tr>
-				<td class="rh">Управление категориями</td>
-				<td> + </td><td> + </td><td> - </td>
-			</tr>
-
-			<tr>
-				<td class="rh">Создать новый счет</td>
-				<td> + </td><td> + </td><td> - </td>
-			</tr>
-			
-		</tbody>
-		</table>
-		
-		<p class="mtp10">
-			<strong>Доступ участника к счету</strong>
-		</p>
-		 
-		<table class="sv"><thead><tr>
-			<th>Возможность \ Уровень доступа</th><th>Админ</th><th>Запись</th><th>Чтение</th>
-			</tr></thead><tbody>
-			
-			<tr>
-				<td class="rh">Управление доступом участников</td>
-				<td> + </td><td> - </td><td> - </td>
-			</tr>
-			
-			<tr>
-				<td class="rh">Изменение/удаление счета</td>
-				<td> + </td><td> - </td><td> - </td>
-			</tr>
-
-			<tr>
-				<td class="rh">Добавление персонального (приватного) счета</td>
-				<td> + </td><td> + </td><td> - </td>
-			</tr>
-
-			<tr>
-				<td class="rh">Операции по счету</td>
-				<td> + </td><td> + </td><td> - </td>
-			</tr>
-
-			<tr>
-				<td class="rh">Просмотр журнала операций</td>
-				<td> + </td><td> + </td><td> + </td>
-			</tr>
-			
-		</tbody>
-		</table>
- -->
-		<p class="mtp10">
-			<strong>Типы счетов</strong>
-		</p>
-		<p>
-			<i>Наличные</i> - деньги в кошельках, сейфах, копилках...
-		</p>
-		<p>
-			<i>Дебетовая карта</i> - пластиковые карты (зарплатная и т.п.)
-		</p>
-		<p>
-			<i>Банковский счет</i> - расчетные счета, личные счета, сберкнижки...
-		</p>
-		<p>
-			<i>Электронные деньги</i> - Яндекс.Деньги, WebMoney...
-		</p>
-		<p>
-			<i>Мне должны</i> - любые займы выданные вами
-		</p>
-		<p>
-			<i>Я должен</i> - любые займы полученные вами
-		</p>
-		<p>
-			<i>Кредит</i> - кредиты наличными, автокредиты, ипотека...
-		</p>
-		<p>
-			<i>Депозит</i> - вклады и депозиты
-		</p>
-		<p>
-			<i>Кредитная карта</i> - овердрафтные и кредитные карты
-		</p>
+		<p>{#mod.money.groupeditor.widget.11}</p>
+		<p>{#mod.money.groupeditor.widget.12}</p>
+		<p>{#mod.money.groupeditor.widget.13}</p>
+		<p>{#mod.money.groupeditor.widget.14}</p>
+		<p>{#mod.money.groupeditor.widget.15}</p>
+		<p>{#mod.money.groupeditor.widget.16}</p>
+		<p>{#mod.money.groupeditor.widget.17}</p>
+		<p>{#mod.money.groupeditor.widget.18}</p>
+		<p>{#mod.money.groupeditor.widget.19}</p>
 		
 	</td>
 	</tr></tbody></table>

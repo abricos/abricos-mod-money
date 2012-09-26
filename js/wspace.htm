@@ -1,45 +1,34 @@
-<!--{panel}-->
-<div class='hd'>Финансы</div>
+<!--{panel}--><div class='hd'>{#mod.money.wspace.panel.1}</div>
 <div class='bd aw-money'>
 
 	<div id="{i#gmenu}"></div>
 	
 	<div id="{i#loading}" class="ws-loading">
-		<img src="/images/loading.gif" /> Идет загрузка данных<br />
-		Пожалуйста, подождите...
+		<img src="/images/loading.gif" /> {#mod.money.wspace.panel.2}
 	</div>
 	
 	<div id="{i#board}" class="board" style="display: none">
 	
 	</div>
 </div>
-
-<!--{page}-->
-<div id="{i#id}" class='wspage'></div>
-
-<!--{home}-->
-<div id="{i#id}" class='wspage'>Добро пожаловать</div>
-
-<!--{accessdenied}-->
-<div id="{i#id}" class='wspage'>
+<!--{page}--><div id="{i#id}" class='wspage'></div>
+<!--{home}--><div id="{i#id}" class='wspage'>{#mod.money.wspace.home.1}</div>
+<!--{accessdenied}--><div id="{i#id}" class='wspage'>
 
 	<div class="ws-loading">
-		Доступ запрещен <br />
-		У вас недостаточно прав, или необходимо зарегистрироваться.
+		{#mod.money.wspace.accessdenied.1}
 	</div>
 
 </div>
-
-<!--{gbmenu}-->
-<div class="gheadermenu">
+<!--{gbmenu}--><div class="gheadermenu">
 	<h2>Финансы</h2>
 	
 	<img class="logo" src="/modules/money/images/logo-96x96.png" />
 	
 	<ul class="topmenu">
-		<li class="sel" id="{i#gmhome}"><a href="{v#url}" title="Финансы - главная страница">Счета</a></li>
-		<li id="{i#gmnewgroup}"><a href="{v#urlgroupnew}" title="Создать бухгалтерию">+ Создать</a></li>
-		<li id="{i#gmabout}"><a href="{v#urlabout}" title="">О приложении</a></li>
+		<li class="sel" id="{i#gmhome}"><a href="{v#url}" title="{#mod.money.wspace.gbmenu.1}">{#mod.money.wspace.gbmenu.2}</a></li>
+		<li id="{i#gmnewgroup}"><a href="{v#urlgroupnew}" title="{#mod.money.wspace.gbmenu.3}">{#mod.money.wspace.gbmenu.4}</a></li>
+		<li id="{i#gmabout}"><a href="{v#urlabout}" title="">{#mod.money.wspace.gbmenu.5}</a></li>
 	</ul>
 	<div class="clear"></div>
 </div>
@@ -50,16 +39,12 @@
 	</div>
 	
 	<div id="{i#maccountd}" class="gbitems" style="display: none;">
-		<a id="{i#miaccount}" class="gbitem" href="{v#urlaws}">Бухгалтерия</a>
-		<a id="{i#miaccountnew}" class="gbitem" href="{v#urlawsnew}">+ Создать бухгалтерию</a>
+		<a id="{i#miaccount}" class="gbitem" href="{v#urlaws}">{#mod.money.wspace.gbmenu.6}</a>
+		<a id="{i#miaccountnew}" class="gbitem" href="{v#urlawsnew}">{#mod.money.wspace.gbmenu.7}</a>
 	</div>
 	
 	<br class="clear" />
 	<div class="line"></div>
 </div>
-
-<!--{gmitemhome}-->
-<a id="{i#id}" class="gbitem" href="{v#url}" style="display: none">Главная</a>
-
-<!--{gmitem}-->
-<a id="{i#id}-{v#id}" class="gbitem" href="{v#url}">{v#tl}</a>
+<!--{gmitemhome}--><a id="{i#id}" class="gbitem" href="{v#url}" style="display: none">{#mod.money.wspace.gmitemhome.1}</a>
+<!--{gmitem}--><a id="{i#id}-{v#id}" class="gbitem" href="{v#url}">{v#tl}</a>

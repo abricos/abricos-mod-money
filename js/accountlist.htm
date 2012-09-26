@@ -1,14 +1,13 @@
-<!--{widget}-->
-<div id="{i#id}" class="aclist">
+<!--{widget}--><div id="{i#id}" class="aclist">
 	<div class="gtl">
 		<span id="{i#gtl}">{v#gtl}&nbsp;</span>
-		<div id="{i#bgpedt}" class="bc bgpedt" title="Редактировать бухгалтерию">
+		<div id="{i#bgpedt}" class="bc bgpedt" title="{#mod.money.accountlist.widget.1}">
 			&nbsp;
 		</div>
-		<div id="{i#bcreate}" class="bc baccnew" title="Добавить новый счет">
+		<div id="{i#bcreate}" class="bc baccnew" title="{#mod.money.accountlist.widget.2}">
 			&nbsp;
 		</div>
-		<div id="{i#bgprem}" class="bc bgrem" title="Удалить бахгалтерию">
+		<div id="{i#bgprem}" class="bc bgrem" title="{#mod.money.accountlist.widget.3}">
 			&nbsp;
 		</div>
 	</div>
@@ -16,7 +15,6 @@
 	<div id="{i#list}" class="mlst"></div>
 
 </div>
-
 <!--{grow}--><div id="{i#id}" class="agrow" style="display: none">
 	<div class="agtl">
 		<table><tbody><tr>
@@ -31,13 +29,10 @@
 
 	<div id="{i#list}"></div>
 </div>
-
-<!--{gsmrow}-->
-<div class="gsmrow">
+<!--{gsmrow}--><div class="gsmrow">
 	<span class="{v#ise}">{v#sm}</span>
 	<span class="cc">{v#cc}</span>
 </div>
-
 <!--{row}--><div id="{i#id}" class="arow">
 	<div id="{i#sel}">
 		<div class="atl" id="{i#tl}"></div>
@@ -47,21 +42,16 @@
 		</div>
 	</div>
 	<div class="amenu">
-		<div id="{i#bedit}" class="b" title="Редактировать счет">
+		<div id="{i#bedit}" class="b" title="{#mod.money.accountlist.row.1}счет">
 			<div id="{i#beditc}" class="bedit bc"> </div>
 		</div>
-		<div id="{i#badd}" class="b" title="Добавить операцию">
+		<div id="{i#badd}" class="b" title="{#mod.money.accountlist.row.2}">
 			<div id="{i#baddc}" class="badd bc"> </div>
 		</div>
-		<div id="{i#brem}" class="b" title="Удалить счет">
+		<div id="{i#brem}" class="b" title="{#mod.money.accountlist.row.3}">
 			<div id="{i#bremc}" class="brem bc"> </div>
 		</div>
 	</div>
 </div>
-
-
-<!--{select}-->
-<select id="{i#id}" class="accountselect">{v#rows}</select>
-
-<!--{selrow}-->
-<option value="{v#id}">{v#tl}</option>
+<!--{select}--><select id="{i#id}" class="accountselect">{v#rows}</select>
+<!--{selrow}--><option value="{v#id}">{v#tl}</option>

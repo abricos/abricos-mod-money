@@ -1,39 +1,24 @@
-<!--{select}-->
-<select id="{i#id}" class="categories">
+<!--{select}--><select id="{i#id}" class="categories">
 	{v#crow}
 	{v#erow}
 	{v#nrow}
 	{v#rtrow}
 	{v#rows}
 </select>
-
-<!--{scrow}-->
-<option value="0">-- Выберите категорию --</option>
-
-<!--{snrow}-->
-<option value="-1" class="red">-- Создать новую категорию --</option>
-
-<!--{serow}-->
-<option value="-2" class="red">-- Редактировать справочник --</option>
-
-<!--{srtrow}-->
-<option value="0" >Корневая категория</option>
-
-<!--{srow}-->
-<option value="{v#id}">{v#tab}{v#tl}</option>
-
+<!--{scrow}--><option value="0">-- {#mod.money.category.scrow.1} --</option>
+<!--{snrow}--><option value="-1" class="red">-- {#mod.money.category.snrow.1} --</option>
+<!--{serow}--><option value="-2" class="red">-- {#mod.money.category.serow.1} --</option>
+<!--{srtrow}--><option value="0" >{#mod.money.category.srtrow.1}</option>
+<!--{srow}--><option value="{v#id}">{v#tab}{v#tl}</option>
 <!--{stab}-->&nbsp;&nbsp;&nbsp;
-
-
-<!--{create}-->
-<div id="{i#id}" class="catcreate">
+<!--{create}--><div id="{i#id}" class="catcreate">
 	<table><tbody>
 		<tr>
-			<td class="ccr1">Вложенность</td>
+			<td class="ccr1">{#mod.money.category.create.1}</td>
 			<td id="{i#sel}"></td>
 		</tr>
 		<tr>
-			<td class="ccr1">Название</td>
+			<td class="ccr1">{#mod.money.category.create.2}</td>
 			<td>
 				<input id="{i#val}" type="text" />
 			</td>

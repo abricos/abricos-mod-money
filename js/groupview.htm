@@ -1,5 +1,4 @@
-<!--{widget}-->
-<div id="{i#id}" class="groupview">
+<!--{widget}--><div id="{i#id}" class="groupview">
 
 	<table id="{i#ws}" class="gvboard"><tbody><tr>
 	<td class="gvcol1">
@@ -12,7 +11,7 @@
 
 		<div id="{i#acceditor}" style="display: none">
 			<div class="loadeditor">
-				<img src="/images/loading.gif" /> Загрузка редактора...
+				<img src="/images/loading.gif" /> {#mod.money.groupview.widget.1}
 			</div>
 		</div>
 		
@@ -28,81 +27,72 @@
 	
 	<div id="{i#notfound}" class="notfound" style="display: none">
 		<p>
-			Не удается открыть бухгалтерию с идентификатором №{v#groupid}.
+			{#mod.money.groupview.widget.2}
 		</p>
 		<p>
-			Возможно она была удалена автором или у Вас нет прав на ее просмотр.
+			{#mod.money.groupview.widget.3}
 		</p>
 		<p>
-			<a href="{v#newgroupurl}">Создать новую бухгалтерию</a>
+			<a href="{v#newgroupurl}">{#mod.money.groupview.widget.4}</a>
 		</p>
 	</div>
 </div>
-
-<!--{accremovepanel}-->
-<div class='hd'>Удаление бухгалтерии</div>
+<!--{accremovepanel}--><div class='hd'>{#mod.money.groupview.accremovepanel.1}</div>
 <div class='bd aw-money'>
 	<div id="{i#dialogremove}" class="field">
-		<h4>Удаление бухгалтерии</h4>
+		<h4>{#mod.money.groupview.accremovepanel.1}</h4>
 		<p>
-			Внимание! <br />
-			Вы действительно хотите удалить счет "{v#tl}" и все что с ним связано?
+			{#mod.money.groupview.accremovepanel.2}
 		</p>
 		<div class="buttons right">
 			<span id="{i#btns}">
-				<input id="{i#bremove}" value="Подтверждаю" type="button" />
-				<input id="{i#bcancel}" value="Отмена" type="button" />
+				<input id="{i#bremove}" value="{#mod.money.groupview.accremovepanel.3}" type="button" />
+				<input id="{i#bcancel}" value="{#mod.money.groupview.accremovepanel.4}" type="button" />
 			</span>
 			<span id="{i#bloading}" style="display: none">
-				<img src="/images/loading.gif" /> Удаление...
+				<img src="/images/loading.gif" /> {#mod.money.groupview.accremovepanel.5}
 			</span>
 		</div>
 	</div>
 </div>
-
-<!--{groupremovepanel}-->
-<div class='hd'>Удаление бухгалтерии</div>
+<!--{groupremovepanel}--><div class='hd'>{#mod.money.groupview.groupremovepanel.1}</div>
 <div class='bd aw-money'>
 	<div id="{i#dialogremove}" class="field">
-		<h4>Удаление бухгалтерии</h4>
+		<h4>{#mod.money.groupview.groupremovepanel.1}</h4>
 		<p>
-			Внимание! <br />
-			Вы действительно хотите удалить бухгалтерию, все ее счета и операции по счетам?
+			{#mod.money.groupview.groupremovepanel.2}
 		</p>
 		<div class="buttons right">
 			<span id="{i#btns}">
-				<input id="{i#bremove}" value="Подтверждаю" type="button" />
-				<input id="{i#bcancel}" value="Отмена" type="button" />
+				<input id="{i#bremove}" value="{#mod.money.groupview.groupremovepanel.4}" type="button" />
+				<input id="{i#bcancel}" value="{#mod.money.groupview.groupremovepanel.5}" type="button" />
 			</span>
 			<span id="{i#bloading}" style="display: none">
-				<img src="/images/loading.gif" /> Удаление...
+				<img src="/images/loading.gif" /> {#mod.money.groupview.groupremovepanel.6}
 			</span>
 		</div>
 	</div>
 </div>
-
-<!--{orempanel}-->
-<div class='hd'>Удаление операции</div>
+<!--{orempanel}--><div class='hd'>{#mod.money.groupview.orempanel.1}</div>
 <div class='bd aw-money'>
 	<div id="{i#dialogremove}" class="field">
-		<h4>Удаление операции</h4>
+		<h4>{#mod.money.groupview.orempanel.1}</h4>
 		<p>
-			Внимание! <br />
-			Вы действительно хотите удалить операцию?
+			{#mod.money.groupview.orempanel.2}
 		</p>
 		<p>
-			Тип операции: {v#otp}<br />
-			Счет: {v#acc} <br />
-			Дата операции: {v#d} <br />
-			Сумма операции: {v#v} <br />
+			{#mod.money.groupview.orempanel.3}: {v#otp}<br />
+			{#mod.money.groupview.orempanel.4}: {v#acc} <br />
+			{#mod.money.groupview.orempanel.5}: {v#d} <br />
+			{#mod.money.groupview.orempanel.6}: {v#v} <br />
 		</p>
 		<div class="buttons right">
 			<span id="{i#btns}">
-				<input id="{i#bremove}" value="Подтверждаю" type="button" />
-				<input id="{i#bcancel}" value="Отмена" type="button" />
+				<input id="{i#bremove}" value="{#mod.money.groupview.orempanel.7}" type="button" />
+				<input id="{i#bcancel}" value="{#mod.money.groupview.orempanel.8}" type="button" />
 			</span>
 			<span id="{i#bloading}" style="display: none">
-				<img src="/images/loading.gif" /> Удаление...
+				<img src="/images/loading.gif" /> {#mod.money.groupview.orempanel.9}
 			</span>
 		</div>
 	</div>

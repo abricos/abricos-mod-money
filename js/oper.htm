@@ -1,5 +1,4 @@
-<!--{widget}-->
-<div id="{i#id}" class="oper">
+<!--{widget}--><div id="{i#id}" class="oper">
 	<div class="dil">&nbsp;</div>
 	<div id="{i#expense}" class="tab" style="display: none"></div>
 	<div id="{i#income}" class="tab" style="display: none"></div>
@@ -8,39 +7,37 @@
 		<ul>
 			<li id="{i#texpense}" class="sel">
 				<div class="w">
-					<div><a id="{i#bexpense}" href="#">Расход</a></div>
+					<div><a id="{i#bexpense}" href="#">{#mod.money.oper.widget.1}</a></div>
 				</div>
 			</li>
 			<li id="{i#tincome}">
 				<div class="w">
-					<div><a id="{i#bincome}" href="#">Доход</a></div>
+					<div><a id="{i#bincome}" href="#">{#mod.money.oper.widget.2}</a></div>
 				</div>
 			</li>
 			<li id="{i#tmove}">
 				<div class="w">
-					<div><a id="{i#bmove}" href="#">Перемещение</a></div>
+					<div><a id="{i#bmove}" href="#">{#mod.money.oper.widget.3}</a></div>
 				</div>
 			</li>
 		</ul>
 		<div class="clear"></div>
 	</div>
 </div>
-
-<!--{editor}-->
-<div id="{i#id}" class="tabitem">
+<!--{editor}--><div id="{i#id}" class="tabitem">
 	<div class="r acc">
-		Счет: <span id="{i#atl}"></span>
+		{#mod.money.oper.editor.1}: <span id="{i#atl}"></span>
 	</div>
 		
 	<div class="r">
 		<table><tbody><tr>
-		<td><span class="dttl">Дата</span></td>
+		<td><span class="dttl">{#mod.money.oper.editor.2}</span></td>
 		<td><div id="{i#dt}"></div></td>
 		</tr></tbody></table>
 	</div>
 	
 	<div class="r in">
-		Сумма <span class="inc"> 
+		{#mod.money.oper.editor.3}<span class="inc"> 
 			<input id="{i#in}" type="text" onclick="this.select();" />
 			<span id="{i#cc}" class="cc"></span>
 			<img id="{i#pcsave}" src="/images/loading.gif" style="display: none" />
@@ -52,14 +49,14 @@
 	</div>
 	<div class="r cmt">
 		<div>
-			Комментарий
+			{#mod.money.oper.editor.4}
 		</div>
 		<textarea id="{i#dsc}"></textarea>
 	</div>
 	
 	<div class="r btns right">
-		<input id="{i#bcreate}" value="Записать" type="button" class="btn" />
-		<input id="{i#bsave}" value="Сохранить изменения" type="button" class="btn" />
-		<input id="{i#bcancel}" value="Отмена" type="button" class="btn" />
+		<input id="{i#bcreate}" value="{#mod.money.oper.editor.5}" type="button" class="btn" />
+		<input id="{i#bsave}" value="{#mod.money.oper.editor.6}" type="button" class="btn" />
+		<input id="{i#bcancel}" value="{#mod.money.oper.editor.7}" type="button" class="btn" />
 	</div>
 </div>

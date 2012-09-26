@@ -1,19 +1,16 @@
-<!--{widget}-->
-<div id="{i#id}" class="accountedit">
+<!--{widget}--><div id="{i#id}" class="accountedit">
 	<div class="aewrp">
 		<div class="bslst" id="{i#bslst}">
-			<a href="#" id="{i#bcreate}">Добавить счет</a>
+			<a href="#" id="{i#bcreate}">{#mod.money.accounteditor.widget.1}</a>
 		</div>
 		<div id="{i#list}"></div>
 	</div>
 </div>
-
-<!--{editor}-->
-<div id="{i#id}" class="accountedit fld">
+<!--{editor}--><div id="{i#id}" class="accountedit fld">
 	<div class="{v#stclass}">
 		<div class="aehd">
-			<span class="stedt">Редактирование счета</span>
-			<span class="stnew">Создание счета</span>
+			<span class="stedt">{#mod.money.accounteditor.editor.1}</span>
+			<span class="stnew">{#mod.money.accounteditor.editor.2}</span>
 		</div>
 	
 		<div id="{i#editor}" class="aewrp"></div>
@@ -24,18 +21,17 @@
 			<span id="{i#pcsave}" class="pcsave" style="display: none">
 				<img src="/images/loading.gif" />
 			</span>
-			<input id="{i#bsave}" value="Сохранить" type="button" class="btn" />
-			<input id="{i#bcancel}" value="Отмена" type="button" class="btn" />
-			<input id="{i#bclose}" value="Закрыть" type="button" class="btn" />
+			<input id="{i#bsave}" value="{#mod.money.accounteditor.editor.3}" type="button" class="btn" />
+			<input id="{i#bcancel}" value="{#mod.money.accounteditor.editor.4}" type="button" class="btn" />
+			<input id="{i#bclose}" value="{#mod.money.accounteditor.editor.5}" type="button" class="btn" />
 		</div>
 	</div>
 </div>
-
 <!--{row}--><div id="{i#id}" class="row">
 <div id="{i#id}" class="acedform">
-	<a id="{i#bremove}" href="#" class="brmacc" title="Удалить этот счет">Удалить</a>
+	<a id="{i#bremove}" href="#" class="brmacc" title="{#mod.money.accounteditor.row.1}">{#mod.money.accounteditor.row.2}</a>
 	<dl>
-		<dt>Тип счета</dt>
+		<dt>{#mod.money.accounteditor.row.3}</dt>
 		<dd>
 			<select id="{i#tp}">
 				<option value="1">{#mod.money.account.type.1}</option>
@@ -52,35 +48,35 @@
 	</dl>
 	
 	<dl>
-		<dt>Название</dt>
+		<dt>{#mod.money.accounteditor.row.4}</dt>
 		<dd>
 			<input id="{i#tl}" type="text" class="atl" value="" />
 		</dd>
 	</dl>
 
 	<dl>
-		<dt>Примечание</dt>
+		<dt>{#mod.money.accounteditor.row.5}</dt>
 		<dd>
 			<textarea id="{i#dsc}" class="adsc"></textarea>
 		</dd>
 	</dl>
 
 	<dl>
-		<dt>Начальный баланс</dt>
+		<dt>{#mod.money.accounteditor.row.6}</dt>
 		<dd>
 			<input id="{i#bc}" type="text" class="abc" value="" />
 		</dd>
 	</dl>
 
 	<dl>
-		<dt>Валюта</dt>
+		<dt>{#mod.money.accounteditor.row.7}</dt>
 		<dd>
 			<div id="{i#cc}"></div>
 		</dd>
 	</dl>
 
 	<dl class="endfld">
-		<dt>Участники счета</dt>
+		<dt>{#mod.money.accounteditor.row.8}</dt>
 		<dd>
 			<div id="{i#ulst}">
 				&nbsp;

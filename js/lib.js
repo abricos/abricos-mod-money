@@ -75,7 +75,7 @@ Component.entryPoint = function(NS){
 			this.isExpense =  d['ise']*1>0;
 		}
 	});
-	NS.Currency = Currency;
+	NS.Category = Category;
 
 	var CategoryList = function(d){
 		CategoryList.superclass.constructor.call(this, d, Category);
