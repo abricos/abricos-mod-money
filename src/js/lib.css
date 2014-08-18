@@ -53,9 +53,6 @@
 .aw-money .fld dd textarea {
 	height: 100px;
 }
-.aw-money .fld dd input.btn {
-	width: auto;
-}
 
 /* * * * * Fixed Row * * * * */
 .aw-money .fixrw {

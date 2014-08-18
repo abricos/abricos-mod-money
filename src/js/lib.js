@@ -1,5 +1,4 @@
 /*
-@version $Id$
 @package Abricos
 @copyright Copyright (C) 2008 Abricos All rights reserved.
 @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -27,8 +26,10 @@ Component.entryPoint = function(NS){
 	
 	var LNG = this.language;
 
-	Brick.util.CSS.update(Brick.util.CSS['{C#MODNAME}']['{C#COMNAME}']);
-	delete Brick.util.CSS['{C#MODNAME}']['{C#COMNAME}'];
+    this.buildTemplate({});
+
+	// Brick.util.CSS.update(Brick.util.CSS['{C#MODNAME}']['{C#COMNAME}']);
+	// delete Brick.util.CSS['{C#MODNAME}']['{C#COMNAME}'];
 	
 	NS.lif = function(f){return L.isFunction(f) ? f : function(){}; };
 	NS.life = function(f, p1, p2, p3, p4, p5, p6, p7){

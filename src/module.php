@@ -1,6 +1,5 @@
 <?php 
 /**
- * @version $Id$
  * @package Abricos
  * @subpackage Money
  * @copyright Copyright (C) 2011 Abricos. All rights reserved.
@@ -49,6 +48,10 @@ class MoneyModule extends Ab_Module {
 		return $appInfo;
 	}
 	/**/
+
+    public function Bos_IsMenu(){
+        return true;
+    }
 }
 
 class MoneyAccountRole {
