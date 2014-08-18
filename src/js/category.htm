@@ -1,27 +1,36 @@
-<!--{select}--><select id="{i#id}" class="categories">
-	{v#crow}
-	{v#erow}
-	{v#nrow}
-	{v#rtrow}
-	{v#rows}
+<!--{select}-->
+<select id="{i#id}" class="categories form-control">
+    {v#crow}
+    {v#erow}
+    {v#nrow}
+    {v#rtrow}
+    {v#rows}
 </select>
-<!--{scrow}--><option value="0">-- {#mod.money.category.scrow.1} --</option>
-<!--{snrow}--><option value="-1" class="red">-- {#mod.money.category.snrow.1} --</option>
-<!--{serow}--><option value="-2" class="red">-- {#mod.money.category.serow.1} --</option>
-<!--{srtrow}--><option value="0" >{#mod.money.category.srtrow.1}</option>
-<!--{srow}--><option value="{v#id}">{v#tab}{v#tl}</option>
+
+<!--{scrow}-->
+<option value="0">-- {#mod.money.category.scrow.1} --</option>
+<!--{snrow}-->
+<option value="-1" class="red">-- {#mod.money.category.snrow.1} --</option>
+<!--{serow}-->
+<option value="-2" class="red">-- {#mod.money.category.serow.1} --</option>
+<!--{srtrow}-->
+<option value="0">{#mod.money.category.srtrow.1}</option>
+<!--{srow}-->
+<option value="{v#id}">{v#tab}{v#tl}</option>
 <!--{stab}-->&nbsp;&nbsp;&nbsp;
-<!--{create}--><div id="{i#id}" class="catcreate">
-	<table><tbody>
-		<tr>
-			<td class="ccr1">{#mod.money.category.create.1}</td>
-			<td id="{i#sel}"></td>
-		</tr>
-		<tr>
-			<td class="ccr1">{#mod.money.category.create.2}</td>
-			<td>
-				<input id="{i#val}" type="text" />
-			</td>
-		</tr>
-	</tbody></table>
+
+<!--{create}-->
+<div id="{i#id}" class="form-horizontal">
+
+    <div class="form-group">
+        <label class="col-md-3 control-label">{#mod.money.category.create.1}</label>
+        <div class="col-md-9" id="{i#sel}"></div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-md-3 control-label">{#mod.money.category.create.2}</label>
+        <div class="col-md-9">
+            <input id="{i#val}" type="text" class="form-control"/>
+        </div>
+    </div>
 </div>

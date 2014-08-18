@@ -1,62 +1,83 @@
-<!--{widget}--><div id="{i#id}" class="oper">
-	<div class="dil">&nbsp;</div>
-	<div id="{i#expense}" class="tab" style="display: none"></div>
-	<div id="{i#income}" class="tab" style="display: none"></div>
-	<div id="{i#move}" class="tab" style="display: none"></div>
-	<div class="otbmenu">
-		<ul>
-			<li id="{i#texpense}" class="sel">
-				<div class="w">
-					<div><a id="{i#bexpense}" href="#">{#mod.money.oper.widget.1}</a></div>
-				</div>
-			</li>
-			<li id="{i#tincome}">
-				<div class="w">
-					<div><a id="{i#bincome}" href="#">{#mod.money.oper.widget.2}</a></div>
-				</div>
-			</li>
-			<li id="{i#tmove}">
-				<div class="w">
-					<div><a id="{i#bmove}" href="#">{#mod.money.oper.widget.3}</a></div>
-				</div>
-			</li>
-		</ul>
-		<div class="clear"></div>
-	</div>
+<!--{widget}-->
+<div id="{i#id}" class="oper">
+    <div class="dil">&nbsp;</div>
+    <div id="{i#expense}" class="tab" style="display: none"></div>
+    <div id="{i#income}" class="tab" style="display: none"></div>
+    <div id="{i#move}" class="tab" style="display: none"></div>
+    <div class="otbmenu">
+        <ul>
+            <li id="{i#texpense}" class="sel">
+                <div class="w">
+                    <div><a id="{i#bexpense}" href="#">{#mod.money.oper.widget.1}</a></div>
+                </div>
+            </li>
+            <li id="{i#tincome}">
+                <div class="w">
+                    <div><a id="{i#bincome}" href="#">{#mod.money.oper.widget.2}</a></div>
+                </div>
+            </li>
+            <li id="{i#tmove}">
+                <div class="w">
+                    <div><a id="{i#bmove}" href="#">{#mod.money.oper.widget.3}</a></div>
+                </div>
+            </li>
+        </ul>
+        <div class="clear"></div>
+    </div>
 </div>
-<!--{editor}--><div id="{i#id}" class="tabitem">
-	<div class="r acc">
-		{#mod.money.oper.editor.1}: <span id="{i#atl}"></span>
-	</div>
-		
-	<div class="r">
-		<table><tbody><tr>
-		<td><span class="dttl">{#mod.money.oper.editor.2}</span></td>
-		<td><div id="{i#dt}"></div></td>
-		</tr></tbody></table>
-	</div>
-	
-	<div class="r in">
-		{#mod.money.oper.editor.3}<span class="inc"> 
-			<input id="{i#in}" type="text" onclick="this.select();" />
-			<span id="{i#cc}" class="cc"></span>
-			<img id="{i#pcsave}" src="/images/loading.gif" style="display: none" />
-		</span> 
-	</div>
-	<div class="r cat">
-		<span id="{i#cats}"></span>
-		<div id="{i#catcreate}"></div>
-	</div>
-	<div class="r cmt">
-		<div>
-			{#mod.money.oper.editor.4}
-		</div>
-		<textarea id="{i#dsc}"></textarea>
-	</div>
-	
-	<div class="r btns right">
-		<input id="{i#bcreate}" value="{#mod.money.oper.editor.5}" type="button" class="btn" />
-		<input id="{i#bsave}" value="{#mod.money.oper.editor.6}" type="button" class="btn" />
-		<input id="{i#bcancel}" value="{#mod.money.oper.editor.7}" type="button" class="btn" />
-	</div>
+
+<!--{editor}-->
+<div id="{i#id}" class="tabitem ">
+
+    <div class="form-horizontal">
+        <div class="form-group">
+            <label class="col-md-3 control-label">{#mod.money.oper.editor.1}</label>
+
+            <div class="col-md-9">
+                <div id="{i#atl}" class="form-control-static"></div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-3 control-label">{#mod.money.oper.editor.2}</label>
+
+            <div class="col-md-9">
+                <div id="{i#dt}"></div>
+            </div>
+        </div>
+
+        <div class="form-group price">
+            <label class="col-md-3 control-label">
+                {#mod.money.oper.editor.3}
+            </label>
+
+            <div class="col-md-9">
+                <div class="inc">
+                    <input id="{i#in}" class="form-control input-lg" type="text" onclick="this.select();"/>
+
+                    <span id="{i#cc}" class="cc"></span>
+                    <img id="{i#pcsave}" src="/images/loading.gif" style="display: none"/>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <span id="{i#cats}"></span>
+    </div>
+
+    <div class="form-group">
+        <div id="{i#catcreate}"></div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label">{#mod.money.oper.editor.4}</label>
+        <textarea id="{i#dsc}" class="form-control"></textarea>
+    </div>
+
+    <div class="text-right">
+        <input id="{i#bcreate}" value="{#mod.money.oper.editor.5}" type="button" class="btn btn-primary"/>
+        <input id="{i#bsave}" value="{#mod.money.oper.editor.6}" type="button" class="btn btn-primary"/>
+        <input id="{i#bcancel}" value="{#mod.money.oper.editor.7}" type="button" class="btn btn-default"/>
+    </div>
 </div>

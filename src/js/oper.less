@@ -1,88 +1,87 @@
 .aw-money .oper {
-	position: relative;
-	width: 380px;
-}
-.aw-money .oper .dil {
-	height: 25px;
-}
-.aw-money .oper .otbmenu {
-	position: absolute; top: 0; left: 0;
-	font-size: 1em;
-}
-.aw-money .oper .otbmenu li {
-	float: left;
-}
-.aw-money .oper .otbmenu li .w {
-	height: 25px;
-	border: 1px solid #8C8D8E;
-	margin-right: 5px;
-	border-bottom: none;
-}
-.aw-money .oper .otbmenu li .w div {
-	margin: 5px 20px 0 20px;
-}
-.aw-money .oper .otbmenu a {
-	text-decoration: none;
-	color: #BFBFBF;
-	font-weight: bold;
-}
-.aw-money .oper .otbmenu li.sel .w {
-	background-color: #F9F5DF;
-}
-.aw-money .oper .otbmenu li.sel a {
-	color: #555555;
-}
+  position: relative;
 
+  .otbmenu {
+    position: absolute;
+    top: 0;
+    left: 0;
 
-.aw-money .oper .tab {
-	font-size: 1.1em;
-}
+    ul {
+      padding: 0;
+    }
 
-.aw-money .oper .htl {
-	font-size: 1.4em;
-	margin-top: 5px !important;
-}
-.aw-money .oper .tabitem {
-	background-color: #F9F5DF;
-	padding: 12px;
-	padding-top: 1px;
-	border: 1px solid #8C8D8E;
-}
-.aw-money .oper .r {
-	margin-top: 12px;
-}
+    li {
+      float: left;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
 
-.aw-money .oper .acc,
-.aw-money .oper .dttl,
-.aw-money .oper .in {
-	font-size: 1.2em;
-}
-.aw-money .oper .dttl {
-	margin-right: 10px;
-}
+    li .w {
+      height: 33px;
+      border: 1px solid #8C8D8E;
+      margin-right: 5px;
+      border-bottom: none;
+    }
 
-.aw-money .oper .in .inc {
-	position: relative;
-}
-.aw-money .oper .in .cc {
-	position: absolute;
-	top: 0; right: 10px;
-	color: #ABADB3;
-}
-.aw-money .oper .in img {
-	position: absolute;
-	top: 2px; left: 3px;
-}
-.aw-money .oper .in input {
-	padding-right: 43px;
-	width: 150px;
-	text-align: right;
-}
+    li .w div {
+      margin: 5px 20px 0 20px;
+    }
 
-.aw-money .oper .cmt textarea,
-.aw-money .oper .cat select {
-	width: 350px;
-}
-.aw-money .oper .catcreate {
-	margin-top: 10px;
+    a {
+      text-decoration: none;
+      color: #BFBFBF;
+      font-weight: bold;
+    }
+
+    li.sel .w {
+      background-color: #F9F5DF;
+    }
+
+    li.sel a {
+      color: #555555;
+    }
+  }
+
+  .dil {
+    height: 32px;
+  }
+
+  .tabitem {
+    background-color: #F9F5DF;
+    padding: 12px;
+    border: 1px solid #8C8D8E;
+  }
+
+  .dttl {
+    margin-right: 10px;
+  }
+
+  .form-group {
+    margin-bottom: 10px;
+  }
+
+  .price {
+    .inc {
+      position: relative;
+    }
+    .cc {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      color: #ABADB3;
+    }
+
+    img {
+      position: absolute;
+      top: 2px;
+      left: 3px;
+    }
+
+    input.form-control {
+      padding-right: 43px;
+      text-align: right;
+    }
+  }
+
 }
