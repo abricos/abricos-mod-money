@@ -1,43 +1,55 @@
-<!--{editor}--><div id="{i#id}" class="tabitem opermove">
+<!--{editor}-->
+<div id="{i#id}" class="tabitem opermove">
 
-	<div class="r accsel">
-		{#mod.money.opermove.editor.1}:
-		<div id="{i#fromacc}"></div>
-	</div>
-	
-	<div class="r accsel">
-		{#mod.money.opermove.editor.2}:
-		<div id="{i#toacc}"></div>
-	</div>
-		
-	<div class="r">
-		<table><tbody><tr>
-		<td><span class="dttl">{#mod.money.opermove.editor.3}</span></td>
-		<td><div id="{i#dt}"></div></td>
-		</tr></tbody></table>
-	</div>
-	
-	<div class="r in">
-		Сумма <span class="inc"> 
-			<input id="{i#in}" type="text" onclick="this.select();" />
-			<span id="{i#cc}" class="cc"></span>
-			<img id="{i#pcsave}" src="/images/loading.gif" style="display: none" />
-		</span> 
-	</div>
-	<div class="r cat">
-		<span id="{i#cats}"></span>
-		<div id="{i#catcreate}"></div>
-	</div>
-	<div class="r cmt">
-		<div>
-			{#mod.money.opermove.editor.4}
-		</div>
-		<textarea id="{i#dsc}"></textarea>
-	</div>
-	
-	<div class="r btns right">
-		<input id="{i#bcreate}" value="{#mod.money.opermove.editor.5}" type="button" class="btn" />
-		<input id="{i#bsave}" value="{#mod.money.opermove.editor.6}" type="button" class="btn" />
-		<input id="{i#bcancel}" value="{#mod.money.opermove.editor.7}" type="button" class="btn" />
-	</div>
+    <div class="form-group">
+        <label class="control-label">
+            {#mod.money.opermove.editor.1}</label>
+
+        <div id="{i#fromacc}"></div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label">
+            {#mod.money.opermove.editor.2}</label>
+
+        <div id="{i#toacc}"></div>
+    </div>
+
+    <div class="form-horizontal">
+        <div class="form-group">
+            <label class="col-md-3 control-label">
+                {#mod.money.opermove.editor.3}
+            </label>
+
+            <div class="col-md-9">
+                <div id="{i#dt}"></div>
+            </div>
+        </div>
+
+        <div class="form-group price">
+            <label class="col-md-3 control-label">
+                {#mod.money.oper.editor.3}
+            </label>
+
+            <div class="col-md-9">
+                <div class="inc">
+                    <input id="{i#in}" class="form-control input-lg" type="text" onclick="this.select();"/>
+
+                    <span id="{i#cc}" class="cc"></span>
+                    <img id="{i#pcsave}" src="/images/loading.gif" style="display: none"/>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label">{#mod.money.opermove.editor.4}</label>
+        <textarea id="{i#dsc}" class="form-control"></textarea>
+    </div>
+
+    <div class="text-right">
+        <input id="{i#bcreate}" value="{#mod.money.opermove.editor.5}" type="button" class="btn btn-primary"/>
+        <input id="{i#bsave}" value="{#mod.money.opermove.editor.6}" type="button" class="btn btn-primary"/>
+        <input id="{i#bcancel}" value="{#mod.money.opermove.editor.7}" type="button" class="btn btn-default"/>
+    </div>
 </div>
