@@ -1,6 +1,8 @@
 .aw-money .oper {
   position: relative;
 
+  @border-color: #ddd;
+
   .otbmenu {
     position: absolute;
     top: 0;
@@ -19,9 +21,10 @@
 
     li .w {
       height: 33px;
-      border: 1px solid #8C8D8E;
+      border: 1px solid @border-color;
       margin-right: 5px;
       border-bottom: none;
+      border-radius: 4px 4px 0 0;
     }
 
     li .w div {
@@ -50,7 +53,8 @@
   .tabitem {
     background-color: #F9F5DF;
     padding: 12px;
-    border: 1px solid #8C8D8E;
+    border: 1px solid @border-color;
+    border-radius: 0 4px 4px 4px;
   }
 
   .dttl {
