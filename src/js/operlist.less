@@ -1,152 +1,157 @@
 .aw-money .operlog {
-	border: 1px solid #8C8D8E;
-}
-.aw-money .operlog .olgtl {
-	position: relative;
-	background-color: #E3E3D7;
-	padding: 5px;
-	border-bottom: 1px solid #8C8D8E;
-}
-.aw-money .operlog .olgtl img {
-	position: absolute;
-	top: 3px; right: 3px;
-}
-.aw-money .operlog .listw {
-	padding: 12px;
+  .panel-title {
+    position: relative;
+    img {
+      position: absolute;
+      top: 3px;
+      right: 3px;
+    }
+  }
+
+  .listw {
+    padding: 12px;
+  }
+
+  .period {
+    margin-top: 10px;
+    margin-left: 10px;
+  }
+  .period td {
+    padding-right: 10px;
+  }
 }
 
-.aw-money .operlog .period {
-	margin-top: 10px;
-	margin-left: 10px;
-}
-.aw-money .operlog .period td {
-	padding-right: 10px;
-}
+.aw-money .operlist {
 
-/* * * * * List * * * * */
-.aw-money .operlist table {
-	width: 100%;
-}
-.aw-money .operlist a {
-	text-decoration: none;
-}
-.aw-money .operlist th {
-	font-size: .95em;
-	background-color: #F4F4EE;
-	font-weight: normal;
-	white-space: nowrap;
-	text-align: left;
-	border: 1px solid #E3E3D7;
-	padding: 5px;
-}
+  table {
+    width: 100%;
+  }
+  a {
+    text-decoration: none;
+  }
+  th {
+    font-size: .95em;
+    background-color: #F4F4EE;
+    font-weight: normal;
+    white-space: nowrap;
+    text-align: left;
+    border: 1px solid #E3E3D7;
+    padding: 5px;
+  }
 
-.aw-money .operlist .pgwrp {
-	background-color: #F4F4EE;
-	border: 1px solid #E3E3D7;
-	border-bottom: none;
-	height: 32px;
-	position: relative;
-}
-.aw-money .operlist .pgel {
-	position: absolute;
-	top: 0;
-	right: 10px;
-}
-.aw-money .operlist tbody tr:hover {
-	background: none repeat scroll 0 0 #FFF0C6;
-}
-.aw-money .operlist tr:hover .fixrw .shadow {
-	background: url("/modules/money/images/shadow-row.png") repeat-y scroll 0 0 transparent;
-}
+  .pgwrp {
+    background-color: #F4F4EE;
+    border: 1px solid #E3E3D7;
+    border-bottom: none;
+    height: 32px;
+    position: relative;
+  }
+  .pgel {
+    position: absolute;
+    top: 0;
+    right: 10px;
+  }
+  tbody tr:hover {
+    background: none repeat scroll 0 0 #FFF0C6;
+  }
+  tr:hover .fixrw .shadow {
+    background: url("/modules/money/images/shadow-row.png") repeat-y scroll 0 0 transparent;
+  }
 
-.aw-money .operlist th.d { width: 80px; }
-.aw-money .operlist th.tp { width: 30px; }
-.aw-money .operlist th.v {
-	width: 100px;
-}
+  th.d {
+    width: 80px;
+  }
+  th.tp {
+    width: 30px;
+  }
+  th.v {
+    width: 100px;
+  }
 
-.aw-money .operlist td.acc,
-.aw-money .operlist td.acc div.fixrw {
-	width: 130px;
-}
-.aw-money .operlist td.cat,
-.aw-money .operlist td.cat div.fixrw {
-	width: 130px;
-}
-.aw-money .operlist td.dsc,
-.aw-money .operlist td.dsc div.fixrw {
-	width: 130px;
-}
+  td.acc,
+  td.acc div.fixrw {
+    width: 130px;
+  }
+  td.cat,
+  td.cat div.fixrw {
+    width: 130px;
+  }
+  td.dsc,
+  td.dsc div.fixrw {
+    width: 130px;
+  }
 
-.aw-money .operlist td.mv,
-.aw-money .operlist td.mv div.fixrw {
-	width: 270px;
-}
+  td.mv,
+  td.mv div.fixrw {
+    width: 270px;
+  }
 
-.aw-money .operlist td {
-	padding: 4px 8px;
-	border-right: 1px solid #E3E3D7;
-	border-bottom: 1px solid #E3E3D7;
-}
-.aw-money .operlist td.d,
-.aw-money .operlist td.v {
-	text-align: right;
-	white-space: nowrap;
-}
-.aw-money .operlist td.tp {
-	text-align: center;
-}
-.aw-money .operlist tr.summa td {
-	background-color: #F4F4EE;
-}
-.aw-money .operlist tr.first td {
-	border-top: 2px solid #E3E3D7;
-}
-/* * * * * Buttons * * * * */
-.aw-money .operlist td.bt {
-	padding: 0;
-	border: 1px solid #E3E3D7;
-}
-.aw-money .operlist td.emp {
-	padding: 0;
-}
-.aw-money .operlist td.bt ,
-.aw-money .operlist td.bt .b {
-	cursor: pointer;
+  td {
+    padding: 4px 8px;
+    border-right: 1px solid #E3E3D7;
+    border-bottom: 1px solid #E3E3D7;
+  }
+  td.d,
+  td.v {
+    text-align: right;
+    white-space: nowrap;
+  }
+  td.tp {
+    text-align: center;
+  }
+  tr.summa td {
+    background-color: #F4F4EE;
+  }
+  tr.first td {
+    border-top: 2px solid #E3E3D7;
+  }
+  /* * * * * Buttons * * * * */
+  td.bt {
+    padding: 0;
+    border: 1px solid #E3E3D7;
+  }
+  td.emp {
+    padding: 0;
+  }
+  td.bt,
+  td.bt .b {
+    cursor: pointer;
     width: 24px;
-	height: 24px;
-}
-.aw-money .operlist td.bt .bedit {
+    height: 24px;
+  }
+  td.bt .bedit {
     margin: 4px 0 0 5px;
-	height: 14px;
+    height: 14px;
     width: 15px;
-	background: url("/modules/money/images/icons001.png") no-repeat scroll -29px -24px transparent;
-}
-.aw-money .operlist td.bt .bremove {
-	width: 24px;
-	height: 24px;
-	background: url("/modules/money/images/remove.gif") no-repeat scroll 7px 7px transparent;
-}
+    background: url("/modules/money/images/icons001.png") no-repeat scroll -29px -24px transparent;
+  }
+  td.bt .bremove {
+    width: 24px;
+    height: 24px;
+    background: url("/modules/money/images/remove.gif") no-repeat scroll 7px 7px transparent;
+  }
 
-/* * * * * Filter Clear * * * * */
-.aw-money .operlist th .ft {
-	position: relative;
-	color: #555555;
-}
-.aw-money .operlist th .ft .bclear {
-	position: absolute;
-	cursor: pointer;
-	top: 2px; right: 0;
-	width: 9px;
-	height: 9px;
-	background: url("/modules/money/images/remove.gif") no-repeat scroll 0 0 transparent;
-}
+  /* * * * * Filter Clear * * * * */
+  th .ft {
+    position: relative;
+    color: #555555;
+  }
+  th .ft .bclear {
+    position: absolute;
+    cursor: pointer;
+    top: 2px;
+    right: 0;
+    width: 9px;
+    height: 9px;
+    background: url("/modules/money/images/remove.gif") no-repeat scroll 0 0 transparent;
+  }
 
-.aw-money .operlist th.acc .ft {
-	width: 136px;
-}
+  th.acc .ft {
+    width: 136px;
+  }
 
-.aw-money .operlist th.acc .ft .tl {
-	margin-right: 14px;
-	overflow: hidden;
+  th.acc .ft .tl {
+    margin-right: 14px;
+    overflow: hidden;
+  }
 }
