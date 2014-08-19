@@ -1,80 +1,69 @@
-<!--{editor}-->
-<dl>
-    <dt>{#mod.money.groupeditor.editor.1}</dt>
-    <dd>
-        <input id="{i#tl}" type="text" class="gtl" value=""/>
-    </dd>
-</dl>
-<dl>
-    <dt>{#mod.money.groupeditor.editor.2}</dt>
-    <dd>
-        <div id="{i#ulst}"></div>
-    </dd>
-</dl>
-<dl>
-    <dt>{#mod.money.groupeditor.editor.3}</dt>
-    <dd>
-    </dd>
-</dl>
-<div id="{i#accountlist}"></div>
-
 <!--{widget}-->
 <div id="{i#id}" class="groupedit {v#gstclass}">
 
-    <table class="w100">
-        <tbody>
-        <tr>
-            <td class="fld">
-                <h3 class="stgnew">{#mod.money.groupeditor.widget.1}</h3>
+    <div class="row">
+        <div class="col-md-7">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title stgnew">{#mod.money.groupeditor.widget.1}</h3>
 
-                <h3 class="stgedt">{#mod.money.groupeditor.widget.2}</h3>
-
-                <div id="{i#editor}" class="mtp10"></div>
-
-                <div class="right mtp10">
-                    <input id="{i#bcreate}" type="button" value="{#mod.money.groupeditor.widget.3}" class="btn stgnew"/>
-                    <input id="{i#bsave}" type="button" value="{#mod.money.groupeditor.widget.4}" class="btn stgedt"/>
-                    <input id="{i#bcancel}" type="button" value="{#mod.money.groupeditor.widget.5}" class="btn"/>
-                    <input id="{i#bclose}" type="button" value="{#mod.money.groupeditor.widget.6}" class="btn"/>
+                    <h3 class="panel-title stgedt">{#mod.money.groupeditor.widget.2}</h3>
                 </div>
+                <div class="panel-body">
+                    <div id="{i#editor}"></div>
 
-            </td>
-            <td class="vline">
-                &nbsp;
-            </td>
-            <td class="aw-page-content mn-hlp">
-                <p>{#mod.money.groupeditor.widget.7}</p>
+                    <div class="text-right">
+                        <button id="{i#bcreate}" class="btn btn-primary stgnew" type="button">
+                            {#mod.money.groupeditor.widget.3}
+                        </button>
+                        <input id="{i#bsave}" type="button" value="{#mod.money.groupeditor.widget.4}"
+                               class="btn btn-primary stgedt"/>
+                        <input id="{i#bcancel}" type="button" value="{#mod.money.groupeditor.widget.5}" class="btn btn-default"/>
+                        <input id="{i#bclose}" type="button" value="{#mod.money.groupeditor.widget.6}" class="btn btn-default"/>
+                    </div>
 
-                <p>{#mod.money.groupeditor.widget.8}</p>
+                </div>
+            </div>
 
-                <p>{#mod.money.groupeditor.widget.9}</p>
+        </div>
+        <div class="col-md-5">
+            <p>{#mod.money.groupeditor.widget.7}</p>
 
-                <p class="mtp10">
-                    {#mod.money.groupeditor.widget.10}
-                </p>
+            <p>{#mod.money.groupeditor.widget.8}</p>
 
-                <p>{#mod.money.groupeditor.widget.11}</p>
+            <p>{#mod.money.groupeditor.widget.9}</p>
 
-                <p>{#mod.money.groupeditor.widget.12}</p>
+            <h5>{#mod.money.groupeditor.widget.10}</h5>
 
-                <p>{#mod.money.groupeditor.widget.13}</p>
+            <p>{#mod.money.groupeditor.widget.11}</p>
 
-                <p>{#mod.money.groupeditor.widget.14}</p>
+            <p>{#mod.money.groupeditor.widget.12}</p>
 
-                <p>{#mod.money.groupeditor.widget.15}</p>
+            <p>{#mod.money.groupeditor.widget.13}</p>
 
-                <p>{#mod.money.groupeditor.widget.16}</p>
+            <p>{#mod.money.groupeditor.widget.14}</p>
 
-                <p>{#mod.money.groupeditor.widget.17}</p>
+            <p>{#mod.money.groupeditor.widget.15}</p>
 
-                <p>{#mod.money.groupeditor.widget.18}</p>
+            <p>{#mod.money.groupeditor.widget.16}</p>
 
-                <p>{#mod.money.groupeditor.widget.19}</p>
+            <p>{#mod.money.groupeditor.widget.17}</p>
 
-            </td>
-        </tr>
-        </tbody>
-    </table>
+            <p>{#mod.money.groupeditor.widget.18}</p>
 
-
+            <p>{#mod.money.groupeditor.widget.19}</p>
+        </div>
+    </div>
 </div>
+
+<!--{editor}-->
+<div class="form-group">
+    <label class="control-label">{#mod.money.groupeditor.editor.1}</label>
+    <input id="{i#tl}" type="text" class="form-control"/>
+</div>
+<div class="form-group">
+    <label class="control-label">Участники</label>
+
+    <div id="{i#ulst}"></div>
+</div>
+<div id="{i#accountlist}"></div>
