@@ -1,5 +1,4 @@
 /*
-@version $Id$
 @package Abricos
 @copyright Copyright (C) 2008 Abricos All rights reserved.
 @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
@@ -65,9 +64,12 @@ Component.entryPoint = function(NS){
 			case TId['row']['bfd']+'-':
 				this.onClickAction('filterdate', oper);
 				return true;
-			case TId['rowtdbase']['bfacc']+'-':
-				this.onClickAction('filteraccount', oper);
-				return true;
+            case TId['rowtdbase']['bftype']+'-':
+                this.onClickAction('filtertype', oper);
+                return true;
+            case TId['rowtdbase']['bfacc']+'-':
+                this.onClickAction('filteraccount', oper);
+                return true;
 			case TId['rowtdbase']['bfcat']+'-':
 				this.onClickAction('filtercategory', oper);
 				return true;
@@ -93,7 +95,8 @@ Component.entryPoint = function(NS){
 			var val = "";
 			switch(action){
 			case 'date': val = oper.date; break;
-			case 'account': val = oper.accountid; break;
+            case 'type': val = oper.isExpense; break;
+            case 'account': val = oper.accountid; break;
 			case 'category': val = oper.categoryid; break;
 			}
 			this.filter[action] = val;
@@ -124,7 +127,7 @@ Component.entryPoint = function(NS){
 		render: function(){
 			var TM = this._TM, lst = "", MM = NS.moneyManager, sum = {},
 				filter = this.filter;
-			
+
 			var pgst = this.pagTop.getState(),
 				index = 0, fromrec = 0,
 				group = this.group;
@@ -162,10 +165,13 @@ Component.entryPoint = function(NS){
 					if (n == 'date' && roundDay(oper.date).getTime() != roundDay(v).getTime()){
 						return;
 					}
-					if (n == 'account' && oper.accountid != v){
-						return;
-					}
-					if (n == 'category' && oper.categoryid != v){
+                    if (n == 'type' && oper.isExpense !== v){
+                        return;
+                    }
+                    if (n == 'account' && oper.accountid !== v){
+                        return;
+                    }
+					if (n == 'category' && oper.categoryid !== v){
 						return;
 					}
 				}
@@ -244,14 +250,20 @@ Component.entryPoint = function(NS){
 			for (var n in filter){
 				isFilter = true;
 				v = filter[n];
-				
+
 				switch(n){
-				case 'date':
-					fdv['d'] = TM.replace('filterval', {
-						'tp': n,
-						'v': Brick.dateExt.convert(v.getTime()/1000, 2, true),
-					});
-					break;
+                case 'date':
+                    fdv['d'] = TM.replace('filterval', {
+                        'tp': n,
+                        'v': Brick.dateExt.convert(v.getTime()/1000, 2, true)
+                    });
+                    break;
+                case 'type':
+                    fdv['tp'] = TM.replace('filterval', {
+                        'tp': n,
+                        'v': v ? '-' : '+'
+                    });
+                    break;
 				case 'account':
 					var acc = MM.findAccount(v);
 					if (!L.isNull(acc)){
@@ -329,7 +341,8 @@ Component.entryPoint = function(NS){
 			switch(action){
 			case 'edit': this.onRowClickEdit(oper); break;
 			case 'remove': this.onRowClickRemove(oper); break;
-			case 'filterdate': this.addFilter('date', oper); break;
+            case 'filterdate': this.addFilter('date', oper); break;
+            case 'filtertype': this.addFilter('type', oper); break;
 			case 'filteraccount': this.addFilter('account', oper); break;
 			case 'filtercategory': this.addFilter('category', oper); break;
 			}

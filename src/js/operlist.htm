@@ -1,29 +1,25 @@
 <!--{widget}-->
-<div id="{i#id}" class="operlog">
+<div id="{i#id}" class="operlog panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">
+            {#mod.money.operlist.widget.1} <img id="{i#loading}" src="/images/loading.gif"/>
+        </h3>
+    </div>
+    <div class="panel-body">
+        <table class="period">
+            <tbody>
+            <tr>
+                <td>
 
-    <div class="panel panel-default">
+                </td>
+                <td>
+                    <div id="{i#period}"></div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
 
-        <div class="panel-heading">
-            <h3 class="panel-title">
-                {#mod.money.operlist.widget.1} <img id="{i#loading}" src="/images/loading.gif"/>
-            </h3>
-        </div>
-        <div class="panel-body">
-            <table class="period">
-                <tbody>
-                <tr>
-                    <td>
-
-                    </td>
-                    <td>
-                        <div id="{i#period}"></div>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-
-            <div class="listw" id="{i#list}"></div>
-        </div>
+        <div class="listw" id="{i#list}"></div>
     </div>
 </div>
 
@@ -93,7 +89,11 @@
 </tr>
 
 <!--{rowtdbase}-->
-<td class="tp">{v#tp}</td>
+<td class="tp">
+    <a id="{i#bftype}-{v#id}" href="#" title="Установить фильтр: Тип">
+        {v#tp}
+    </a>
+</td>
 <td class="v"><span class="{v#expcls}">{v#v} </span> {v#cc}</td>
 <td class="acc">
     <div class="fixrw">
