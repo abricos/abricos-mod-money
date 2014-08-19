@@ -36,35 +36,37 @@
                 </a>
             </div>
 
-            <ul class="nav navbar-nav">
+            <ul class="nav navbar-nav" style="display: none">
                 <li id="{i#gmhome}">
                     <a href="{v#url}" class="select"
                        title="{#mod.money.wspace.gbmenu.1}">{#mod.money.wspace.gbmenu.2}</a>
                 </li>
+            </ul>
+
+            <ul id="{i#mhome}" class="nav navbar-nav">
+            </ul>
+
+            <ul class="nav navbar-nav navbar-right">
                 <li id="{i#gmnewgroup}">
                     <a href="{v#urlgroupnew}" title="{#mod.money.wspace.gbmenu.3}">{#mod.money.wspace.gbmenu.4}</a>
                 </li>
-                <li id="{i#gmabout}">
+                <li id="{i#gmabout}" style="display: none">
                     <a href="{v#urlabout}" title="">{#mod.money.wspace.gbmenu.5}</a>
                 </li>
             </ul>
-
         </div>
 
     </nav>
 </div>
-<div class="nav nav-tabs" role="tablist" id="{i#mhome}">
-
-</div>
 
 <!--{gmitemhome}-->
 <li id="{i#id}" class="active" style="display: none">
-    <a href="{v#url}" >
+    <a href="{v#url}">
         {#mod.money.wspace.gmitemhome.1}
     </a>
 </li>
 
 <!--{gmitem}-->
 <li class="{v#class}" id="{i#id}-{v#id}">
-    <a  href="{v#url}">{v#tl}</a>
+    <a href="{v#url}">{v#tl}</a>
 </li>
