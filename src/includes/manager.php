@@ -1,6 +1,5 @@
 <?php
 /**
- * @version $Id$
  * @package Abricos
  * @subpackage Money
  * @copyright Copyright (C) 2008 Abricos. All rights reserved.
@@ -402,6 +401,7 @@ class MoneyManager extends Ab_ModuleManager {
         MoneyQuery::AccountUpdateBalance($this->db, $dbOper['accountid']);
 
         $account = MoneyQuery::Account($this->db, $this->userid, $dbOper['accountid']);
+        $ret = new stdClass();
         $ret->balance = new stdClass();
         $ret->balance->accountid = $account['id'];
         $ret->balance->value = $account['bc'];
@@ -578,7 +578,7 @@ class MoneyManager extends Ab_ModuleManager {
         if (!$this->IsViewRole()) {
             return null;
         }
-        $lng = $this->module->lang;
+        $lng = $this->module->GetI18n();
         return array(
             array(
                 "name" => "money",
