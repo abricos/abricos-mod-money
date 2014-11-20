@@ -12,6 +12,8 @@
  * Модуль Финансы
  */
 class MoneyModule extends Ab_Module {
+
+    private $_manager;
 	
 	/**
 	 * Конструктор
@@ -27,7 +29,7 @@ class MoneyModule extends Ab_Module {
 	 * @return MoneyManager
 	 */
 	public function GetManager(){
-		if (is_null($this->_manager)){
+		if (!isset($this->_manager)){
 			require_once 'includes/manager.php';
 			$this->_manager = new MoneyManager($this);
 		}
