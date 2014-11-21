@@ -583,7 +583,7 @@ class MoneyManager extends Ab_ModuleManager {
             array(
                 "name" => "money",
                 "title" => $lng['bosmenu']['title'],
-                "icon" => "/modules/money/images/app_icon.png",
+                "icon" => "/modules/money/images/money-24.png",
                 "url" => "money/wspace/ws/"
             )
         );
