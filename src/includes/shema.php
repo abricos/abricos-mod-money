@@ -1,7 +1,7 @@
 <?php
 /**
  * Схема таблиц данного модуля.
- * 
+ *
  * @version $Id$
  * @package Abricos
  * @subpackage Money
@@ -11,22 +11,22 @@
  */
 
 $charset = "CHARACTER SET 'utf8' COLLATE 'utf8_general_ci'";
-$updateManager = Ab_UpdateManager::$current; 
+$updateManager = Ab_UpdateManager::$current;
 $db = Abricos::$db;
 $pfx = $db->prefix;
 
-$uprofileManager = Abricos::GetModule('uprofile')->GetManager(); 
+$uprofileManager = Abricos::GetModule('uprofile')->GetManager();
 
-if ($updateManager->isInstall()){
+if ($updateManager->isInstall()) {
 
-	$uprofileManager->FieldAppend('lastname', 'Фамилия', UserFieldType::STRING, 100);
-	$uprofileManager->FieldAppend('firstname', 'Имя', UserFieldType::STRING, 100);
-	$uprofileManager->FieldCacheClear();
-	
-	Abricos::GetModule('money')->permission->Install();
+    $uprofileManager->FieldAppend('lastname', 'Фамилия', UserFieldType::STRING, 100);
+    $uprofileManager->FieldAppend('firstname', 'Имя', UserFieldType::STRING, 100);
+    $uprofileManager->FieldCacheClear();
 
-	// Бухгалтерия
-	$db->query_write("
+    Abricos::GetModule('money')->permission->Install();
+
+    // Бухгалтерия
+    $db->query_write("
 		CREATE TABLE IF NOT EXISTS ".$pfx."money_group (
 		  `groupid` int(10) unsigned NOT NULL auto_increment COMMENT 'Идентификатор счета',
 		  `userid` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Идентификатор автора',
@@ -37,11 +37,10 @@ if ($updateManager->isInstall()){
 		  `upddate` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Дата обновления',
 		  
 		  PRIMARY KEY  (`groupid`)
-		)".$charset
-	);
-	
-	// Доступ пользователей на управление в бухгалтерии
-	$db->query_write("
+		)".$charset);
+
+    // Доступ пользователей на управление в бухгалтерии
+    $db->query_write("
 		CREATE TABLE IF NOT EXISTS ".$pfx."money_guserrole (
 		  `groupid` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Идентификатор бухгалтерии',
 		  `userid` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Идентификатор пользователя',
@@ -50,13 +49,12 @@ if ($updateManager->isInstall()){
 
 		  `deldate` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Дата удаления',
 		  UNIQUE KEY `group` (`groupid`, `userid`)
-		)".$charset
-	);
-	
+		)".$charset);
 
-	// TODO: возможно необходимо прикреплять аккаунт к нескольким группам?
-	// Кошелек
-	$db->query_write("
+
+    // TODO: возможно необходимо прикреплять аккаунт к нескольким группам?
+    // Кошелек
+    $db->query_write("
 		CREATE TABLE IF NOT EXISTS ".$pfx."money_account (
 		  `accountid` int(10) unsigned NOT NULL auto_increment COMMENT 'Идентификатор счета',
 		  `groupid` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Идентификатор бухгалтерии',
@@ -77,11 +75,10 @@ if ($updateManager->isInstall()){
 		  PRIMARY KEY  (`accountid`),
 		  KEY `groupid` (`groupid`),
 		  KEY `userid` (`userid`)
-		)".$charset
-	);	
-	
-	// Доступ пользователей к счету
-	$db->query_write("
+		)".$charset);
+
+    // Доступ пользователей к счету
+    $db->query_write("
 		CREATE TABLE IF NOT EXISTS ".$pfx."money_auserrole (
 		  `accountid` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Идентификатор счета',
 		  `userid` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Идентификатор пользователя',
@@ -90,13 +87,12 @@ if ($updateManager->isInstall()){
 
 		  `deldate` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Дата удаления',
 		  UNIQUE KEY `account` (`accountid`, `userid`)
-		)".$charset
-	);
-	
-	// Метод ввода операции, заложено на будущее, для оптимизации 
-	// расширенных возможностей ввода операций 
-	// TODO: в данной версии реализован только один метод - перемещение
-	$db->query_write("
+		)".$charset);
+
+    // Метод ввода операции, заложено на будущее, для оптимизации
+    // расширенных возможностей ввода операций
+    // TODO: в данной версии реализован только один метод - перемещение
+    $db->query_write("
 		CREATE TABLE IF NOT EXISTS ".$pfx."money_method (
 		  `methodid` int(10) unsigned NOT NULL auto_increment COMMENT 'Идентификатор',
 		  `methodtype` varchar(10) NOT NULL DEFAULT '' COMMENT 'Тип метода, например move - перемещение',
@@ -108,11 +104,10 @@ if ($updateManager->isInstall()){
 	
 		  PRIMARY KEY  (`methodid`),
 		  KEY `methodtype` (`methodtype`)
-		)".$charset
-	);
-	
-	// Перемещения денежных сердств по счетам
-	$db->query_write("
+		)".$charset);
+
+    // Перемещения денежных сердств по счетам
+    $db->query_write("
 		CREATE TABLE IF NOT EXISTS ".$pfx."money_move (
 		  `methodid` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Идентификатор',
 	
@@ -131,11 +126,10 @@ if ($updateManager->isInstall()){
 		  `cmispercent` tinyint(1) unsigned NOT NULL DEFAULT 0 COMMENT '0-абсолютное значение, 1-процент',
 	
 		  PRIMARY KEY  (`methodid`)	
-		)".$charset
-	);
-	
-	// Операции по счету
-	$db->query_write("
+		)".$charset);
+
+    // Операции по счету
+    $db->query_write("
 		CREATE TABLE IF NOT EXISTS ".$pfx."money_oper (
 		  `operid` int(10) unsigned NOT NULL auto_increment COMMENT 'Идентификатор',
 		  `methodid` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Идентификатор метода ввода операции, 0-не определен',
@@ -155,10 +149,9 @@ if ($updateManager->isInstall()){
 	
 		  PRIMARY KEY  (`operid`),
 		  KEY `accountid` (`accountid`)	
-		)".$charset
-	);
+		)".$charset);
 
-	$db->query_write("
+    $db->query_write("
 		CREATE TABLE IF NOT EXISTS ".$pfx."money_category (
 		  `categoryid` int(10) unsigned NOT NULL auto_increment COMMENT 'Идентификатор',
 		  `parentcategoryid` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Родитель',
@@ -178,49 +171,48 @@ if ($updateManager->isInstall()){
 		  PRIMARY KEY  (`categoryid`),
 		  KEY `userid` (`userid`),
 		  KEY `groupid` (`groupid`)
-		)".$charset
-	);
+		)".$charset);
 }
 
-if (!$updateManager->isInstall() && $updateManager->isUpdate('0.1.0.1')){
-	
-	$db->query_write("
+if (!$updateManager->isInstall() && $updateManager->isUpdate('0.1.0.1')) {
+
+    $db->query_write("
 		ALTER TABLE ".$pfx."money_move
 			ADD `fromoperid` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Операция - источник',
 			ADD `tooperid` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Операция - назначение',
 			ADD `cmoperid` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Операция - комиссия'
 	");
-	
-	$rows = $db->query_read("
+
+    $rows = $db->query_read("
 		SELECT *
 		FROM ".$pfx."money_move
 	");
-	while (($row = $db->fetch_array($rows))){
-		$oper = $db->query_first("
+    while (($row = $db->fetch_array($rows))) {
+        $oper = $db->query_first("
 			SELECT *
 			FROM ".$pfx."money_oper
 			WHERE methodid=".$row['methodid']." and accountid=".$row['fromaccountid']."
 		");
-		$db->query_write("
+        $db->query_write("
 			UPDATE ".$pfx."money_move
 			SET fromoperid=".$oper['operid']."
 			WHERE methodid=".$row['methodid']."
 			LIMIT 1
 		");
-		
-		$oper = $db->query_first("
+
+        $oper = $db->query_first("
 			SELECT *
 			FROM ".$pfx."money_oper
 			WHERE methodid=".$row['methodid']." and accountid=".$row['toaccountid']."
 		");
-		$db->query_write("
+        $db->query_write("
 			UPDATE ".$pfx."money_move
 			SET tooperid=".$oper['operid']."
 			WHERE methodid=".$row['methodid']."
 			LIMIT 1
 		");
-	}
-	
+    }
+
 }
 
 ?>

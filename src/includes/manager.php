@@ -413,10 +413,7 @@ class MoneyManager extends Ab_ModuleManager {
         $dbFAccount = MoneyQuery::Account($this->db, $this->userid, $dbMOper['fromaccountid']);
         $dbTAccount = MoneyQuery::Account($this->db, $this->userid, $dbMOper['toaccountid']);
 
-        if (
-            empty($dbFAccount) || empty($dbTAccount) ||
-            $dbFAccount['r'] < MoneyAccountRole::WRITE ||
-            $dbTAccount['r'] < MoneyAccountRole::WRITE
+        if (empty($dbFAccount) || empty($dbTAccount) || $dbFAccount['r'] < MoneyAccountRole::WRITE || $dbTAccount['r'] < MoneyAccountRole::WRITE
         ) {
             return null;
         }
@@ -439,7 +436,10 @@ class MoneyManager extends Ab_ModuleManager {
         $ret2->balance->accountid = $account['id'];
         $ret2->balance->value = $account['bc'];
 
-        return array($ret1, $ret2);
+        return array(
+            $ret1,
+            $ret2
+        );
     }
 
     public function OperMoveSave($od) {
@@ -447,11 +447,7 @@ class MoneyManager extends Ab_ModuleManager {
         $dbFAccount = MoneyQuery::Account($this->db, $this->userid, $od->faid);
         $dbTAccount = MoneyQuery::Account($this->db, $this->userid, $od->taid);
 
-        if (
-            empty($dbFAccount) || empty($dbTAccount) ||
-            $dbFAccount['r'] < MoneyAccountRole::WRITE ||
-            $dbTAccount['r'] < MoneyAccountRole::WRITE ||
-            $dbFAccount['gid'] != $dbTAccount['gid']
+        if (empty($dbFAccount) || empty($dbTAccount) || $dbFAccount['r'] < MoneyAccountRole::WRITE || $dbTAccount['r'] < MoneyAccountRole::WRITE || $dbFAccount['gid'] != $dbTAccount['gid']
         ) {
             return null;
         }
@@ -464,10 +460,7 @@ class MoneyManager extends Ab_ModuleManager {
             MoneyQuery::OperMoveAppend($this->db, $this->userid, $od);
         } else {
             $dbMOper = MoneyQuery::OperMoveInfo($this->db, $od->id);
-            if (
-                empty($dbMOper) ||
-                $dbMOper['fromaccountid'] != $dbFAccount['id'] ||
-                $dbMOper['toaccountid'] != $dbTAccount['id']
+            if (empty($dbMOper) || $dbMOper['fromaccountid'] != $dbFAccount['id'] || $dbMOper['toaccountid'] != $dbTAccount['id']
             ) {
                 // изменение счета невозможно в этой версии
                 return null;
@@ -490,7 +483,10 @@ class MoneyManager extends Ab_ModuleManager {
         $ret2->balance->accountid = $account['id'];
         $ret2->balance->value = $account['bc'];
 
-        return array($ret1, $ret2);
+        return array(
+            $ret1,
+            $ret2
+        );
     }
 
     public function OperLogList($groupid, $fromdt, $enddt, $lastupdate = 0) {
