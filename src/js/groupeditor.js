@@ -1,10 +1,81 @@
 var Component = new Brick.Component();
 Component.requires = {
     mod: [
+        {name: 'sys', files: ['form.js']},
         {name: '{C#MODNAME}', files: ['accounteditor.js']}
     ]
 };
 Component.entryPoint = function(NS){
+
+    var Y = Brick.YUI,
+        COMPONENT = this,
+        SYS = Brick.mod.sys;
+
+    NS.GroupEditorWidget = Y.Base.create('groupEditorWidget', SYS.AppWidget, [], {
+        onInitAppWidget: function(err, appInstance, options){
+            this.set('waiting', true);
+
+            this.get('appInstance').groupList(function(err, result){
+                this.set('waiting', false);
+                if (!err){
+                    this.set('groupList', result.groupList);
+                }
+                // this.renderGroup();
+            }, this);
+        }
+        /*,
+        renderGroupList: function(){
+            var groupList = this.get('groupList');
+            if (!groupList){
+                return;
+            }
+            var tp = this.template, lst = "";
+
+            groupList.each(function(group){
+                var attrs = group.toJSON();
+
+                lst += tp.replace('row', [
+                    attrs
+                ]);
+            });
+
+            tp.gel('list').innerHTML = tp.replace('list', {
+                'rows': lst
+            });
+        },
+        onClick: function(e){
+            var groupId = e.target.getData('id') | 0;
+            if (groupId === 0){
+                return;
+            }
+
+            switch (e.dataClick) {
+                case 'group-edit':
+                    this.showGroupEditorDialog(groupId);
+                    return true;
+            }
+        }
+        /**/
+    }, {
+        ATTRS: {
+            component: {
+                value: COMPONENT
+            },
+            templateBlockName: {
+                value: 'widget'
+            },
+            groupId: {
+                value: 0
+            }
+        }
+    });
+
+    NS.GroupEditorWidget.parseURLParam = function(args){
+        var groupId = args && (args[0]|0);
+        return {
+            groupId: groupId
+        };
+    };
 
     var Dom = YAHOO.util.Dom,
         E = YAHOO.util.Event,
@@ -56,11 +127,11 @@ Component.entryPoint = function(NS){
     };
     NS.GroupEditorFormWidget = GroupEditorFormWidget;
 
-    var GroupEditWidget = function(container, groupid){
+    var GroupEditorWidget = function(container, groupid){
         groupid = groupid || 0;
         this.init(container, groupid);
     };
-    GroupEditWidget.prototype = {
+    GroupEditorWidget.prototype = {
         init: function(container, groupid){
 
             var group = NS.moneyManager.groups.get(groupid);
@@ -135,7 +206,6 @@ Component.entryPoint = function(NS){
             }
         }
     };
-    NS.GroupEditWidget = GroupEditWidget;
 
 
 };

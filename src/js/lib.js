@@ -1,7 +1,7 @@
 var Component = new Brick.Component();
 Component.requires = {
     mod: [
-        {name: 'sys', files: ['number.js']},
+        {name: 'sys', files: ['application.js', 'form.js', 'number.js']},
         {name: 'uprofile', files: ['lib.js']},
         {name: '{C#MODNAME}', files: ['model.js']}
     ]
@@ -13,6 +13,49 @@ Component.entryPoint = function(NS){
         isWrite: 30,
         isView: 10
     });
+
+    var Y = Brick.YUI,
+
+        COMPONENT = this,
+
+        SYS = Brick.mod.sys;
+
+    NS.URL = {
+        ws: "#app={C#MODNAMEURI}/wspace/ws/",
+        group: {
+            view: function(groupid){
+                return NS.URL.ws + 'groupview/GroupViewWidget/' + groupid + '/';
+            },
+            create: function(){
+                return NS.URL.ws + 'groupeditor/GroupEditorWidget/0/'
+            },
+            edit: function(groupid){
+                return NS.URL.ws + 'groupeditor/GroupEditorWidget/' + groupid + '/';
+            }
+        }
+    };
+
+    SYS.Application.build(COMPONENT, {
+        groupList: {
+            cache: 'groupList',
+            response: function(d){
+                return new NS.GroupList(d);
+            }
+        },
+        initData: {
+            cache: 'initData'
+        }
+    }, {
+        initializer: function(){
+            var instance = this;
+            NS.roles.load(function(){
+                instance.initCallbackFire();
+            });
+        }
+    });
+
+
+    /* * * * * TODO: old to remove * * * */
 
     var L = YAHOO.lang,
         R = NS.roles,
@@ -75,7 +118,7 @@ Component.entryPoint = function(NS){
 
             var __self = this;
 
-            this.groups = new NS.GroupList(); 
+            this.groups = new NS.GroupList();
 
             R.load(function(){
                 var sd = {

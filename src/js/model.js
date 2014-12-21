@@ -1,10 +1,40 @@
 var Component = new Brick.Component();
 Component.requires = {
+    yui: ['model', 'model-list'],
     mod: [
         {name: 'sys', files: ['item.js']}
     ]
 };
 Component.entryPoint = function(NS){
+
+    var Y = Brick.YUI,
+        COMPONENT = this,
+        SYS = Brick.mod.sys;
+
+    var Intl = new Abricos.ComponentLanguage(COMPONENT);
+
+    NS.Group = Y.Base.create('group', Y.Model, [], {}, {
+        ATTRS: {
+            title: {
+                value: Intl.get('group.defTitle')
+            }
+        }
+    });
+
+    NS.GroupList = Y.Base.create('groupList', Y.ModelList, [], {
+        model: NS.Group
+    });
+
+    NS.Account = Y.Base.create('account', Y.Model, [], {}, {
+        ATTRS: {
+            title: {value: ''},
+            balance: {value: 0}
+        }
+    });
+
+
+    /* * * * * * TODO: old to remote * * * * * */
+    return;
 
     var L = YAHOO.lang;
 
@@ -332,21 +362,12 @@ Component.entryPoint = function(NS){
 
     // расчетный счет/кошелек
     var Group = function(d){
-        d = L.merge({
-            'tl': ''	// title
-        }, d || {});
-        Group.superclass.constructor.call(this, d);
     };
     YAHOO.extend(Group, NS.Item, {
         init: function(d){
             this.accounts = new AccountList();
             this.roles = new AURoleList();
             this.categories = new CategoryList();
-
-            Group.superclass.init.call(this, d);
-        },
-        update: function(d){
-            this.title = d['tl'];
         },
         createAccount: function(){
             var account = new NS.Account({
@@ -396,10 +417,5 @@ Component.entryPoint = function(NS){
     });
     NS.Group = Group;
 
-    var GroupList = function(d){
-        GroupList.superclass.constructor.call(this, d, Group);
-    };
-    YAHOO.extend(GroupList, NS.ItemList, {});
-    NS.GroupList = GroupList;
 
 };

@@ -9,7 +9,7 @@
 
 require_once 'dbquery.php';
 
-class MoneyManager extends Ab_ModuleManager {
+class MoneyModuleManager extends Ab_ModuleManager {
 
     /**
      * @var MoneyModule
@@ -45,7 +45,22 @@ class MoneyManager extends Ab_ModuleManager {
         return $this->IsRoleEnable(MoneyAction::VIEW);
     }
 
+    private $_moneyManager;
+
+    public function GetManager() {
+        if (!isset($this->_moneyManager)) {
+            require_once 'classes/money.php';
+            $this->_moneyManager = new MoneyManager($this);
+        }
+        return $this->_moneyManager;
+    }
+
     public function AJAX($d) {
+
+
+
+        // TODO: remove old method
+        return;
         switch ($d->do) {
             case 'init':
                 return $this->BoardData();
@@ -96,7 +111,7 @@ class MoneyManager extends Ab_ModuleManager {
         return $ret;
     }
 
-    public function BoardData() {
+    public function InitDataToAJAX() {
         if (!$this->IsViewRole()) {
             return null;
         }
@@ -111,7 +126,7 @@ class MoneyManager extends Ab_ModuleManager {
         $ret->accounts = $this->ToArray($rows, $aids, "id", $gids, "gid");
 
         $rows = MoneyQuery::GroupListByIds($this->db, $gids, $this->userid);
-        $ret->groups = $this->ToArray($rows);
+        $ret->groupList = $this->ToArray($rows);
 
         $rows = MoneyQuery::GUserRoleListByGId($this->db, $gids);
         $ret->groles = $this->ToArray($rows, $uids, "u");
@@ -123,7 +138,6 @@ class MoneyManager extends Ab_ModuleManager {
         $ret->users = $this->ToArray($rows);
 
         // для проверки занесенных категорий
-        $ckuids = array();
         $rows = MoneyQuery::CategoryList($this->db, $gids);
         $ret->categories = $this->ToArray($rows);
 

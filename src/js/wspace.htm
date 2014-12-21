@@ -1,71 +1,35 @@
-<!--{panel}-->
-<div class='hd'>{#mod.money.wspace.panel.1}</div>
-<div class='bd aw-money'>
-    <div id="{i#gmenu}"></div>
+<!--{widget}-->
+<div class="app-workspace aw-money">
+    <nav class="navbar navbar-default" role="navigation">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#" data-url="home">
+                <img class="icon" src="/modules/money/images/money-24.png"/>
+            </a>
+            <a class="navbar-brand" href="#" data-url="home">
+                Деньги
+            </a>
+        </div>
 
-    <div id="{i#loading}" class="ws-loading">
-        <img src="/images/loading.gif"/> {#mod.money.wspace.panel.2}
+        <ul class="nav navbar-nav navbar-right">
+            <li>
+                <a href="#" data-url="group.create" title="Создать бухгалтерию (группу счетов)">
+                    + Создать
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <div data-wait="show" class="text-center">
+        <img src="/images/loading.gif"/>
+
+        <p>Идет загрузка данных</p>
+
+        <p>Пожалуйста, подождите...</p>
     </div>
-
-    <div id="{i#board}" class="board" style="display: none">
-
-    </div>
+    <div class="app-workspace-page" data-wait="hide"></div>
 </div>
 
-<!--{page}-->
-<div id="{i#id}" class='wspage'></div>
-
-<!--{home}-->
-<div id="{i#id}" class='wspage'>{#mod.money.wspace.home.1}</div>
 
 <!--{accessdenied}-->
-<div id="{i#id}" class='wspage'>
-    <div class="ws-loading">
-        {#mod.money.wspace.accessdenied.1}
-    </div>
+<div class='wspage'>
+    Доступ запрещен
 </div>
-
-<!--{gbmenu}-->
-<div class="app-nav">
-    <nav class="navbar navbar-default" role="navigation">
-        <div class="container-fluid">
-            <div class="navbar-header">
-                <a class="navbar-brand" href="#app={C#MODNAMEURI}/wspace/ws/">
-                    <img class="icon" src="/modules/money/images/money-24.png"/>
-                    Деньги
-                </a>
-            </div>
-
-            <ul class="nav navbar-nav" style="display: none">
-                <li id="{i#gmhome}">
-                    <a href="{v#url}" class="select"
-                       title="{#mod.money.wspace.gbmenu.1}">{#mod.money.wspace.gbmenu.2}</a>
-                </li>
-            </ul>
-
-            <ul id="{i#mhome}" class="nav navbar-nav">
-            </ul>
-
-            <ul class="nav navbar-nav navbar-right">
-                <li id="{i#gmnewgroup}">
-                    <a href="{v#urlgroupnew}" title="{#mod.money.wspace.gbmenu.3}">{#mod.money.wspace.gbmenu.4}</a>
-                </li>
-                <li id="{i#gmabout}" style="display: none">
-                    <a href="{v#urlabout}" title="">{#mod.money.wspace.gbmenu.5}</a>
-                </li>
-            </ul>
-        </div>
-    </nav>
-</div>
-
-<!--{gmitemhome}-->
-<li id="{i#id}" class="active" style="display: none">
-    <a href="{v#url}">
-        {#mod.money.wspace.gmitemhome.1}
-    </a>
-</li>
-
-<!--{gmitem}-->
-<li class="{v#class}" id="{i#id}-{v#id}">
-    <a href="{v#url}">{v#tl}</a>
-</li>

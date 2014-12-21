@@ -161,15 +161,8 @@ class MoneyQuery {
         $sql = "
 			SELECT 
 				a.accountid as id,
-				a.groupid as gid,
-				a.title as tl,
-				a.descript as dsc,
-				a.accounttype as tp,
-				a.initbalance as ibc,
-				a.balance as bc,
-				a.currency as cc,
-				ur.role as r,
-				a.upddate as upd
+				ur.role as _role,
+				a.*
 			FROM ".$db->prefix."money_auserrole ur
 			INNER JOIN ".$db->prefix."money_account a ON a.accountid=ur.accountid
 			INNER JOIN ".$db->prefix."money_group g ON g.groupid=a.groupid

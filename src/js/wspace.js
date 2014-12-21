@@ -6,8 +6,99 @@ Component.requires = {
 };
 Component.entryPoint = function(NS){
 
+    var Y = Brick.YUI,
+
+        COMPONENT = this,
+
+        SYS = Brick.mod.sys;
+
+    NS.WorkspaceWidget = Y.Base.create('moneyWorkspaceWidget', SYS.AppWidget, [
+            SYS.AppWorkspace
+        ], {
+            _getWorkspacePageAsync: function(callback){
+                var page = this.get('workspacePage');
+
+                if (page && page.component && page.widget){
+                    callback.call(this, null, page);
+                } else {
+                    var page = {
+                        component: 'wspace',
+                        widget: 'AccessDeniedWidget'
+                    };
+                    this.get('appInstance').initData(function(err, result){
+                        if (!err){
+                            var group = result.groupList.getByIndex(0);
+                            if (group){
+                                page = {
+                                    component: 'groupview',
+                                    widget: 'GroupViewWidget',
+                                    args: [group.id]
+                                };
+                            }else{
+                                page = {
+                                    component: 'groupeditor',
+                                    widget: 'GroupEditorWidget'
+                                };
+                            }
+                        }
+                        callback.call(this, err, page);
+                    }, this);
+                }
+            }
+        }, {
+            ATTRS: {
+                component: {
+                    value: COMPONENT
+                },
+                templateBlockName: {
+                    value: 'widget'
+                },
+                workspacePageAsync: {
+                    getter: function(){
+                        return this._getWorkspacePageAsync
+                    }
+                }
+            }
+        }
+    )
+    ;
+
+    NS.ws = SYS.AppWorkspace.build('{C#MODNAME}', NS.WorkspaceWidget);
+
+    NS.AccessDeniedWidget = Y.Base.create('accessDeniedWidget', SYS.AppWidget, [], {}, {
+        ATTRS: {
+            component: {value: COMPONENT},
+            templateBlockName: {value: 'accessdenied'}
+        }
+    });
+
+
+    var HomeWidget = function(container){
+        this.init(container);
+    };
+    HomeWidget.prototype = {
+        init: function(container){
+            buildTemplate(this, 'home');
+            container.innerHTML = this._TM.replace('home');
+
+            var uri = NS.navigator.group.create,
+                group = NS.moneyManager.groups.getByIndex(0);
+
+            if (!L.isNull(group)){
+                uri = NS.navigator.group.view(group.id);
+            }
+            Brick.Page.reload(uri);
+        },
+        destroy: function(){
+            var el = this._TM.getEl('home.id');
+            el.parentNode.removeChild(el);
+        }
+    };
+
+
+    /* * * * * TODO: old to remove * * * */
+
     var Dom = YAHOO.util.Dom,
-        E = YAHOO.util.Event,
         L = YAHOO.lang,
         R = NS.roles;
 
@@ -142,29 +233,6 @@ Component.entryPoint = function(NS){
     NS.WSPageWidget = WSPageWidget;
 
 
-    var HomeWidget = function(container){
-        this.init(container);
-    };
-    HomeWidget.prototype = {
-        init: function(container){
-            buildTemplate(this, 'home');
-            container.innerHTML = this._TM.replace('home');
-
-            var uri = NS.navigator.group.create,
-                group = NS.moneyManager.groups.getByIndex(0);
-
-            if (!L.isNull(group)){
-                uri = NS.navigator.group.view(group.id);
-            }
-            Brick.Page.reload(uri);
-        },
-        destroy: function(){
-            var el = this._TM.getEl('home.id');
-            el.parentNode.removeChild(el);
-        }
-    };
-    NS.HomeWidget = HomeWidget;
-
     var AccessDeniedWidget = function(container){
         this.init(container);
     };
@@ -276,4 +344,5 @@ Component.entryPoint = function(NS){
         return activeWSPanel;
     };
 
-};
+}
+;

@@ -15,9 +15,6 @@ class MoneyModule extends Ab_Module {
 
     private $_manager;
 
-    /**
-     * Конструктор
-     */
     public function __construct() {
         $this->version = "0.2.0";
         $this->name = "money";
@@ -26,12 +23,12 @@ class MoneyModule extends Ab_Module {
     }
 
     /**
-     * @return MoneyManager
+     * @return MoneyModuleManager
      */
     public function GetManager() {
         if (!isset($this->_manager)) {
             require_once 'includes/manager.php';
-            $this->_manager = new MoneyManager($this);
+            $this->_manager = new MoneyModuleManager($this);
         }
         return $this->_manager;
     }
@@ -40,27 +37,9 @@ class MoneyModule extends Ab_Module {
         return 'index';
     }
 
-    /*
-    public function GetAppSourceInfo(){
-        $appInfo = new AppSourceInfo($this);
-
-        $appInfo->resource->Add("/modules/money/images/logo-96x96.png");
-        $appInfo->resource->Add("/modules/money/images/app_icon.png");
-
-        return $appInfo;
-    }
-    /**/
-
     public function Bos_IsMenu() {
         return true;
     }
-}
-
-class MoneyAccountRole {
-    const ACCESSDENIED = 0;
-    const READ = 1;
-    const WRITE = 2;
-    const ADMIN = 3;
 }
 
 class MoneyAction {
