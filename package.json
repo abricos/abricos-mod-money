@@ -1,0 +1,24 @@
+{
+  "name": "abricos-mod-money",
+  "description": "Money Module for Abricos Platform",
+  "version": "0.2.0",
+  "author": {
+    "name": "Alexander Kuzmin",
+    "email": "roosit@abricos.org",
+    "web": "http://abricos.org",
+    "twitter": "roositab"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/abricos/abricos-mod-money.git"
+  },
+  "keywords": [
+    "abricos",
+    "money"
+  ],
+  "bugs": {
+    "url": "https://github.com/abricos/abricos-mod-money/issues"
+  },
+  "homepage": "http://abricos.org/mods/money/"
+}

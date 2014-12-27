@@ -16,7 +16,7 @@ class MoneyModule extends Ab_Module {
     private $_manager;
 
     public function __construct() {
-        $this->version = "0.2.0";
+        $this->version = "{C#VERSION}";
         $this->name = "money";
         $this->takelink = "money";
         $this->permission = new MoneyPermission($this);
