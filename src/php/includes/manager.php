@@ -24,7 +24,7 @@ class MoneyModuleManager extends Ab_ModuleManager {
     public function __construct(MoneyModule $module) {
         parent::__construct($module);
 
-        MoneyManager::$instance = $this;
+        MoneyModuleManager::$instance = $this;
     }
 
     public function IsAdminRole() {
