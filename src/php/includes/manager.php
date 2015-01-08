@@ -593,7 +593,7 @@ class MoneyModuleManager extends Ab_ModuleManager {
             array(
                 "name" => "money",
                 "title" => $lng['bosmenu']['title'],
-                "icon" => "/modules/money/images/money-24.png",
+                "icon" => "{C#ASSETS}/images/money-24.png",
                 "url" => "money/wspace/ws/"
             )
         );
