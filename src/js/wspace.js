@@ -1,9 +1,3 @@
-/*
- @package Abricos
- @copyright Copyright (C) 2008 Abricos All rights reserved.
- @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
- */
-
 var Component = new Brick.Component();
 Component.requires = {
     mod: [
@@ -12,8 +6,43 @@ Component.requires = {
 };
 Component.entryPoint = function(NS){
 
+    var Y = Brick.YUI,
+
+        COMPONENT = this,
+
+        SYS = Brick.mod.sys;
+
+    NS.WorkspaceWidget = Y.Base.create('workspaceWidget', SYS.AppWidget, [
+        SYS.AppWorkspace
+    ], {
+        onInitAppWidget: function(err, appInstance){
+            this.set('waiting', true);
+            appInstance.accountList(function(err, result){
+                this.set('waiting', false);
+                console.log(result);
+            }, this);
+        }
+    }, {
+        ATTRS: {
+            component: {
+                value: COMPONENT
+            },
+            templateBlockName: {
+                value: 'widget'
+            }
+        }
+    });
+
+    NS.ws = SYS.AppWorkspace.build('{C#MODNAME}', NS.WorkspaceWidget, {
+        workspacePage: {
+            component: 'ticketListEditor',
+            widget: 'TicketListEditorWidget'
+        }
+    });
+
+    return; // TODO: remove
+
     var Dom = YAHOO.util.Dom,
-        E = YAHOO.util.Event,
         L = YAHOO.lang,
         R = NS.roles;
 

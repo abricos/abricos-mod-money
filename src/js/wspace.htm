@@ -1,3 +1,69 @@
+<!--{widget}-->
+<div class="app-workspace aw-money">
+
+    <div class="app-nav">
+        <nav class="navbar navbar-default" role="navigation">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="#app={C#MODNAMEURI}/wspace/ws/">
+                        <img class="icon" src="/modules/money/images/money-24.png"/>
+                    </a>
+                    <a class="navbar-brand" href="#app={C#MODNAMEURI}/wspace/ws/">
+                        Деньги
+                    </a>
+                </div>
+
+                <ul class="nav navbar-nav" style="display: none">
+                    <li id="{i#gmhome}">
+                        <a href="{v#url}" class="select"
+                           title="{#mod.money.wspace.gbmenu.1}">{#mod.money.wspace.gbmenu.2}</a>
+                    </li>
+                </ul>
+
+                <ul id="{i#mhome}" class="nav navbar-nav">
+                </ul>
+
+                <ul class="nav navbar-nav navbar-right">
+                    <li id="{i#gmnewgroup}">
+                        <a href="{v#urlgroupnew}" title="{#mod.money.wspace.gbmenu.3}">{#mod.money.wspace.gbmenu.4}</a>
+                    </li>
+                    <li id="{i#gmabout}" style="display: none">
+                        <a href="{v#urlabout}" title="">{#mod.money.wspace.gbmenu.5}</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </div>
+
+    <nav class="navbar navbar-default" role="navigation">
+        <div class="navbar-header">
+            <a href="#" data-url="money.list" class="navbar-brand">Билеты</a>
+        </div>
+        <div class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+                <li>
+                    <a href="#" data-url="question.list">Вопросы</a>
+                </li>
+                <li>
+                    <a href="#" data-url="group.list">Разделы</a>
+                </li>
+                <li>
+                    <a href="#" data-url="config">Настройки</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div data-wait="show" class="text-center">
+        <img src="/images/loading.gif"/>
+        <p>Идет загрузка данных</p>
+        <p>Пожалуйста, подождите...</p>
+    </div>
+
+    <div class="app-workspace-page" data-wait="hide"></div>
+</div>
+
+
 <!--{panel}-->
 <div class='hd'>{#mod.money.wspace.panel.1}</div>
 <div class='bd aw-money'>

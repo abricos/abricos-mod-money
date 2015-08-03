@@ -1,0 +1,45 @@
+{
+  "version": "0.1.0",
+  "type": "model",
+  "fields": {
+    "id": {
+      "type": "int"
+    },
+    "groupid": {
+      "type": "int",
+      "json": "gid"
+    },
+    "title": {
+      "type": "string",
+      "json": "tl"
+    },
+    "descript": {
+      "type": "string",
+      "json": "dsc"
+    },
+    "accounttype": {
+      "type": "int",
+      "json": "tp"
+    },
+    "initbalance": {
+      "type": "double",
+      "json": "ibc"
+    },
+    "balance": {
+      "type": "double",
+      "json": "bc"
+    },
+    "currency": {
+      "type": "string",
+      "json": "cc"
+    },
+    "role": {
+      "type": "int",
+      "json": "r"
+    },
+    "upddate": {
+      "type": "int",
+      "json": "upd"
+    }
+  }
+}

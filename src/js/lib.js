@@ -1,22 +1,84 @@
-/*
- @package Abricos
- @copyright Copyright (C) 2008 Abricos All rights reserved.
- @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
- */
-
 var Component = new Brick.Component();
 Component.requires = {
     mod: [
-        {name: 'sys', files: ['item.js', 'number.js']},
-        {name: 'uprofile', files: ['lib.js']}
+        {
+            name: 'sys', files: [
+            'application.js',
+            'item.js', // TODO: remove
+            'number.js'
+        ]
+        },
+        {name: 'uprofile', files: ['lib.js']},
+        {name: '{C#MODNAME}', files: ['model.js']}
     ]
 };
 Component.entryPoint = function(NS){
 
+    var Y = Brick.YUI,
+        COMPONENT = this,
+        SYS = Brick.mod.sys;
+
     NS.roles = new Brick.AppRoles('{C#MODNAME}', {
-        isAdmin: 50,
+        isView: 10,
         isWrite: 30,
-        isView: 10
+        isAdmin: 50
+    });
+
+    NS.URL = {
+        ws: "#app={C#MODNAMEURI}/wspace/ws/",
+        'about': function(){
+            return NS.URL.ws + 'about/AboutWidget/'
+        },
+        'accessdenied': function(){
+            return NS.URL.ws + 'about/AccessDeniedWidget/'
+        },
+        'group': {
+            'view': function(groupid){
+                return NS.URL.ws + 'groupview/GroupViewWidget/' + groupid + '/';
+            },
+            'create': function(){
+                return NS.URL.ws + 'groupeditor/GroupEditWidget/0/'
+            },
+            'edit': function(groupid){
+                return NS.URL.ws + 'groupeditor/GroupEditWidget/' + groupid + '/';
+            }
+        },
+        'account': {
+            'list': function(){
+                return NS.URL.ws + 'account/AccountListWidget/p1/p2/p3/';
+            },
+            'view': function(acc){
+                return AWS + 'view/' + (acc ? acc + '/' : '');
+            },
+            'create': function(){
+                return AWS + 'create/';
+            }
+        }
+    };
+
+    SYS.Application.build(COMPONENT, {
+        accountList: {
+            cache: 'accountList',
+            response: function(d){
+                return new NS.AccountList({
+                    appInstance: this,
+                    items: d.list
+                });
+            }
+        },
+        groupList: {
+            cache: 'groupList',
+            response: function(d){
+                return new NS.GroupList({
+                    appInstance: this,
+                    items: d.list
+                });
+            }
+        }
+    }, {
+        initializer: function(){
+            this.initCallbackFire();
+        }
     });
 
     var Dom = YAHOO.util.Dom,
