@@ -1,22 +1,38 @@
 'use strict';
 
 var Abricos = require('abricos-rest');
+var helper = Abricos.helper;
 var should = require('should');
 
 describe('Money Module', function(){
 
-    var userModule,
-        moneyModule;
+    var moneyModule;
+    var userTestAPI;
 
     beforeEach(function(done){
         var api = new Abricos.API();
-        userModule = api.getModule('user');
+        var userModule = api.getModule('user');
+        userTestAPI = userModule.testAPI();
+
         moneyModule = api.getModule('money');
-
         done();
     });
 
-    it('Guest user info', function(done){
-        done();
+    it('should registered new user', function(done){
+        userTestAPI.registration(function(err, user){
+            should.not.exist(err);
+            should.exist(user);
+            done();
+        });
     });
+
+    it('should get an empty account list', function(done){
+        moneyModule.accountList(function(err, accountList){
+            done();
+        });
+    });
+
+
+    it('should updated group info');
+    it('should remote group');
 });

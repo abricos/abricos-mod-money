@@ -1,7 +1,6 @@
 <?php
 
 /**
- * @version $Id$
  * @package Abricos
  * @subpackage Money
  * @copyright Copyright (C) 2008 Abricos. All rights reserved.
@@ -11,16 +10,48 @@
 class MoneyQuery {
 
     /**
+     * Список аккаунтов доступных пользователю
+     *
+     * @param Ab_Database $db
+     * @param integer $userid
+     */
+    public static function AccountList(Ab_Database $db, $userid){
+        $sql = "
+			SELECT
+				a.accountid as id,
+				a.*
+			FROM ".$db->prefix."money_auserrole ur
+			INNER JOIN ".$db->prefix."money_account a ON a.accountid=ur.accountid
+			WHERE ur.userid=".bkint($userid)." AND ur.role>0
+				AND a.deldate=0 AND ur.deldate=0
+		";
+        return $db->query_read($sql);
+    }
+
+    public static function AccountUserRoleList(Ab_Database $db, $accountIds){
+
+        $sql = "
+			SELECT
+				concat(ur.accountid,'-',ur.userid) as id,
+				ur.*
+			FROM ".$db->prefix."money_auserrole ur
+			WHERE ur.deldate=0 AND ur.role>0
+		";
+        return $db->query_read($sql);
+    }
+
+
+    /**
      * Список категорий: свои + других участников, но только те, что используются
      * в операциях
      */
-    public static function CategoryList(Ab_Database $db, $gids) {
-        if (count($gids) == 0) {
+    public static function CategoryList(Ab_Database $db, $gids){
+        if (count($gids) == 0){
             return null;
         }
 
         $wh = array();
-        foreach ($gids as $gid) {
+        foreach ($gids as $gid){
             array_push($wh, "c.groupid=".intval($gid));
         }
         $sql = "
@@ -39,7 +70,7 @@ class MoneyQuery {
         return $db->query_read($sql);
     }
 
-    public static function CategoryAppend(Ab_Database $db, $userid, $groupid, $title, $isExpense, $parentid = 0, $order = 0) {
+    public static function CategoryAppend(Ab_Database $db, $userid, $groupid, $title, $isExpense, $parentid = 0, $order = 0){
         $sql = "
 			INSERT INTO ".$db->prefix."money_category 
 			(parentcategoryid, userid, groupid, title, isexpense, ord, dateline, upddate) VALUES (
@@ -57,9 +88,9 @@ class MoneyQuery {
         return $db->insert_id();
     }
 
-    public static function UserListByIds(Ab_Database $db, $ids) {
+    public static function UserListByIds(Ab_Database $db, $ids){
         $wh = array("u.userid=0");
-        foreach ($ids as $id) {
+        foreach ($ids as $id){
             array_push($wh, "u.userid=".intval($id));
         }
         $sql = "
@@ -75,7 +106,7 @@ class MoneyQuery {
         return $db->query_read($sql);
     }
 
-    public static function GroupAppend(Ab_Database $db, $userid, $gd) {
+    public static function GroupAppend(Ab_Database $db, $userid, $gd){
         $sql = "
 			INSERT INTO ".$db->prefix."money_group (userid, title, dateline, upddate) VALUES (
 				".bkint($userid).",
@@ -88,7 +119,7 @@ class MoneyQuery {
         return $db->insert_id();
     }
 
-    public static function GroupUpdate(Ab_Database $db, $groupid, $gd) {
+    public static function GroupUpdate(Ab_Database $db, $groupid, $gd){
         $sql = "
 			UPDATE ".$db->prefix."money_group
 			SET title='".bkstr($gd->tl)."',
@@ -98,7 +129,7 @@ class MoneyQuery {
         $db->query_write($sql);
     }
 
-    public static function GroupRemove(Ab_Database $db, $groupid) {
+    public static function GroupRemove(Ab_Database $db, $groupid){
         $sql = "
 			UPDATE ".$db->prefix."money_group
 			SET upddate=".TIMENOW.", deldate=".TIMENOW."
@@ -116,15 +147,15 @@ class MoneyQuery {
      * @param mixed $ids
      * @return NULL|integer
      */
-    public static function GroupListByIds(Ab_Database $db, $ids, $userid) {
-        if (!is_array($ids)) {
+    public static function GroupListByIds(Ab_Database $db, $ids, $userid){
+        if (!is_array($ids)){
             $ids = array(intval($ids));
         }
-        if (count($ids) == 0) {
+        if (count($ids) == 0){
             return null;
         }
         $aw = array();
-        foreach ($ids as $id) {
+        foreach ($ids as $id){
             array_push($aw, "g.groupid=".bkint($id));
         }
         $sql = "
@@ -141,44 +172,18 @@ class MoneyQuery {
         return $db->query_read($sql);
     }
 
-    public static function GroupById(Ab_Database $db, $groupid, $userid) {
+    public static function GroupById(Ab_Database $db, $groupid, $userid){
         $rows = MoneyQuery::GroupListByIds($db, $groupid, $userid);
         return $db->fetch_array($rows);
     }
 
-    public static function Account(Ab_Database $db, $userid, $accountid) {
+    public static function Account(Ab_Database $db, $userid, $accountid){
         $rows = MoneyQuery::AccountList($db, $userid, 0, $accountid);
         return $db->fetch_array($rows);
     }
 
-    /**
-     * Список аккаунтов доступных пользователю
-     *
-     * @param Ab_Database $db
-     * @param integer $userid
-     */
-    public static function AccountList(Ab_Database $db, $userid, $groupid = 0, $accountid = 0) {
-        $sql = "
-			SELECT 
-				a.accountid as id,
-				ur.role as _role,
-				a.*
-			FROM ".$db->prefix."money_auserrole ur
-			INNER JOIN ".$db->prefix."money_account a ON a.accountid=ur.accountid
-			INNER JOIN ".$db->prefix."money_group g ON g.groupid=a.groupid
-			WHERE a.deldate=0 AND g.deldate=0 AND ur.userid=".bkint($userid)." AND ur.role>0  
-				".($groupid > 0 ? " AND a.groupid=".bkint($groupid) : "")."
-				".($accountid > 0 ? " AND a.accountid=".bkint($accountid) : "")."
-		";
-        if ($accountid > 0) {
-            $sql .= "
-				LIMIT 1
-			";
-        }
-        return $db->query_read($sql);
-    }
 
-    public static function AccountAppend(Ab_Database $db, $userid, $groupid, $ad) {
+    public static function AccountAppend(Ab_Database $db, $userid, $groupid, $ad){
         $sql = "
 			INSERT INTO ".$db->prefix."money_account 
 			(groupid, userid, accounttype, title, descript, initbalance, currency, dateline, upddate) VALUES (
@@ -197,7 +202,7 @@ class MoneyQuery {
         return $db->insert_id();
     }
 
-    public static function AccountUpdate(Ab_Database $db, $accountid, $ad) {
+    public static function AccountUpdate(Ab_Database $db, $accountid, $ad){
         $sql = "
 			UPDATE ".$db->prefix."money_account
 			SET
@@ -212,7 +217,7 @@ class MoneyQuery {
         $db->query_write($sql);
     }
 
-    public static function AccountRemove(Ab_Database $db, $accountid) {
+    public static function AccountRemove(Ab_Database $db, $accountid){
         $sql = "
 			UPDATE ".$db->prefix."money_account
 			SET upddate=".TIMENOW.",
@@ -224,7 +229,7 @@ class MoneyQuery {
         return $db->affected_rows();
     }
 
-    public static function AccountUpdateBalance(Ab_Database $db, $accountid) {
+    public static function AccountUpdateBalance(Ab_Database $db, $accountid){
         $row = MoneyQuery::OperSum($db, $accountid);
         $sm = empty($row) ? 0 : $row['sm'];
         $sql = "
@@ -236,7 +241,7 @@ class MoneyQuery {
         $db->query_write($sql);
     }
 
-    public static function OperSum(Ab_Database $db, $accountid) {
+    public static function OperSum(Ab_Database $db, $accountid){
         $sql = "
 			SELECT sum(o.operval*if(o.isexpense=0, 1, -1)) as sm
 			FROM ".$db->prefix."money_oper o
@@ -246,9 +251,9 @@ class MoneyQuery {
         return $db->query_first($sql);
     }
 
-    public static function GUserRoleListByGId(Ab_Database $db, $ids) {
+    public static function GUserRoleListByGId(Ab_Database $db, $ids){
         $wh = array("ur.groupid=0");
-        foreach ($ids as $id) {
+        foreach ($ids as $id){
             array_push($wh, "ur.groupid=".intval($id));
         }
         $sql = "
@@ -263,7 +268,7 @@ class MoneyQuery {
         return $db->query_read($sql);
     }
 
-    public static function GUserRoleAppend(Ab_Database $db, $groupid, $userid, $role) {
+    public static function GUserRoleAppend(Ab_Database $db, $groupid, $userid, $role){
         $sql = "
 			INSERT INTO ".$db->prefix."money_guserrole 
 			(groupid, userid, role) VALUES (
@@ -276,7 +281,7 @@ class MoneyQuery {
         return $db->insert_id();
     }
 
-    public static function GUserRoleUpdate(Ab_Database $db, $groupid, $userid, $role) {
+    public static function GUserRoleUpdate(Ab_Database $db, $groupid, $userid, $role){
         $sql = "
 			UPDATE ".$db->prefix."money_guserrole
 			SET role=".bkint($role)."
@@ -286,7 +291,7 @@ class MoneyQuery {
         $db->query_write($sql);
     }
 
-    public static function GUserRoleRemove(Ab_Database $db, $groupid, $userid) {
+    public static function GUserRoleRemove(Ab_Database $db, $groupid, $userid){
         $sql = "
 			DELETE FROM ".$db->prefix."money_guserrole
 			WHERE groupid=".bkint($groupid)." AND userid=".bkint($userid)."
@@ -295,24 +300,7 @@ class MoneyQuery {
         $db->query_write($sql);
     }
 
-    public static function AUserRoleListByAId(Ab_Database $db, $ids) {
-        $wh = array("ur.accountid=0");
-        foreach ($ids as $id) {
-            array_push($wh, "ur.accountid=".intval($id));
-        }
-        $sql = "
-			SELECT
-				concat(ur.accountid,'-',ur.userid) as id,
-				ur.accountid as aid,
-				ur.userid as u,
-				ur.role as r
-			FROM ".$db->prefix."money_auserrole ur
-			WHERE ".implode(" OR ", $wh)."
-		";
-        return $db->query_read($sql);
-    }
-
-    public static function AUserRoleAppend(Ab_Database $db, $accountid, $userid, $role) {
+    public static function AUserRoleAppend(Ab_Database $db, $accountid, $userid, $role){
         $sql = "
 			INSERT INTO ".$db->prefix."money_auserrole 
 			(accountid, userid, role) VALUES (
@@ -325,7 +313,7 @@ class MoneyQuery {
         return $db->insert_id();
     }
 
-    public static function AUserRoleUpdate(Ab_Database $db, $accountid, $userid, $role) {
+    public static function AUserRoleUpdate(Ab_Database $db, $accountid, $userid, $role){
         $sql = "
 			UPDATE ".$db->prefix."money_auserrole
 			SET role=".bkint($role)."
@@ -335,7 +323,7 @@ class MoneyQuery {
         $db->query_write($sql);
     }
 
-    public static function AUserRoleRemove(Ab_Database $db, $accountid, $userid) {
+    public static function AUserRoleRemove(Ab_Database $db, $accountid, $userid){
         $sql = "
 			DELETE FROM ".$db->prefix."money_auserrole
 			WHERE accountid=".bkint($accountid)." AND userid=".bkint($userid)."
@@ -344,7 +332,7 @@ class MoneyQuery {
         $db->query_write($sql);
     }
 
-    public static function OperAppend(Ab_Database $db, $userid, $accountid, $isExpense, $operval, $operdate, $catid, $descript, $methodid = 0) {
+    public static function OperAppend(Ab_Database $db, $userid, $accountid, $isExpense, $operval, $operdate, $catid, $descript, $methodid = 0){
         $sql = "
 			INSERT INTO ".$db->prefix."money_oper
 			(methodid, accountid, userid, isexpense, operval, operdate, categoryid, descript, dateline, upddate) VALUES (
@@ -364,11 +352,11 @@ class MoneyQuery {
         return $db->insert_id();
     }
 
-    public static function OperAppendByObj(Ab_Database $db, $userid, $accountid, $od) {
+    public static function OperAppendByObj(Ab_Database $db, $userid, $accountid, $od){
         return MoneyQuery::OperAppend($db, $userid, $accountid, $od->ise, $od->v, $od->d, $od->cid, $od->dsc);
     }
 
-    public static function OperUpdate(Ab_Database $db, $operid, $accountid, $operval, $operdate, $catid, $descript) {
+    public static function OperUpdate(Ab_Database $db, $operid, $accountid, $operval, $operdate, $catid, $descript){
         $sql = "
 			UPDATE ".$db->prefix."money_oper
 			SET
@@ -383,11 +371,11 @@ class MoneyQuery {
         $db->query_write($sql);
     }
 
-    public static function OperUpdateByObj(Ab_Database $db, $operid, $accountid, $od) {
+    public static function OperUpdateByObj(Ab_Database $db, $operid, $accountid, $od){
         return MoneyQuery::OperUpdate($db, $operid, $accountid, $od->v, $od->d, $od->cid, $od->dsc);
     }
 
-    public static function OperRemove(Ab_Database $db, $operid, $accountid) {
+    public static function OperRemove(Ab_Database $db, $operid, $accountid){
         $sql = "
 			UPDATE ".$db->prefix."money_oper
 			SET deldate=".TIMENOW.", upddate=".TIMENOW."
@@ -397,9 +385,9 @@ class MoneyQuery {
         $db->query_write($sql);
     }
 
-    public static function OperListByAIds(Ab_Database $db, $aids, $fromdt, $enddt, $lastUpdate = 0) {
+    public static function OperListByAIds(Ab_Database $db, $aids, $fromdt, $enddt, $lastUpdate = 0){
         $aw = array("o.accountid=0");
-        foreach ($aids as $id) {
+        foreach ($aids as $id){
             array_push($aw, "o.accountid=".bkint($id));
         }
         $sql = "
@@ -424,7 +412,7 @@ class MoneyQuery {
         return $db->query_read($sql);
     }
 
-    public static function OperInfo(Ab_Database $db, $operid) {
+    public static function OperInfo(Ab_Database $db, $operid){
         $sql = "
 			SELECT *
 			FROM ".$db->prefix."money_oper o
@@ -434,12 +422,12 @@ class MoneyQuery {
         return $db->query_first($sql);
     }
 
-    public static function OperMoveListByAIds(Ab_Database $db, $aids, $fromdt, $enddt, $lastUpdate = 0) {
-        if (empty($aids)) {
+    public static function OperMoveListByAIds(Ab_Database $db, $aids, $fromdt, $enddt, $lastUpdate = 0){
+        if (empty($aids)){
             return null;
         }
         $aw = array();
-        foreach ($aids as $id) {
+        foreach ($aids as $id){
             array_push($aw, "m.fromaccountid=".bkint($id)." OR m.toaccountid=".bkint($id));
         }
         $sql = "
@@ -460,7 +448,7 @@ class MoneyQuery {
         return $db->query_read($sql);
     }
 
-    public static function OperMoveAppend(Ab_Database $db, $userid, $od) {
+    public static function OperMoveAppend(Ab_Database $db, $userid, $od){
 
         $sql = "
 			INSERT INTO ".$db->prefix."money_method
@@ -498,7 +486,7 @@ class MoneyQuery {
         return $methodid;
     }
 
-    public static function OperMoveInfo(Ab_Database $db, $methodid) {
+    public static function OperMoveInfo(Ab_Database $db, $methodid){
         $sql = "
 			SELECT *
 			FROM ".$db->prefix."money_move 
@@ -508,7 +496,7 @@ class MoneyQuery {
         return $db->query_first($sql);
     }
 
-    public static function OperMoveUpdate(Ab_Database $db, $methodid, $od) {
+    public static function OperMoveUpdate(Ab_Database $db, $methodid, $od){
         $sql = "
 			UPDATE ".$db->prefix."money_move
 			SET operval=".doubleval($od->v).",
@@ -524,7 +512,7 @@ class MoneyQuery {
         MoneyQuery::OperUpdate($db, $dbMOper['tooperid'], $dbMOper['toaccountid'], $od->v, $od->d, 0, $od->dsc);
     }
 
-    public static function OperMoveRemove(Ab_Database $db, $methodid) {
+    public static function OperMoveRemove(Ab_Database $db, $methodid){
         $sql = "
 			UPDATE ".$db->prefix."money_method
 			SET deldate=".TIMENOW.", upddate=".TIMENOW."

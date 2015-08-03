@@ -17,7 +17,7 @@ $pfx = $db->prefix;
 
 $uprofileManager = Abricos::GetModule('uprofile')->GetManager();
 
-if ($updateManager->isInstall()) {
+if ($updateManager->isInstall()){
 
     $uprofileManager->FieldAppend('lastname', 'Фамилия', UserFieldType::STRING, 100);
     $uprofileManager->FieldAppend('firstname', 'Имя', UserFieldType::STRING, 100);
@@ -28,27 +28,27 @@ if ($updateManager->isInstall()) {
     // Бухгалтерия
     $db->query_write("
 		CREATE TABLE IF NOT EXISTS ".$pfx."money_group (
-		  `groupid` int(10) unsigned NOT NULL auto_increment COMMENT 'Идентификатор счета',
-		  `userid` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Идентификатор автора',
-		  `title` varchar(250) NOT NULL DEFAULT '' COMMENT 'Название',
+		  groupid int(10) unsigned NOT NULL auto_increment COMMENT 'Идентификатор счета',
+		  userid int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Идентификатор автора',
+		  title varchar(250) NOT NULL DEFAULT '' COMMENT 'Название',
 		  
-		  `dateline` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Дата создания',
-		  `deldate` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Дата удаления',
-		  `upddate` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Дата обновления',
+		  dateline int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Дата создания',
+		  deldate int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Дата удаления',
+		  upddate int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Дата обновления',
 		  
-		  PRIMARY KEY  (`groupid`)
+		  PRIMARY KEY  (groupid)
 		)".$charset);
 
     // Доступ пользователей на управление в бухгалтерии
     $db->query_write("
 		CREATE TABLE IF NOT EXISTS ".$pfx."money_guserrole (
-		  `groupid` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Идентификатор бухгалтерии',
-		  `userid` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Идентификатор пользователя',
+		  groupid int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Идентификатор бухгалтерии',
+		  userid int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Идентификатор пользователя',
 		  
-		  `role` tinyint(1) unsigned NOT NULL DEFAULT 0 COMMENT 'Роль пользователя: 0-нет доступа, 1-только для чтения, 2-запись, 3-админ',
+		  role tinyint(1) unsigned NOT NULL DEFAULT 0 COMMENT 'Роль пользователя: 0-нет доступа, 1-только для чтения, 2-запись, 3-админ',
 
-		  `deldate` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Дата удаления',
-		  UNIQUE KEY `group` (`groupid`, `userid`)
+		  deldate int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Дата удаления',
+		  UNIQUE KEY group (groupid, userid)
 		)".$charset);
 
 
@@ -56,37 +56,37 @@ if ($updateManager->isInstall()) {
     // Кошелек
     $db->query_write("
 		CREATE TABLE IF NOT EXISTS ".$pfx."money_account (
-		  `accountid` int(10) unsigned NOT NULL auto_increment COMMENT 'Идентификатор счета',
-		  `groupid` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Идентификатор бухгалтерии',
-		  `userid` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Идентификатор автора',
+		  accountid int(10) unsigned NOT NULL auto_increment COMMENT 'Идентификатор счета',
+		  groupid int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Идентификатор бухгалтерии',
+		  userid int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Идентификатор автора',
 
-		  `accounttype` tinyint(2) unsigned NOT NULL DEFAULT 1 COMMENT 'Тип счета',
-		  `title` varchar(250) NOT NULL DEFAULT '' COMMENT 'Название',
-		  `descript` TEXT COMMENT 'Примечание',
+		  accounttype tinyint(2) unsigned NOT NULL DEFAULT 1 COMMENT 'Тип счета',
+		  title varchar(250) NOT NULL DEFAULT '' COMMENT 'Название',
+		  descript TEXT COMMENT 'Примечание',
 	
-		  `initbalance` double(10, 2) NOT NULL DEFAULT 0 COMMENT 'Начальный баланс',
-		  `balance` double(10, 2) NOT NULL DEFAULT 0 COMMENT 'Текущий баланс',
-		  `currency` varchar(3) NOT NULL DEFAULT '' COMMENT 'Идентификатор валюты',
+		  initbalance double(10, 2) NOT NULL DEFAULT 0 COMMENT 'Начальный баланс',
+		  balance double(10, 2) NOT NULL DEFAULT 0 COMMENT 'Текущий баланс',
+		  currency varchar(3) NOT NULL DEFAULT '' COMMENT 'Идентификатор валюты',
 	
-		  `dateline` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Дата создания',
-		  `upddate` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Дата обновления',
-		  `deldate` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Дата удаления',
+		  dateline int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Дата создания',
+		  upddate int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Дата обновления',
+		  deldate int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Дата удаления',
 	
-		  PRIMARY KEY  (`accountid`),
-		  KEY `groupid` (`groupid`),
-		  KEY `userid` (`userid`)
+		  PRIMARY KEY  (accountid),
+		  KEY groupid (groupid),
+		  KEY userid (userid)
 		)".$charset);
 
     // Доступ пользователей к счету
     $db->query_write("
 		CREATE TABLE IF NOT EXISTS ".$pfx."money_auserrole (
-		  `accountid` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Идентификатор счета',
-		  `userid` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Идентификатор пользователя',
+		  accountid int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Идентификатор счета',
+		  userid int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Идентификатор пользователя',
 		  
-		  `role` tinyint(1) unsigned NOT NULL DEFAULT 0 COMMENT 'Роль пользователя: 0-нет доступа, 1-только для чтения, 2-запись, 3-админ',
+		  role tinyint(1) unsigned NOT NULL DEFAULT 0 COMMENT 'Роль пользователя: 0-нет доступа, 1-только для чтения, 2-запись, 3-админ',
 
-		  `deldate` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Дата удаления',
-		  UNIQUE KEY `account` (`accountid`, `userid`)
+		  deldate int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Дата удаления',
+		  UNIQUE KEY account (accountid, userid)
 		)".$charset);
 
     // Метод ввода операции, заложено на будущее, для оптимизации
@@ -94,100 +94,100 @@ if ($updateManager->isInstall()) {
     // TODO: в данной версии реализован только один метод - перемещение
     $db->query_write("
 		CREATE TABLE IF NOT EXISTS ".$pfx."money_method (
-		  `methodid` int(10) unsigned NOT NULL auto_increment COMMENT 'Идентификатор',
-		  `methodtype` varchar(10) NOT NULL DEFAULT '' COMMENT 'Тип метода, например move - перемещение',
-		  `userid` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Автор операции',
+		  methodid int(10) unsigned NOT NULL auto_increment COMMENT 'Идентификатор',
+		  methodtype varchar(10) NOT NULL DEFAULT '' COMMENT 'Тип метода, например move - перемещение',
+		  userid int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Автор операции',
 
-		  `dateline` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Дата создания',
-		  `upddate` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Дата обновления',
-		  `deldate` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Дата удаления',
+		  dateline int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Дата создания',
+		  upddate int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Дата обновления',
+		  deldate int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Дата удаления',
 	
-		  PRIMARY KEY  (`methodid`),
-		  KEY `methodtype` (`methodtype`)
+		  PRIMARY KEY  (methodid),
+		  KEY methodtype (methodtype)
 		)".$charset);
 
     // Перемещения денежных сердств по счетам
     $db->query_write("
 		CREATE TABLE IF NOT EXISTS ".$pfx."money_move (
-		  `methodid` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Идентификатор',
+		  methodid int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Идентификатор',
 	
-		  `fromaccountid` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Источник счета',
-		  `fromoperid` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Операция - источник',
+		  fromaccountid int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Источник счета',
+		  fromoperid int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Операция - источник',
 
-		  `toaccountid` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Счет назначение',
-		  `tooperid` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Операция - назначение',
+		  toaccountid int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Счет назначение',
+		  tooperid int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Операция - назначение',
 	
-		  `operval` double(10, 2) unsigned NOT NULL DEFAULT 0 COMMENT 'Сумма операции',
-		  `operdate` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Дата операции',
+		  operval double(10, 2) unsigned NOT NULL DEFAULT 0 COMMENT 'Сумма операции',
+		  operdate int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Дата операции',
 	
-		  `cmaccount` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Счет списания комиссии',
-		  `cmoperid` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Операция - комиссия',
-		  `cmval` double(10, 2) unsigned NOT NULL DEFAULT 0 COMMENT 'Сумма комиссии',
-		  `cmispercent` tinyint(1) unsigned NOT NULL DEFAULT 0 COMMENT '0-абсолютное значение, 1-процент',
+		  cmaccount int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Счет списания комиссии',
+		  cmoperid int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Операция - комиссия',
+		  cmval double(10, 2) unsigned NOT NULL DEFAULT 0 COMMENT 'Сумма комиссии',
+		  cmispercent tinyint(1) unsigned NOT NULL DEFAULT 0 COMMENT '0-абсолютное значение, 1-процент',
 	
-		  PRIMARY KEY  (`methodid`)	
+		  PRIMARY KEY  (methodid)	
 		)".$charset);
 
     // Операции по счету
     $db->query_write("
 		CREATE TABLE IF NOT EXISTS ".$pfx."money_oper (
-		  `operid` int(10) unsigned NOT NULL auto_increment COMMENT 'Идентификатор',
-		  `methodid` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Идентификатор метода ввода операции, 0-не определен',
-		  `accountid` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Идентификатор счета',
-		  `userid` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Идентификатор пользователя операции',
+		  operid int(10) unsigned NOT NULL auto_increment COMMENT 'Идентификатор',
+		  methodid int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Идентификатор метода ввода операции, 0-не определен',
+		  accountid int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Идентификатор счета',
+		  userid int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Идентификатор пользователя операции',
 
-		  `isexpense` tinyint(1) unsigned NOT NULL DEFAULT 0 COMMENT '0 - приход, 1 - расход',
-		  `operval` double(10, 2) unsigned NOT NULL DEFAULT 0 COMMENT 'Сумма операции',
-		  `operdate` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Дата операции',
+		  isexpense tinyint(1) unsigned NOT NULL DEFAULT 0 COMMENT '0 - приход, 1 - расход',
+		  operval double(10, 2) unsigned NOT NULL DEFAULT 0 COMMENT 'Сумма операции',
+		  operdate int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Дата операции',
 	
-		  `categoryid` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Категория',
-		  `descript` TEXT COMMENT 'Примечание',
+		  categoryid int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Категория',
+		  descript TEXT COMMENT 'Примечание',
 	
-		  `dateline` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Дата создания',
-		  `upddate` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Дата обновления',
-		  `deldate` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Дата удаления',
+		  dateline int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Дата создания',
+		  upddate int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Дата обновления',
+		  deldate int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Дата удаления',
 	
-		  PRIMARY KEY  (`operid`),
-		  KEY `accountid` (`accountid`)	
+		  PRIMARY KEY  (operid),
+		  KEY accountid (accountid)	
 		)".$charset);
 
     $db->query_write("
 		CREATE TABLE IF NOT EXISTS ".$pfx."money_category (
-		  `categoryid` int(10) unsigned NOT NULL auto_increment COMMENT 'Идентификатор',
-		  `parentcategoryid` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Родитель',
-		  `userid` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Идентификатор пользователя',
-		  `groupid` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Идентификатор бухгалтерии',
+		  categoryid int(10) unsigned NOT NULL auto_increment COMMENT 'Идентификатор',
+		  parentcategoryid int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Родитель',
+		  userid int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Идентификатор пользователя',
+		  groupid int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Идентификатор бухгалтерии',
 	
-		  `title` varchar(250) NOT NULL DEFAULT '' COMMENT 'Название',
+		  title varchar(250) NOT NULL DEFAULT '' COMMENT 'Название',
 		  
-		  `isexpense` tinyint(1) unsigned NOT NULL DEFAULT 0 COMMENT '0 - приход, 1 - расход',
+		  isexpense tinyint(1) unsigned NOT NULL DEFAULT 0 COMMENT '0 - приход, 1 - расход',
 
-		  `ord` int(2) unsigned NOT NULL DEFAULT 0 COMMENT 'Сортировка',
+		  ord int(2) unsigned NOT NULL DEFAULT 0 COMMENT 'Сортировка',
 	
-		  `dateline` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Дата создания',
-		  `upddate` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Дата обновления',
-		  `deldate` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Дата удаления',
+		  dateline int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Дата создания',
+		  upddate int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Дата обновления',
+		  deldate int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Дата удаления',
 	
-		  PRIMARY KEY  (`categoryid`),
-		  KEY `userid` (`userid`),
-		  KEY `groupid` (`groupid`)
+		  PRIMARY KEY  (categoryid),
+		  KEY userid (userid),
+		  KEY groupid (groupid)
 		)".$charset);
 }
 
-if (!$updateManager->isInstall() && $updateManager->isUpdate('0.1.0.1')) {
+if (!$updateManager->isInstall() && $updateManager->isUpdate('0.1.0.1')){
 
     $db->query_write("
 		ALTER TABLE ".$pfx."money_move
-			ADD `fromoperid` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Операция - источник',
-			ADD `tooperid` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Операция - назначение',
-			ADD `cmoperid` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Операция - комиссия'
+			ADD fromoperid int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Операция - источник',
+			ADD tooperid int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Операция - назначение',
+			ADD cmoperid int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Операция - комиссия'
 	");
 
     $rows = $db->query_read("
 		SELECT *
 		FROM ".$pfx."money_move
 	");
-    while (($row = $db->fetch_array($rows))) {
+    while (($row = $db->fetch_array($rows))){
         $oper = $db->query_first("
 			SELECT *
 			FROM ".$pfx."money_oper
