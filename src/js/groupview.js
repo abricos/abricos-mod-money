@@ -13,10 +13,7 @@ Component.requires = {
 Component.entryPoint = function(NS){
 
     var Dom = YAHOO.util.Dom,
-        E = YAHOO.util.Event,
         L = YAHOO.lang;
-
-    var LNG = Brick.util.Language.geta(['mod', '{C#MODNAME}']);
 
     var buildTemplate = this.buildTemplate;
 
@@ -305,7 +302,7 @@ Component.entryPoint = function(NS){
 
             var MM = NS.moneyManager, sAcc = "", sOTp = "";
 
-            var LLNG = LNG['oper']['type'];
+            var LLNG = Abricos.I18n.get('mod.money.oper.type', {isData: true});
             if (oper.methodid == 0){
                 var account = MM.findAccount(oper.accountid);
                 sAcc = L.isNull(account) ? '' : account.getTitle();
@@ -317,7 +314,7 @@ Component.entryPoint = function(NS){
                     tAcc = MM.findAccount(opMove.toAccountId);
 
                 sAcc = (L.isNull(fAcc) ? '' : fAcc.getTitle()) + " -&gt; " +
-                (L.isNull(tAcc) ? '' : tAcc.getTitle());
+                    (L.isNull(tAcc) ? '' : tAcc.getTitle());
                 sOTp = LLNG['move'];
             }
 

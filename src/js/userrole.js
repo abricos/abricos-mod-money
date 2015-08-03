@@ -16,7 +16,6 @@ Component.entryPoint = function(NS){
         L = YAHOO.lang;
 
     var UID = Brick.env.user.id;
-    var LNG = Brick.util.Language.geta(['mod', '{C#MODNAME}']);
     var buildTemplate = this.buildTemplate;
 
     var RoleRowWidget = function(container, ur, cfg){
@@ -43,7 +42,7 @@ Component.entryPoint = function(NS){
             elSel.value = ur.role;
             if (UID == user.id || cfg['readonly']){
                 Dom.setStyle(elSel, 'display', 'none');
-                TM.getEl('urrow.ro').innerHTML = LNG['account']['role'][ur.role];
+                TM.getEl('urrow.ro').innerHTML = Abricos.Language.get('mod.money.lib.account.role.' + ur.role);
             }
             E.on(elSel, 'change', function(){
                 __self.updateHelp();

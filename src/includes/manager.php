@@ -556,10 +556,11 @@ class MoneyManager extends Ab_ModuleManager {
             return null;
         }
 
-        $dbGroup = $this->_groupCache[$groupid];
-        if (empty($dbGroup)) {
-            $dbGroup = $this->_groupCache[$groupid] = MoneyQuery::GroupById($this->db, $groupid, $this->userid);
+        if (!isset($this->_groupCache[$groupid])) {
+            $this->_groupCache[$groupid] = MoneyQuery::GroupById($this->db, $groupid, $this->userid);
         }
+        $dbGroup = $this->_groupCache[$groupid];
+
         if (empty($dbGroup) || $dbGroup['r'] < MoneyAccountRole::WRITE) {
             return null;
         }

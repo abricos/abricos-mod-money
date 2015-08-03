@@ -16,7 +16,6 @@ Component.entryPoint = function(NS){
         E = YAHOO.util.Event,
         L = YAHOO.lang;
 
-    var LNG = Brick.util.Language.geta(['mod', '{C#MODNAME}']);
     var buildTemplate = this.buildTemplate;
 
     var AccountEditorRowWidget = function(container, account, isFirst, callbackRemove){

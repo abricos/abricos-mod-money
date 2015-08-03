@@ -33,9 +33,6 @@ Component.entryPoint = function(NS){
 
     this.buildTemplate({});
 
-    // Brick.util.CSS.update(Brick.util.CSS['{C#MODNAME}']['{C#COMNAME}']);
-    // delete Brick.util.CSS['{C#MODNAME}']['{C#COMNAME}'];
-
     NS.lif = function(f){
         return L.isFunction(f) ? f : function(){
         };
@@ -115,7 +112,7 @@ Component.entryPoint = function(NS){
     YAHOO.extend(CurrencyList, NS.ItemList, {});
     NS.CurrencyList = CurrencyList;
 
-    var CLNG = LNG['currency'];
+    var CLNG = Abricos.I18n.get('mod.money.currency', {isData: true});
     NS.currencyList = new CurrencyList([
         CLNG['RUB'],
         CLNG['USD'],
