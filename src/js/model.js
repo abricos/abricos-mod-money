@@ -7,6 +7,7 @@ Component.requires = {
 Component.entryPoint = function(NS){
 
     var Y = Brick.YUI,
+        L = Y.Lang,
         SYS = Brick.mod.sys;
 
     NS.Account = Y.Base.create('account', SYS.AppModel, [], {
@@ -27,7 +28,14 @@ Component.entryPoint = function(NS){
     });
 
     NS.Group = Y.Base.create('group', SYS.AppModel, [], {
-        structureName: 'Group'
+        structureName: 'Group',
+        getTitle: function(){
+            var title = this.get('title');
+            if (L.isString(title) && title.length > 0){
+                return title;
+            }
+            return Abricos.I18n.get('mod.money.group.nottitle');
+        }
     });
 
     NS.GroupList = Y.Base.create('groupList', SYS.AppModelList, [], {

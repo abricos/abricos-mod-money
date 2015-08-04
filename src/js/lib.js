@@ -465,12 +465,7 @@ Component.entryPoint = function(NS){
             account.roles.add(ur);
             return account;
         },
-        getTitle: function(){
-            if (L.isString(this.title) && this.title.length > 0){
-                return this.title;
-            }
-            return LNG['group']['nottitle'];
-        },
+
         getMyRole: function(){
             var r = this.roles.getByUserId(UID);
             if (L.isNull(r)){

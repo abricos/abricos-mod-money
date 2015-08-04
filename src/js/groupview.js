@@ -206,6 +206,14 @@ Component.entryPoint = function(NS){
     };
     NS.GroupViewWidget = GroupViewWidget;
 
+    NS.GroupViewWidget.parseURLParam = function(args){
+        return {
+            groupid: args[0] | 0
+        };
+    };
+
+
+
     var AccountRemovePanel = function(account, callback){
         this.account = account;
         this.callback = callback;
@@ -356,6 +364,5 @@ Component.entryPoint = function(NS){
         }
     });
     NS.OperRemovePanel = OperRemovePanel;
-
 
 };
