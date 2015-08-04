@@ -1,7 +1,7 @@
 var Component = new Brick.Component();
 Component.requires = {
     mod: [
-        {name: '{C#MODNAME}', files: ['lib.js']}
+        {name: '{C#MODNAME}', files: ['accountList.js']}
     ]
 };
 Component.entryPoint = function(NS){
@@ -43,6 +43,10 @@ Component.entryPoint = function(NS){
                 return;
             }
 
+            this.accountsWidget = new NS.AccountListWidget({
+                boundingBox: tp.gel('acclist'),
+                groupid: group.get('id')
+            });
         }
     }, {
         ATTRS: {

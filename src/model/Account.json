@@ -17,9 +17,10 @@
       "type": "string",
       "json": "dsc"
     },
-    "accounttype": {
+    "type": {
       "type": "int",
-      "json": "tp"
+      "json": "tp",
+      "dbField": "accounttype"
     },
     "initbalance": {
       "type": "double",

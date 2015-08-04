@@ -59,7 +59,6 @@ Component.entryPoint = function(NS){
     SYS.Application.build(COMPONENT, {
         accountList: {
             cache: 'accountList',
-            request: 'groupList',
             response: function(d){
                 return new NS.AccountList({
                     appInstance: this,
@@ -68,6 +67,7 @@ Component.entryPoint = function(NS){
             }
         },
         groupList: {
+            request: 'accountList',
             cache: 'groupList',
             response: function(d){
                 return new NS.GroupList({
@@ -159,37 +159,6 @@ Component.entryPoint = function(NS){
     YAHOO.extend(CategoryList, NS.ItemList, {});
     NS.CategoryList = CategoryList;
 
-
-    var Currency = function(d){
-        d = L.merge({
-            'tl': '',	// title
-            's': ''		// sign
-        }, d || {});
-        Currency.superclass.constructor.call(this, d);
-    };
-    YAHOO.extend(Currency, NS.Item, {
-        update: function(d){
-            this.title = d['tl'];
-            this.sign = d['s'];
-        }
-    });
-    NS.Currency = Currency;
-
-    var CurrencyList = function(d){
-        CurrencyList.superclass.constructor.call(this, d, Currency);
-    };
-    YAHOO.extend(CurrencyList, NS.ItemList, {});
-    NS.CurrencyList = CurrencyList;
-
-    var CLNG = Abricos.I18n.get('mod.money.currency', {isData: true});
-    NS.currencyList = new CurrencyList([
-        CLNG['RUB'],
-        CLNG['USD'],
-        CLNG['EUR'],
-        CLNG['UAH'],
-        CLNG['BYR'],
-        CLNG['AZN']
-    ]);
 
     var OperMethod = function(d){
         OperMethod.superclass.constructor.call(this, d);

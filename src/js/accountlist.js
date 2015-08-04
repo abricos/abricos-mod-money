@@ -178,20 +178,6 @@ Component.entryPoint = function(NS){
         this.init(container, agid, cfg);
     };
     AccountGroupRowWidget.prototype = {
-        init: function(container, agid, cfg){
-            this.cfg = cfg;
-
-            var TM = buildTemplate(this, 'grow,gsmrow');
-            container.innerHTML += TM.replace('grow', {
-                'tl': LNG['account']['group'][agid]
-            });
-            this.ws = [];
-        },
-        destroy: function(){
-            this.clearws();
-            var el = this._TM.getEl('grow.id');
-            el.parentNode.removeChild(el);
-        },
         onClick: function(el){
             for (var i = 0; i < this.ws.length; i++){
                 if (this.ws[i].onClick(el)){
@@ -199,12 +185,6 @@ Component.entryPoint = function(NS){
                 }
             }
             return false;
-        },
-        clearws: function(){
-            for (var i = 0; i < this.ws.length; i++){
-                this.ws[i].destroy();
-            }
-            this.ws = [];
         },
         renderAccount: function(acc){
             var __self = this,
@@ -383,41 +363,14 @@ Component.entryPoint = function(NS){
         },
         reBuildList: function(){
             for (var i = 1; i <= 3; i++){
-                this.wgs[i].clearws();
+                this.wgs[i]._clearWidgets();
             }
             this.buildList();
             if (!L.isNull(this.selectedAccount)){
                 this.selectAccount(this.selectedAccount);
             }
         },
-        buildList: function(){
-            var __self = this;
-            this.group.accounts.foreach(function(acc){
-                __self.renderAccount(acc);
-            });
-            this.render();
-        },
-        renderAccount: function(acc){
-            var agid = 1;
-            switch (acc.type) {
-                case 5:
-                    agid = 2;
-                    break;
-                case 6:
-                case 7:
-                    agid = 3;
-                    break;
-            }
-            this.wgs[agid].renderAccount(acc);
-        },
-        render: function(){
-            var TM = this._TM, gp = this.group;
-            TM.getEl('widget.gtl').innerHTML = gp.getTitle();
 
-            for (var i = 1; i <= 3; i++){
-                this.wgs[i].render();
-            }
-        },
         selectAccount: function(account){
             if (L.isNull(account)){
                 this.selectAccountById(null);

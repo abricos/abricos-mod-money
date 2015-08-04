@@ -20,6 +20,10 @@ Component.entryPoint = function(NS){
                 return title;
             }
             return Abricos.I18n.get('mod.money.account.type.' + type);
+        },
+        getCurrency: function(){
+            var ccId = this.get('currency');
+            return NS.currencyList.getById(ccId);
         }
     });
 
@@ -42,4 +46,24 @@ Component.entryPoint = function(NS){
         appItem: NS.Group
     });
 
+    NS.Currency = Y.Base.create('currency', SYS.AppItem, [], {}, {
+        ATTRS: {
+            id: {value: ''},
+            title: {value: ''},
+            sign: {value: ''}
+        }
+    });
+
+    var CLNG = Abricos.I18n.get('mod.money.currency', {isData: true});
+    NS.currencyList = new SYS.AppItemList({
+        appItem: NS.Currency,
+        items: [
+            CLNG['RUB'],
+            CLNG['USD'],
+            CLNG['EUR'],
+            CLNG['UAH'],
+            CLNG['BYR'],
+            CLNG['AZN']
+        ]
+    });
 };

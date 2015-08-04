@@ -36,33 +36,33 @@ Brick.util.Language.add('en',{'mod': {'money':{
 	'currency':{
 		'RUB': {
 			'id': 'RUB',
-			'tl': 'Russian Rouble',
-			's': 'RUB'
+			'title': 'Russian Rouble',
+			'sign': 'RUB'
 		},
 		'USD': {
 			'id': 'USD',
-			'tl': 'US Dollar',
-			's': '$'
+			'title': 'US Dollar',
+			'sign': '$'
 		},
 		'EUR': {
 			'id': 'EUR',
-			'tl': 'Euro',
-			's': '€'
+			'title': 'Euro',
+			'sign': '€'
 		},
 		'UAH': {
 			'id': 'UAH',
-			'tl': 'Гривна',
-			's': 'грн'
+			'title': 'Гривна',
+			'sign': 'грн'
 		},
 		'BYR': {
 			'id': 'BYR',
-			'tl': 'Белорусский руль',
-			's': 'BYR'
+			'title': 'Белорусский руль',
+			'sign': 'BYR'
 		},
 		'AZN': {
 			'id': 'AZN',
-			'tl': 'Азербайджанский манат',
-			's': 'AZN'
+			'title': 'Азербайджанский манат',
+			'sign': 'AZN'
 		}
 	}
 }}});
