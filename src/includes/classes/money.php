@@ -33,6 +33,8 @@ class Money {
 
     public function AJAX($d){
         switch ($d->do){
+            case "appStructure":
+                return $this->AppStructureToJSON();
             case 'accountList':
                 return $this->AccountListToJSON();
             case 'groupList':
@@ -53,6 +55,24 @@ class Money {
         return $ret;
     }
 
+    public function AppStructureToJSON(){
+        if (!$this->manager->IsViewRole()){
+            return 403;
+        }
+
+        $modelManager = AbricosModelManager::GetManager('money');
+
+        $res = $modelManager->ToJSON('Account,Group');
+        if (empty($res)){
+            return null;
+        }
+
+        $ret = new stdClass();
+        $ret->appStructure = $res;
+        return $ret;
+    }
+
+
     public function AccountListToJSON(){
         $res = $this->AccountList();
         return $this->ResultToJSON('accountList', $res);
@@ -60,6 +80,9 @@ class Money {
 
     private $_cacheAccountList;
 
+    /**
+     * @return int|MoneyAccountList
+     */
     public function AccountList(){
         if (isset($this->_cacheAccountList)){
             return $this->_cacheAccountList;
@@ -82,12 +105,27 @@ class Money {
         return $this->ResultToJSON('groupList', $res);
     }
 
+    private $_cacheGroupList;
+
     public function GroupList(){
+        if (isset($this->_cacheGroupList)){
+            return $this->_cacheGroupList;
+        }
         if (!$this->manager->IsViewRole()){
             return 403;
         }
-    }
 
+        $accountList = $this->AccountList();
+        $groupIds = $accountList->ToArray('groupid');
+
+        $list = $this->models->InstanceClass('GroupList');
+        $rows = MoneyQuery::GroupListByIds($this->db, $groupIds, Abricos::$user->id);
+        while (($d = $this->db->fetch_array($rows))){
+            $list->Add($this->models->InstanceClass('Group', $d));
+        }
+
+        return $this->_cacheGroupList = $list;
+    }
 }
 
 ?>

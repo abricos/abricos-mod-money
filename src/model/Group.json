@@ -4,8 +4,21 @@
     "id": {
       "type": "int"
     },
+    "userid": {
+      "type": "int",
+      "json": "uid"
+    },
     "title": {
-      "type": "string"
+      "type": "string",
+      "json": "tl"
+    },
+    "role": {
+      "type": "int",
+      "json": "r"
+    },
+    "upddate": {
+      "type": "int",
+      "json": "upd"
     }
   }
 }

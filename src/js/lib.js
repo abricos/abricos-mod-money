@@ -59,6 +59,7 @@ Component.entryPoint = function(NS){
     SYS.Application.build(COMPONENT, {
         accountList: {
             cache: 'accountList',
+            request: 'groupList',
             response: function(d){
                 return new NS.AccountList({
                     appInstance: this,
@@ -78,6 +79,12 @@ Component.entryPoint = function(NS){
     }, {
         initializer: function(){
             this.initCallbackFire();
+        }
+    }, [], {
+        ATTRS: {
+            isLoadAppStructure: {
+                value: true
+            }
         }
     });
 
@@ -116,7 +123,7 @@ Component.entryPoint = function(NS){
         return YAHOO.util.Number.format(val, nf);
     };
 
-    // Account User Role Type
+    // old_Account User Role Type
     NS.AURoleType = {
         'NOT': 0,
         'READ': 1,
@@ -306,7 +313,7 @@ Component.entryPoint = function(NS){
     NS.OperList = OperList;
 
     // расчетный счет/кошелек
-    var Account = function(d){
+    var old_Account = function(d){
         d = L.merge({
             'tl': '',	// title
             'bc': 0,	// баланс
@@ -317,13 +324,13 @@ Component.entryPoint = function(NS){
             'r': '0',	// роль текущего пользователя на этот аккаунт
             'tp': 1		// account type
         }, d || {});
-        Account.superclass.constructor.call(this, d);
+        old_Account.superclass.constructor.call(this, d);
     };
-    YAHOO.extend(Account, NS.Item, {
+    YAHOO.extend(old_Account, NS.Item, {
         init: function(d){
             this.roles = new AURoleList();
 
-            Account.superclass.init.call(this, d);
+            old_Account.superclass.init.call(this, d);
         },
         update: function(d){
             this.title = d['tl'];
@@ -372,14 +379,14 @@ Component.entryPoint = function(NS){
             return this.isWriteRole();
         }
     });
-    NS.Account = Account;
+    NS.old_Account = old_Account;
 
-    var AccountList = function(d){
-        AccountList.superclass.constructor.call(this, d, Account);
+    var old_AccountList = function(d){
+        old_AccountList.superclass.constructor.call(this, d, old_Account);
     };
-    YAHOO.extend(AccountList, NS.ItemList, {
+    YAHOO.extend(old_AccountList, NS.ItemList, {
         update: function(d){
-            AccountList.superclass.update.call(this, d);
+            old_AccountList.superclass.update.call(this, d);
 
             this.list = this.list.sort(function(o1, o2){
                 var d1 = L.trim(o1.title), d2 = L.trim(o2.title);
@@ -393,7 +400,7 @@ Component.entryPoint = function(NS){
             });
         }
     });
-    NS.AccountList = AccountList;
+    NS.old_AccountList = old_AccountList;
 
     var AURole = function(d){
         d = L.merge({
@@ -430,25 +437,25 @@ Component.entryPoint = function(NS){
 
 
     // расчетный счет/кошелек
-    var Group = function(d){
+    var old_Group = function(d){
         d = L.merge({
             'tl': ''	// title
         }, d || {});
-        Group.superclass.constructor.call(this, d);
+        old_Group.superclass.constructor.call(this, d);
     };
-    YAHOO.extend(Group, NS.Item, {
+    YAHOO.extend(old_Group, NS.Item, {
         init: function(d){
-            this.accounts = new AccountList();
+            this.accounts = new old_AccountList();
             this.roles = new AURoleList();
             this.categories = new CategoryList();
 
-            Group.superclass.init.call(this, d);
+            old_Group.superclass.init.call(this, d);
         },
         update: function(d){
             this.title = d['tl'];
         },
         createAccount: function(){
-            var account = new NS.Account({
+            var account = new NS.old_Account({
                 'gid': this.id
             });
             var ur = new NS.AURole({
@@ -493,13 +500,13 @@ Component.entryPoint = function(NS){
             return this.isReadRole();
         }
     });
-    NS.Group = Group;
+    NS.old_Group = old_Group;
 
-    var GroupList = function(d){
-        GroupList.superclass.constructor.call(this, d, Group);
+    var old_GroupList = function(d){
+        old_GroupList.superclass.constructor.call(this, d, old_Group);
     };
-    YAHOO.extend(GroupList, NS.ItemList, {});
-    NS.GroupList = GroupList;
+    YAHOO.extend(old_GroupList, NS.ItemList, {});
+    NS.old_GroupList = old_GroupList;
 
     NS.users = UP.viewer.users;
 
@@ -536,7 +543,7 @@ Component.entryPoint = function(NS){
 
             var __self = this;
 
-            this.groups = new GroupList();
+            this.groups = new old_GroupList();
 
             R.load(function(){
                 var sd = {
@@ -635,7 +642,7 @@ Component.entryPoint = function(NS){
             }
         },
         createGroup: function(){
-            var group = new NS.Group();
+            var group = new NS.old_Group();
             group.accounts.add(group.createAccount());
 
             var ur = new NS.AURole({

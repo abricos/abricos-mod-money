@@ -20,6 +20,10 @@ Component.entryPoint = function(NS){
             appInstance.accountList(function(err, result){
                 this.set('waiting', false);
                 console.log(result);
+
+                result.accountList.each(function(acc){
+                    console.log(acc.toJSON());
+                });
             }, this);
         }
     }, {

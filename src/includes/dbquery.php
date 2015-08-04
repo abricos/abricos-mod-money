@@ -130,10 +130,10 @@ class MoneyQuery {
         $sql = "
 			SELECT 
 				g.groupid as id,
-				g.userid as uid,
-				g.title as tl,
-				g.upddate as upd,
-				IF ((ur.role IS NULL), 0, ur.role) as r
+				g.userid,
+				g.title,
+				g.upddate,
+				IF ((ur.role IS NULL), 0, ur.role) as role
 			FROM ".$db->prefix."money_group g
 			LEFT JOIN ".$db->prefix."money_guserrole ur ON g.groupid=ur.groupid AND ur.userid=".bkint($userid)."
 			WHERE ".implode($aw, " OR ")."
@@ -159,17 +159,16 @@ class MoneyQuery {
      */
     public static function AccountList(Ab_Database $db, $userid, $groupid = 0, $accountid = 0) {
         $sql = "
-			SELECT 
-				a.accountid as id,
-				a.groupid as gid,
-				a.title as tl,
-				a.descript as dsc,
-				a.accounttype as tp,
-				a.initbalance as ibc,
-				a.balance as bc,
-				a.currency as cc,
-				ur.role as r,
-				a.upddate as upd
+			SELECT a.accountid as id,
+				a.groupid,
+				a.title,
+				a.descript,
+				a.accounttype,
+				a.initbalance,
+				a.balance,
+				a.currency,
+				ur.role,
+				a.upddate
 			FROM ".$db->prefix."money_auserrole ur
 			INNER JOIN ".$db->prefix."money_account a ON a.accountid=ur.accountid
 			INNER JOIN ".$db->prefix."money_group g ON g.groupid=a.groupid
