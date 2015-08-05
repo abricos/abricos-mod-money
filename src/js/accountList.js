@@ -24,19 +24,20 @@ Component.entryPoint = function(NS){
 
             var elv = Y.one(tp.gel('val'));
             elv.setHTML(NS.numberFormat(acc.balance));
-            return;
+
+
             if (acc.balance >= 0){
-                Dom.replaceClass(elv, 'red', 'green');
+                elv.replaceClass('red', 'green');
             } else {
-                Dom.replaceClass(elv, 'green', 'red');
+                elv.replaceClass( 'green', 'red');
             }
 
-            if (!acc.isEditRole()){
-                Dom.setStyle(gel('bedit'), 'display', 'none');
-                Dom.setStyle(gel('brem'), 'display', 'none');
+            if (!account.isEditRole()){
+                Y.one(tp.gel('bedit')).addClass('hide');
+                Y.one(tp.gel('brem')).addClass('hide');
             }
-            if (!acc.isOperRole()){
-                Dom.setStyle(gel('badd'), 'display', 'none');
+            if (!account.isOperRole()){
+                Y.one(tp.gel('badd')).addClass('hide');
             }
         }
     }, {

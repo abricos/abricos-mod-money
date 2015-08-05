@@ -260,9 +260,9 @@ class MoneyQuery {
         $sql = "
 			SELECT
 				concat(ur.groupid,'-',ur.userid) as id,
-				ur.groupid as aid,
-				ur.userid as u,
-				ur.role as r
+				ur.groupid,
+				ur.userid,
+				ur.role
 			FROM ".$db->prefix."money_guserrole ur
 			WHERE ".implode(" OR ", $wh)."
 		";
@@ -309,9 +309,9 @@ class MoneyQuery {
         $sql = "
 			SELECT
 				concat(ur.accountid,'-',ur.userid) as id,
-				ur.accountid as aid,
-				ur.userid as u,
-				ur.role as r
+				ur.accountid,
+				ur.userid,
+				ur.role
 			FROM ".$db->prefix."money_auserrole ur
 			WHERE ".implode(" OR ", $wh)."
 		";

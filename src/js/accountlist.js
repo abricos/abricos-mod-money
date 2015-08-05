@@ -118,30 +118,7 @@ Component.entryPoint = function(NS){
             }
             return false;
         },
-        render: function(){
-            var TM = this._TM, gel = function(n){
-                return TM.getEl('row.' + n);
-            };
-            acc = this.account;
-            gel('tl').innerHTML = acc.getTitle();
-            gel('cc').innerHTML = acc.currency.sign;
 
-            var elv = gel('val');
-            elv.innerHTML = NS.numberFormat(acc.balance);
-            if (acc.balance >= 0){
-                Dom.replaceClass(elv, 'red', 'green');
-            } else {
-                Dom.replaceClass(elv, 'green', 'red');
-            }
-
-            if (!acc.isEditRole()){
-                Dom.setStyle(gel('bedit'), 'display', 'none');
-                Dom.setStyle(gel('brem'), 'display', 'none');
-            }
-            if (!acc.isOperRole()){
-                Dom.setStyle(gel('badd'), 'display', 'none');
-            }
-        },
         onMenuEditClick: function(){
             NS.life(this.cfg['onEditCallback'], this);
         },
