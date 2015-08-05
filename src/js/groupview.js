@@ -82,11 +82,7 @@ Component.entryPoint = function(NS){
             var el = this._TM.getEl('widget.id');
             el.parentNode.removeChild(el);
         },
-        setFirstAccount: function(){
-            var acc = this.group.accounts.getByIndex(0);
-            this.accountsWidget.selectAccount(acc);
-            return acc;
-        },
+
         onAccountsClickCreate: function(){
             this.showAccountEditor(0);
         },

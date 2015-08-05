@@ -15,6 +15,8 @@ Component.entryPoint = function(NS){
             return this.get('account').toJSON();
         },
         onInitAppWidget: function(err, appInstance){
+            this.publish('menuClick');
+
             var tp = this.template,
                 account = this.get('account'),
                 acc = account.toJSON();
@@ -25,11 +27,10 @@ Component.entryPoint = function(NS){
             var elv = Y.one(tp.gel('val'));
             elv.setHTML(NS.numberFormat(acc.balance));
 
-
             if (acc.balance >= 0){
                 elv.replaceClass('red', 'green');
             } else {
-                elv.replaceClass( 'green', 'red');
+                elv.replaceClass('green', 'red');
             }
 
             if (!account.isEditRole()){
@@ -39,28 +40,56 @@ Component.entryPoint = function(NS){
             if (!account.isOperRole()){
                 Y.one(tp.gel('badd')).addClass('hide');
             }
+        },
+        _isSelectedSetter: function(val){
+            var elSel = Y.one(this.template.gel('sel'));
+
+            if (val){
+                elSel.addClass('sel');
+            } else {
+                elSel.removeClass('sel');
+            }
+            return !!val;
+        },
+        onClick: function(e){
+            switch (e.dataClick) {
+                case 'edit':
+                case 'create':
+                case 'remove':
+                    this.fire('menuClick', {
+                        account: this.get('account'),
+                        action: e.dataClick
+                    });
+                    return true;
+            }
         }
     }, {
         ATTRS: {
             component: {value: COMPONENT},
             templateBlockName: {value: 'row'},
-            account: {value: null}
+            account: {value: null},
+            isSelected: {
+                setter: '_isSelectedSetter'
+            }
         }
     });
 
     NS.AccountGroupRowWidget = Y.Base.create('accountGroupRowWidget', SYS.AppWidget, [], {
-        _ws: [],
         buildTData: function(){
             var groupType = this.get('groupType');
             return {
                 title: Abricos.I18n.get('mod.money.account.group.' + groupType)
             }
         },
+        initializer: function(){
+            this.publish('accountMenuClick');
+            this._clearWidgets();
+        },
         destructor: function(){
             this._clearWidgets();
         },
         _clearWidgets: function(){
-            var ws = this._ws;
+            var ws = this._ws || [];
             for (var i = 0; i < ws.length; i++){
                 ws[i].destroy();
             }
@@ -77,20 +106,48 @@ Component.entryPoint = function(NS){
                 boundingBox: div,
                 account: account
             });
+            w.on('menuClick', this._onRowMenuClick, this);
             ws[ws.length] = w;
             return w;
+        },
+        _onRowMenuClick: function(e){
+            this.fire('accountMenuClick', {action: e.action, account: e.account});
+        },
+        _selectedAccountSetter: function(account){
+            var accountid = 0, ret = null;
+            if (account){
+                accountid = Y.Lang.isNumber(account) ? account : account.get('id');
+            }
+            var ws = this._ws;
+            for (var i = 0; i < ws.length; i++){
+                var w = ws[i];
+                if (w.get('account').get('id') === accountid){
+                    ret = w.get('account');
+                    w.set('isSelected', true);
+                } else {
+                    w.set('isSelected', false);
+                }
+            }
+            return ret;
         }
     }, {
         ATTRS: {
             component: {value: COMPONENT},
             templateBlockName: {value: 'grow,gsmrow'},
-            groupType: {value: 0}
+            groupType: {value: 0},
+            selectedAccount: {
+                setter: '_selectedAccountSetter'
+            }
         }
     });
 
     NS.AccountListWidget = Y.Base.create('accountListWidget', SYS.AppWidget, [], {
-        _wgs: {},
         onInitAppWidget: function(err, appInstance){
+            this.publish('menuClick');
+            this.publish('accountMenuClick');
+
+            this._wgs = {};
+
             var tp = this.template,
                 elList = Y.one(tp.gel('list'));
 
@@ -101,6 +158,7 @@ Component.entryPoint = function(NS){
                     boundingBox: div,
                     groupType: i
                 });
+                this._wgs[i].on('accountMenuClick', this._onAccountMenuClick, this);
             }
 
             this.set('waiting', true);
@@ -113,11 +171,16 @@ Component.entryPoint = function(NS){
                 this.renderList();
             }, this);
         },
+        _onAccountMenuClick: function(e){
+            this.fire('accountMenuClick', {account: e.account, action: e.action});
+        },
         renderList: function(){
             var tp = this.template,
                 groupList = this.get('groupList'),
                 groupid = this.get('groupid'),
                 group = groupList.getById(groupid);
+
+            this.set('group', group);
 
             tp.gel('gtl').innerHTML = group.getTitle();
 
@@ -137,14 +200,44 @@ Component.entryPoint = function(NS){
                 }
                 this._wgs[agid].renderAccount(account);
             }, this);
+        },
+
+        selectAccount: function(account){
+            this.set('selectedAccount', account);
+        },
+        _selectedAccountSetter: function(account){
+            var ret = null;
+
+            for (var i = 1; i <= 3; i++){
+                var w = this._wgs[i];
+                w.set('selectedAccount', account);
+                var acc = w.get('selectedAccount');
+                if (acc){
+                    ret = acc;
+                }
+            }
+            return ret;
+        },
+        onClick: function(e){
+            switch (e.dataClick) {
+                case 'edit':
+                case 'create':
+                case 'remove':
+                    this.fire('menuClick', {group: this.get('group'), action: e.dataClick});
+                    return true;
+            }
         }
     }, {
         ATTRS: {
             component: {value: COMPONENT},
             templateBlockName: {value: 'widget'},
             groupid: {value: null},
+            group: {value: null},
             groupList: {value: null},
-            accountList: {value: null}
+            accountList: {value: null},
+            selectedAccount: {
+                setter: '_selectedAccountSetter'
+            }
         }
     });
 

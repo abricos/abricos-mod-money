@@ -21,6 +21,7 @@ Component.entryPoint = function(NS){
                 this.set('waiting', false);
                 if (!err){
                     this.set('groupList', result.groupList);
+                    this.set('accountList', result.accountList);
                 }
                 this.renderGroup();
             }, this);
@@ -47,12 +48,26 @@ Component.entryPoint = function(NS){
                 boundingBox: tp.gel('acclist'),
                 groupid: group.get('id')
             });
-        }
+
+            this.setFirstAccount();
+        },
+        setFirstAccount: function(){
+            var groupid = this.get('groupid'),
+                first = null;
+            this.get('accountList').each(function(account){
+                if (!first && account.get('groupid') === groupid){
+                    first = account;
+                }
+            }, this);
+            this.accountsWidget.set('selectedAccount', first);
+            return first;
+        },
     }, {
         ATTRS: {
             component: {value: COMPONENT},
             templateBlockName: {value: 'widget'},
             groupList: {value: null},
+            accountList: {value: null},
             group: {value: null},
             groupid: {value: 0}
         }

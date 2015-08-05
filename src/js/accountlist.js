@@ -18,8 +18,7 @@ Component.entryPoint = function(NS){
 
     var CE = YAHOO.util.CustomEvent;
 
-    var LNG = this.language,
-        buildTemplate = this.buildTemplate;
+    var buildTemplate = this.buildTemplate;
 
     var elChildForeach = function(el, callback){
         NS.life(callback, el);
@@ -67,85 +66,13 @@ Component.entryPoint = function(NS){
         this.init(container, account, cfg);
     };
     AccountRowWidget.prototype = {
-        init: function(container, acc, cfg){
-            this.account = acc;
-            this.selected = false;
-            this.cfg = cfg;
-
-            var TM = buildTemplate(this, 'row'),
-                div = document.createElement('div');
-
-            div.innerHTML = TM.replace('row', {
-                'id': acc.id
-            });
-            container.appendChild(div.childNodes[0]);
-
-            this.render();
-        },
         destroy: function(){
             var el = this._TM.getEl('row.id');
             el.parentNode.removeChild(el);
         },
-        onClick: function(el){
-            var tp = this._TId['row'];
-            switch (el.id) {
-                case tp['bedit']:
-                case tp['beditc']:
-                    this.onMenuEditClick();
-                    return true;
 
-                case tp['badd']:
-                case tp['baddc']:
-                    this.onMenuAddOperClick();
-                    return true;
-
-                case tp['brem']:
-                case tp['bremc']:
-                    this.onMenuRemoveClick();
-                    return true;
-            }
-
-            var TM = this._TM, findClick = false;
-
-            elChildForeach(TM.getEl('row.id'), function(fel){
-                if (fel == el){
-                    findClick = true;
-                }
-            });
-            if (findClick){
-                this.onSelectByClick();
-                return true;
-            }
-            return false;
-        },
-
-        onMenuEditClick: function(){
-            NS.life(this.cfg['onEditCallback'], this);
-        },
-        onMenuRemoveClick: function(){
-            NS.life(this.cfg['onRemoveCallback'], this);
-        },
-        onMenuAddOperClick: function(){
-            NS.life(this.cfg['onAddOperCallback'], this);
-        },
         onSelectByClick: function(){
             NS.life(this.cfg['onSelCallback'], this);
-        },
-        select: function(){
-            this.selected = true;
-            this.renderSelStatus();
-        },
-        unSelect: function(){
-            this.selected = false;
-            this.renderSelStatus();
-        },
-        renderSelStatus: function(){
-            var TM = this._TM;
-            if (this.selected){
-                Dom.addClass(TM.getEl('row.sel'), 'sel');
-            } else {
-                Dom.removeClass(TM.getEl('row.sel'), 'sel');
-            }
         }
     };
     NS.AccountRowWidget = AccountRowWidget;
@@ -222,19 +149,6 @@ Component.entryPoint = function(NS){
         },
         onSelectByClick: function(rowWidget){
             NS.life(this.cfg['onSelCallback'], rowWidget);
-        },
-        selectAccount: function(accountid){
-            var reta = null;
-            for (var i = 0; i < this.ws.length; i++){
-                var w = this.ws[i];
-                if (w.account.id == accountid){
-                    reta = w.account;
-                    w.select();
-                } else {
-                    w.unSelect();
-                }
-            }
-            return reta;
         }
     };
     NS.AccountGroupRowWidget = AccountGroupRowWidget;
@@ -292,20 +206,6 @@ Component.entryPoint = function(NS){
             mm.accountChangedEvent.subscribe(this.onAccountChanged, this, true);
             mm.accountRemovedEvent.subscribe(this.onAccountChanged, this, true);
         },
-        destroy: function(){
-            var mm = NS.moneyManager;
-            mm.balanceChangedEvent.unsubscribe(this.onBalanceChanged);
-
-            mm.accountCreatedEvent.unsubscribe(this.onAccountChanged);
-            mm.accountChangedEvent.unsubscribe(this.onAccountChanged);
-            mm.accountRemovedEvent.unsubscribe(this.onAccountChanged);
-
-            for (var i = 1; i <= 3; i++){
-                this.wgs[i].destroy();
-            }
-            var el = this._TM.getEl('widget.id');
-            el.parentNode.removeChild(el);
-        },
         onAccountChanged: function(e, prm){
             this.reBuildList();
         },
@@ -348,26 +248,7 @@ Component.entryPoint = function(NS){
             }
         },
 
-        selectAccount: function(account){
-            if (L.isNull(account)){
-                this.selectAccountById(null);
-            } else {
-                this.selectAccountById(account.id);
-            }
-        },
-        selectAccountById: function(accountid){
 
-            var reta = null;
-            for (var i = 1; i <= 3; i++){
-                var acc = this.wgs[i].selectAccount(accountid);
-                if (!L.isNull(acc)){
-                    reta = acc;
-                }
-            }
-            this.selectedAccount = reta;
-            this.onSelectAccount(reta);
-            return reta;
-        },
         onSelectAccount: function(account){
             this.selectChangedEvent.fire(account);
         },
