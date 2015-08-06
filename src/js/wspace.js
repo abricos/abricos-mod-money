@@ -48,6 +48,10 @@ Component.entryPoint = function(NS){
             this.appURLUpdate();
 
             if (!firstGroupId){
+                this.showWorkspacePage({
+                    component: 'groupEditor',
+                    widget: 'GroupEditorWidget'
+                });
             } else {
                 this.showWorkspacePage({
                     component: 'groupView',

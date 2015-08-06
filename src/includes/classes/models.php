@@ -38,5 +38,13 @@ class MoneyAccountUserRoleList extends AbricosModelList {
 
 }
 
+class MoneyUser extends AbricosModel {
+    protected $_structModule = 'money';
+    protected $_structName = 'User';
+}
+
+class MoneyUserList extends AbricosModelList {
+
+}
 
 ?>

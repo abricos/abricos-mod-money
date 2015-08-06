@@ -48,7 +48,7 @@ if ($updateManager->isInstall()) {
 		  role tinyint(1) unsigned NOT NULL DEFAULT 0 COMMENT 'Роль пользователя: 0-нет доступа, 1-только для чтения, 2-запись, 3-админ',
 
 		  deldate int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Дата удаления',
-		  UNIQUE KEY group (groupid, userid)
+		  UNIQUE KEY `group` (groupid, userid)
 		)".$charset);
 
 

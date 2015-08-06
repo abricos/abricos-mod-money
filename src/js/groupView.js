@@ -74,8 +74,9 @@ Component.entryPoint = function(NS){
     });
 
     NS.GroupViewWidget.parseURLParam = function(args){
+        args = args || [];
         return {
-            groupid: args[0] | 0
+            groupid: (args[0] | 0)
         };
     };
 

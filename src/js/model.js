@@ -12,10 +12,10 @@ Component.entryPoint = function(NS){
         UID = Brick.env.user.id;
 
     NS.AURoleType = {
-        'NOT': 0,
-        'READ': 1,
-        'WRITE': 2,
-        'ADMIN': 3
+        NOT: 0,
+        READ: 1,
+        WRITE: 2,
+        ADMIN: 3
     };
 
     NS.Account = Y.Base.create('account', SYS.AppModel, [], {
@@ -139,6 +139,21 @@ Component.entryPoint = function(NS){
 
     NS.GroupList = Y.Base.create('groupList', SYS.AppModelList, [], {
         appItem: NS.Group
+    });
+
+    NS.User = Y.Base.create('user', SYS.AppModel, [], {
+        structureName: 'User',
+        getUserName: function(){
+            var d = this.toJSON();
+            if (d.firstname !== '' && d.lastname !== ''){
+                return d.firstname + ' ' + d.lastname;
+            }
+            return d.username;
+        }
+    });
+
+    NS.UserList = Y.Base.create('userList', SYS.AppModelList, [], {
+        appItem: NS.User
     });
 
     NS.Currency = Y.Base.create('currency', SYS.AppItem, [], {}, {

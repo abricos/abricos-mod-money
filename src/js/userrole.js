@@ -190,79 +190,13 @@ Component.entryPoint = function(NS){
             }
             return false;
         },
+
         renderRole: function(ur){
             var w = new NS.RoleRowWidget(this._TM.getEl('urlist.list'), ur, this.config);
             this.ws[this.ws.length] = w;
             return w;
         },
-        showEditor: function(){
-            if (!L.isNull(this.usersWidget)){
-                return;
-            }
-            var TM = this._TM, ids = [], ws = this.ws;
 
-            for (var i = 0; i < ws.length; i++){
-                ids[ids.length] = ws[i].role.userid;
-            }
-
-            this.usersWidget =
-                new Brick.mod.uprofile.UserSelectWidget(TM.getEl('urlist.users'), ids);
-
-            Dom.setStyle(TM.getEl('urlist.v'), 'display', 'none');
-            Dom.setStyle(TM.getEl('urlist.e'), 'display', '');
-        },
-        hideEditor: function(){
-            if (L.isNull(this.usersWidget)){
-                return [];
-            }
-            var TM = this._TM;
-
-            var uIds = this.usersWidget.getSelectedUsers();
-            this.usersWidget = null;
-
-            TM.getEl('urlist.users').innerHTML = '';
-            Dom.setStyle(TM.getEl('urlist.v'), 'display', '');
-            Dom.setStyle(TM.getEl('urlist.e'), 'display', 'none');
-            return uIds;
-        },
-        cancelEdChanges: function(){
-            this.hideEditor();
-        },
-        applyEdChanges: function(){
-            var uIds = this.hideEditor(), ws = this.ws, nws = [];
-
-            uIds[uIds.length] = UID;
-
-            for (var i = 0; i < ws.length; i++){
-                var find = false;
-                for (var ii = 0; ii < uIds.length; ii++){
-                    if (ws[i].role.userid == uIds[ii]){
-                        find = true;
-                    }
-                }
-                if (!find){
-                    ws[i].destroy();
-                } else {
-                    nws[nws.length] = ws[i];
-                }
-            }
-            this.ws = nws;
-            for (var ii = 0; ii < uIds.length; ii++){
-                var find = false;
-                for (var i = 0; i < ws.length; i++){
-                    if (ws[i].role.userid == uIds[ii]){
-                        find = true;
-                    }
-                }
-                if (!find){
-                    var ur = new NS.AURole({
-                        'r': NS.AURoleType['WRITE'],
-                        'u': uIds[ii]
-                    });
-                    this.renderRole(ur);
-                }
-            }
-        },
         getSaveData: function(){
             var ws = this.ws, sd = [];
             for (var i = 0; i < ws.length; i++){

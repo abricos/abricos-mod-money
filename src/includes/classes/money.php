@@ -33,6 +33,8 @@ class Money {
         $models->RegisterClass('AccountList', 'MoneyAccountList');
         $models->RegisterClass('AccountUserRole', 'MoneyAccountUserRole');
         $models->RegisterClass('AccountUserRoleList', 'MoneyAccountUserRoleList');
+        $models->RegisterClass('User', 'MoneyUser');
+        $models->RegisterClass('UserList', 'MoneyUserList');
     }
 
     public function AJAX($d){
@@ -47,6 +49,8 @@ class Money {
                 return $this->GroupUserRoleListToJSON();
             case 'accountUserRoleList':
                 return $this->AccountUserRoleListToJSON();
+            case 'userList':
+                return $this->UserListToJSON();
         }
         return null;
     }
@@ -70,7 +74,7 @@ class Money {
 
         $modelManager = AbricosModelManager::GetManager('money');
 
-        $res = $modelManager->ToJSON('Account,Group,AccountUserRole,GroupUserRole');
+        $res = $modelManager->ToJSON('Account,Group,AccountUserRole,GroupUserRole,User');
         if (empty($res)){
             return null;
         }
@@ -187,6 +191,32 @@ class Money {
         }
 
         return $this->_cacheAccountUserRoleList = $list;
+    }
+
+    public function UserListToJSON(){
+        $res = $this->UserList();
+        return $this->ResultToJSON('userList', $res);
+    }
+
+    private $_cacheUserList;
+
+    public function UserList(){
+        if (isset($this->_cacheUserList)){
+            return $this->_cacheUserList;
+        }
+        if (!$this->manager->IsViewRole()){
+            return 403;
+        }
+
+        $userIds = $this->GroupUserRoleList()->ToArray('userid');
+        $userIds += $this->AccountUserRoleList()->ToArray('userid');
+
+        $list = $this->models->InstanceClass('UserList');
+        $rows = MoneyQuery::UserListByIds($this->db, $userIds);
+        while (($d = $this->db->fetch_array($rows))){
+            $list->Add($this->models->InstanceClass('User', $d));
+        }
+        return $this->_cacheUserList = $list;
     }
 }
 

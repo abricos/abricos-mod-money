@@ -69,21 +69,6 @@ Component.entryPoint = function(NS){
     GroupEditWidget.prototype = {
         init: function(container, groupid){
 
-            var group = NS.moneyManager.groups.get(groupid);
-            if (L.isNull(group)){
-                group = NS.moneyManager.createGroup();
-            }
-            this.group = group;
-
-            var TM = buildTemplate(this, 'widget'),
-                gel = function(n){
-                    return TM.getEl('widget.' + n);
-                };
-
-            container.innerHTML = TM.replace('widget', {
-                'gstclass': group.id > 0 ? 'isgedit' : 'isgnew'
-            });
-
             this.widget = new GroupEditorFormWidget(gel('editor'), group);
 
             var __self = this;
