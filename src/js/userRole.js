@@ -12,6 +12,47 @@ Component.entryPoint = function(NS){
         SYS = Brick.mod.sys,
         UID = Brick.env.user.id;
 
+    NS.RoleHelpWidget = Y.Base.create('roleHelpWidget', SYS.AppWidget, [], {
+        buildTData: function(){
+            var tp = this.template;
+            return {
+                lst: tp.replace(this.get('isAccount') ? 'hacc' : 'hgroup')
+            };
+        },
+        onInitAppWidget: function(err, appInstance){
+            this.publish('close');
+            this._roleSetter(this.get('role'));
+        },
+        _roleSetter: function(role){
+            var tp = this.template,
+                el = Y.one(tp.gel('wrp')),
+                cpfx = 'rid';
+            if (!el){
+                return;
+            }
+            for (var i = 0; i <= 3; i++){
+                el.removeClass(cpfx + i);
+            }
+            el.addClass(cpfx + role);
+        },
+        onClick: function(e){
+            switch (e.dataClick) {
+                case 'close':
+                    this.fire('close');
+                    return true;
+            }
+        }
+    }, {
+        ATTRS: {
+            component: {value: COMPONENT},
+            templateBlockName: {value: 'help,hacc,hgroup'},
+            role: {
+                value: 0,
+                setter: '_roleSetter'
+            }
+        }
+    });
+
     NS.RoleRowWidget = Y.Base.create('roleRowWidget', SYS.AppWidget, [], {
         buildTData: function(){
             var user = this.getUser();
@@ -34,11 +75,15 @@ Component.entryPoint = function(NS){
             }
             elSel.on('change', this.updateHelp, this);
         },
+        getRoleValue: function(){
+            return this.template.gel('rs').value | 0;
+        },
         updateHelp: function(){
             if (!this.helpWidget){
                 return;
             }
-            this.helpWidget.setRole(this.getSaveData());
+            var role = this.getRoleValue();
+            this.helpWidget.set('role', role);
         },
         getUser: function(){
             var role = this.get('role'),
@@ -50,7 +95,7 @@ Component.entryPoint = function(NS){
             if (!user){ // TODO: optimize uprofile module
                 var upUser = Brick.mod.uprofile.viewer.users.get(userid);
                 userList.add([{
-                    id: upUser.id|0,
+                    id: upUser.id | 0,
                     unm: upUser.userName,
                     fnm: upUser.firstName,
                     lnm: upUser.lastName,
@@ -61,9 +106,28 @@ Component.entryPoint = function(NS){
 
             return user;
         },
+        showHelp: function(){
+            if (this.helpWidget){
+                return;
+            }
+            this.helpWidget = new NS.RoleHelpWidget({
+                boundingBox: this.template.gel('help'),
+                role: this.getRoleValue(),
+                isAccount: this.get('owner').get('isAccount')
+            });
+            this.helpWidget.on('close', this.closeHelp, this);
+        },
+        closeHelp: function(){
+            if (!this.helpWidget){
+                return;
+            }
+            this.helpWidget.destroy();
+            this.helpWidget = null;
+        },
         onClick: function(e){
             switch (e.dataClick) {
-                case '':
+                case 'info':
+                    this.showHelp();
                     return true;
             }
         }
