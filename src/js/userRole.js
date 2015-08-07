@@ -111,7 +111,7 @@ Component.entryPoint = function(NS){
                 return;
             }
             this.helpWidget = new NS.RoleHelpWidget({
-                boundingBox: this.template.gel('help'),
+                srcNode: Y.one(this.template.gel('help')).appendChild('<div></div>'),
                 role: this.getRoleValue(),
                 isAccount: this.get('owner').get('isAccount')
             });
