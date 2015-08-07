@@ -48,10 +48,14 @@ Component.entryPoint = function(NS){
             }
 
             this.rolesWidget = new NS.RoleListWidget({
-                boundingBox: tp.gel('ulst'),
+                srcNode: tp.gel('ulst'),
                 readOnly: readOnly,
                 isAccount: false,
                 ownerid: groupid
+            });
+            this.accountListWidget = new NS.AccountEditorListWidget({
+                srcNode: tp.gel('accountList'),
+                group: group
             });
 
         },

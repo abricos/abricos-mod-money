@@ -10,8 +10,36 @@ Component.entryPoint = function(NS){
         COMPONENT = this,
         SYS = Brick.mod.sys;
 
-    NS.AccountEditorWidget = Y.Base.create('accountEditorWidget', SYS.AppWidget, [
-    ], {
+    NS.AccountEditorRowWidget = Y.Base.create('accountEditorRowWidget', SYS.AppWidget, [], {
+        onInitAppWidget: function(err, appInstance){
+            var tp = this.template,
+                account = this.get('account'),
+                accountid = account.get('id'),
+                readOnly = accountid > 0 && !account.isAdminRole();
+
+            this.rolesWidget = new NS.RoleListWidget({
+                srcNode: tp.gel('ulst'),
+                readOnly: readOnly,
+                isAccount: true,
+                ownerid: accountid
+            });
+
+            this.currencyWidget = new NS.CurrencySelectWidget({
+                srcNode: tp.gel('cc'),
+                readOnly: readOnly,
+                selected: account.get('currency')
+            });
+        }
+    }, {
+        ATTRS: {
+            component: {value: COMPONENT},
+            templateBlockName: {value: 'row'},
+            account: {value: null},
+            isFirst: {value: false}
+        }
+    });
+
+    NS.AccountEditorWidget = Y.Base.create('accountEditorWidget', SYS.AppWidget, [], {
         buildTData: function(){
             return {
                 'gstclass': this.get('groupid') > 0 ? 'isgedit' : 'isgnew'
@@ -58,4 +86,32 @@ Component.entryPoint = function(NS){
         }
     });
 
+    NS.AccountEditorListWidget = Y.Base.create('accountEditorListWidget', SYS.AppWidget, [], {
+        onInitAppWidget: function(err, appInstance){
+            this._ws = [];
+            var group = this.get('group'),
+                groupid = group.get('id');
+
+            if (groupid === 0){
+                var account = new NS.Account({appInstance: appInstance});
+                this._renderAccount(account);
+            } else {
+                this.get('group').accountEach(this._renderAccount, this);
+            }
+        },
+        _renderAccount: function(account){
+            var w = new NS.AccountEditorRowWidget({
+                srcNode: Y.one(this.template.gel('list')).appendChild('<div></div>'),
+                account: account
+            });
+            this._ws[this._ws.length] = w;
+        }
+
+    }, {
+        ATTRS: {
+            component: {value: COMPONENT},
+            templateBlockName: {value: 'widget'},
+            group: {value: null}
+        }
+    });
 };

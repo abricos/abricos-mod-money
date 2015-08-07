@@ -116,6 +116,15 @@ Component.entryPoint = function(NS){
         },
         isOperRole: function(){
             return this.isWriteRole();
+        },
+        accountEach: function(fn, context){
+            var groupid = this.get('groupid');
+            this.appInstance.getFromCache('accountList').each(function(account){
+                if (account.get('groupid') !== groupid){
+                    return;
+                }
+                fn.call(context || this, account)
+            }, this);
         }
     });
 

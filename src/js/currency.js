@@ -1,9 +1,3 @@
-/*
- @package Abricos
- @copyright Copyright (C) 2008 Abricos All rights reserved.
- @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
- */
-
 var Component = new Brick.Component();
 Component.requires = {
     mod: [
@@ -11,48 +5,49 @@ Component.requires = {
     ]
 };
 Component.entryPoint = function(NS){
+    var Y = Brick.YUI,
+        COMPONENT = this,
+        SYS = Brick.mod.sys;
 
-    var Dom = YAHOO.util.Dom,
-        E = YAHOO.util.Event,
-        L = YAHOO.lang;
-
-    var buildTemplate = this.buildTemplate;
-
-    var CurrencySelectWidget = function(container, ccid, cfg){
-        ccid = ccid || 'RUB';
-        cfg = L.merge({
-            'readonly': false,
-            'select': '',
-            'filter': null,
-            'mode': 0 // 0 - сокращение, 1 - название, 2 - код+название
-        }, cfg || {});
-        this.init(container, ccid, cfg);
-    };
-    CurrencySelectWidget.prototype = {
-        init: function(container, ccid, cfg){
-            var TM = buildTemplate(this, 'select,row'), lst = '';
-
-            NS.currencyList.foreach(function(cc){
-                var tl = cc.sign;
-                lst += TM.replace('row', {
-                    'id': cc.id,
-                    'tl': tl
-                });
+    NS.CurrencySelectWidget = Y.Base.create('currencySelectWidget', SYS.AppWidget, [], {
+        onInitAppWidget: function(err, appInstance, options){
+            var tp = this.template, lst = "";
+            NS.currencyList.each(function(currency){
+                lst += tp.replace('row', currency.toJSON());
             });
-            container.innerHTML = TM.replace('select', {'rows': lst});
-            this.setValue(ccid);
-            if (cfg['readonly']){
-                TM.getEl('select.id').disabled = 'disabled';
+            var el = Y.one(tp.gel('id'));
+            el.setHTML(lst);
+            if (options && options.arguments && options.arguments[0] && options.arguments[0].selected){
+                this.set('selected', options.arguments[0].selected);
             }
-        },
-        destroy: function(){
-        },
-        getValue: function(){
-            return this._TM.getEl('select.id').value;
-        },
-        setValue: function(val){
-            this._TM.getEl('select.id').value = val;
         }
-    };
-    NS.CurrencySelectWidget = CurrencySelectWidget;
+    }, {
+        ATTRS: {
+            component: {value: COMPONENT},
+            templateBlockName: {value: 'select,row'},
+            selected: {
+                value: Abricos.config.locale === 'ru-RU' ? 'RUB' : 'USD',
+                setter: function(val){
+                    var el = Y.one(this.template.gel('id'));
+                    if (!el){
+                        return;
+                    }
+                    el.set('value', val);
+                    return val;
+                },
+                getter: function(){
+                    var el = Y.one(this.template.gel('id'));
+                    if (!el){
+                        return;
+                    }
+                    return el.get('value');
+                }
+            },
+            readOnly: {value: false},
+            mode: {
+                value: 0 // 0 - сокращение, 1 - название, 2 - код+название
+            }
+        }
+    });
+
 };
