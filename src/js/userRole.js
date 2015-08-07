@@ -41,7 +41,6 @@ Component.entryPoint = function(NS){
             this.helpWidget.setRole(this.getSaveData());
         },
         getUser: function(){
-
             var role = this.get('role'),
                 owner = this.get('owner'),
                 userList = owner.get('appInstance').getFromCache('userList'),
@@ -50,15 +49,14 @@ Component.entryPoint = function(NS){
 
             if (!user){ // TODO: optimize uprofile module
                 var upUser = Brick.mod.uprofile.viewer.users.get(userid);
-                user = new NS.User({
-                    appInstance: this.get('appInstance'),
+                userList.add([{
                     id: upUser.id|0,
                     unm: upUser.userName,
                     fnm: upUser.firstName,
                     lnm: upUser.lastName,
                     avt: upUser.avatar
-                });
-                userList.add(user);
+                }]);
+                user = userList.getById(userid);
             }
 
             return user;
