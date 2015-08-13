@@ -43,7 +43,6 @@ Component.entryPoint = function(NS){
                     return el.get('value');
                 }
             },
-            readOnly: {value: false},
             mode: {
                 value: 0 // 0 - сокращение, 1 - название, 2 - код+название
             }

@@ -12,8 +12,8 @@ Component.entryPoint = function(NS){
         SYS = Brick.mod.sys;
 
     NS.GroupEditorWidget = Y.Base.create('groupEditorWidget', SYS.AppWidget, [
-        SYS.Form,
-        SYS.FormAction
+        SYS.Form
+        // , SYS.FormAction
     ], {
         buildTData: function(){
             return {
@@ -41,10 +41,8 @@ Component.entryPoint = function(NS){
 
             this.set('model', group);
 
-            tp.gel('tl').value = group.get('title');
-
             if (readOnly){
-                tp.gel('tl').disabled = 'disabled';
+                tp.gel('title').disabled = 'disabled';
             }
 
             this.rolesWidget = new NS.RoleListWidget({
@@ -53,23 +51,39 @@ Component.entryPoint = function(NS){
                 isAccount: false,
                 ownerid: groupid
             });
+
             this.accountListWidget = new NS.AccountEditorListWidget({
                 srcNode: tp.gel('accountList'),
                 group: group
             });
-
-        },
-        onSubmitFormAction: function(){
-            this.set('waiting', true);
-
-            var model = this.get('model');
-
-            this.get('appInstance').configSave(model, function(err, result){
-                this.set('waiting', false);
-            }, this);
         },
         onClick: function(e){
+            switch (e.dataClick) {
+                case 'save':
+                    this.save();
+                    return true;
+                case 'cancel':
+                    return true;
+            }
+        },
+        toJSON: function(){
+            this.updateModelFromUI();
 
+            var d = this.get('model').toJSON();
+            d.roles = this.rolesWidget.toJSON();
+            d.accounts = this.accountListWidget.toJSON();
+
+            return d;
+        },
+        save: function(){
+            this.set('waiting', true);
+
+            var d = this.toJSON();
+            console.log(d.accounts[0]);
+
+            this.get('appInstance').groupSave(d, function(err, result){
+                this.set('waiting', false);
+            }, this);
         }
     }, {
         ATTRS: {

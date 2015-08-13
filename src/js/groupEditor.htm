@@ -5,36 +5,37 @@
         <div class="col-md-7">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h3 class="panel-title stgnew">{#mod.money.groupeditor.widget.1}</h3>
-
-                    <h3 class="panel-title stgedt">{#mod.money.groupeditor.widget.2}</h3>
+                    <h3 class="panel-title">
+                        <span class="stgnew">{#mod.money.groupeditor.widget.1}</span>
+                        <span class="stgedt">{#mod.money.groupeditor.widget.2}</span>
+                    </h3>
                 </div>
                 <div class="panel-body">
-                    <form>
-                        <div class="form-group">
-                            <label class="control-label">{#mod.money.groupeditor.editor.1}</label>
-                            <input id="{i#tl}" type="text" class="form-control"/>
-                        </div>
-                        <div class="form-group">
-                            <label class="control-label">Участники</label>
+                    <div class="form-group">
+                        <label class="control-label">{#mod.money.groupeditor.editor.1}</label>
+                        <input name="title" type="text" class="form-control"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Участники</label>
 
-                            <div id="{i#ulst}"></div>
-                        </div>
-                        <div id="{i#accountList}"></div>
+                        <div id="{i#ulst}"></div>
+                    </div>
+                    <div id="{i#accountList}"></div>
 
-                        <div class="text-right">
-                            <button id="{i#bcreate}" class="btn btn-primary stgnew" type="button">
-                                {#mod.money.groupeditor.widget.3}
-                            </button>
-                            <input id="{i#bsave}" type="button" value="{#mod.money.groupeditor.widget.4}"
-                                   class="btn btn-primary stgedt"/>
-                            <input id="{i#bcancel}" type="button" value="{#mod.money.groupeditor.widget.5}"
-                                   class="btn btn-default"/>
-                            <input id="{i#bclose}" type="button" value="{#mod.money.groupeditor.widget.6}"
-                                   class="btn btn-default"/>
-                        </div>
-                    </form>
-
+                    <div class="text-right">
+                        <button id="{i#bcreate}" data-click="save" class="btn btn-primary stgnew">
+                            {#mod.money.groupeditor.widget.3}
+                        </button>
+                        <button id="{i#bsave}" data-click="save" class="btn btn-primary stgedt">
+                            {#mod.money.groupeditor.widget.4}
+                        </button>
+                        <button id="{i#bcancel}" data-click="cancel" class="btn btn-default">
+                            {#mod.money.groupeditor.widget.5}
+                        </button>
+                        <button id="{i#bclose}" data-click="cancel" class="btn btn-default">
+                            {#mod.money.groupeditor.widget.6}
+                        </button>
+                    </div>
                 </div>
             </div>
 

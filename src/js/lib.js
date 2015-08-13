@@ -74,6 +74,9 @@ Component.entryPoint = function(NS){
                 return new NS.GroupList({appInstance: this, items: d.list});
             }
         },
+        groupSave: {
+            args: ['group']
+        },
         accountList: {
             request: 'accountUserRoleList',
             cache: 'accountList',

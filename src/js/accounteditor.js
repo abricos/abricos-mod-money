@@ -64,25 +64,6 @@ Component.entryPoint = function(NS){
                 gel('bc').disabled = 'disabled';
             }
         },
-        destroy: function(){
-            this.rolesWidget.destroy();
-            this.currencyWidget.destroy();
-
-            var el = this._TM.getEl('row.id');
-            el.parentNode.removeChild(el);
-        },
-        onClick: function(el){
-            if (this.rolesWidget.onClick(el)){
-                return true;
-            }
-            var tp = this._TId['row'];
-            switch (el.id) {
-                case tp['bremove']:
-                    this.onRemoveWidget();
-                    return true;
-            }
-            return false;
-        },
         getSaveData: function(){
             var TM = this._TM, gel = function(n){
                 return TM.getEl('row.' + n);
@@ -98,12 +79,7 @@ Component.entryPoint = function(NS){
             };
             return sd;
         },
-        onRemoveWidget: function(){
-            if (!L.isFunction(this.callbackRemove)){
-                return;
-            }
-            this.callbackRemove(this);
-        }
+
     };
     NS.AccountEditorRowWidget = AccountEditorRowWidget;
 
@@ -201,69 +177,11 @@ Component.entryPoint = function(NS){
     };
     AccountEditorListWidget.prototype = {
         init: function(container, group){
-            this.group = group;
-
-            var TM = buildTemplate(this, 'widget');
-            container.innerHTML = TM.replace('widget');
-
-            var __self = this;
-            E.on(container, 'click', function(e){
-                var el = E.getTarget(e);
-                if (__self.onClick(el)){
-                    E.preventDefault(e);
-                }
-            });
-
             var isFirst = false;
             if (!group.isCreateAccountRole()){
                 Dom.setStyle(TM.getEl('widget.bslst'), 'display', 'none');
                 isFirst = true;
             }
-
-            this.ws = [];
-            var __self = this;
-            group.accounts.foreach(function(acc){
-                __self.renderAccount(acc, isFirst);
-                isFirst = false;
-            });
-        },
-        destroy: function(){
-            this._clearws();
-        },
-        onClick: function(el){
-            var ws = this.ws;
-            for (var i = 0; i < ws.length; i++){
-                if (ws[i].onClick(el)){
-                    return true;
-                }
-            }
-            var tp = this._TId['widget'];
-            switch (el.id) {
-                case tp['bcreate']:
-                    this.createAccount();
-                    return true;
-            }
-            return false;
-        },
-        _clearws: function(){
-            for (var i = 0; i < this.ws.length; i++){
-                this.ws[i].destroy();
-            }
-            this.ws = [];
-        },
-        createAccount: function(){
-            var acc = this.group.createAccount();
-            this.renderAccount(acc, true);
-        },
-        renderAccount: function(acc, isFirst){
-            var __self = this;
-            var w =
-                new NS.AccountEditorRowWidget(this._TM.getEl('widget.list'), acc, isFirst, function(wd){
-                    __self.accountRemove(wd.account);
-                });
-
-            this.ws[this.ws.length] = w;
-            return w;
         },
         getSaveData: function(){
             var ws = this.ws, sd = [];
@@ -272,17 +190,6 @@ Component.entryPoint = function(NS){
             }
             return sd;
         },
-        accountRemove: function(acc){
-            var ws = this.ws, nws = [];
-            for (var i = 0; i < ws.length; i++){
-                if (ws[i].account != acc){
-                    nws[nws.length] = ws[i];
-                } else {
-                    ws[i].destroy();
-                }
-            }
-            this.ws = nws;
-        }
     };
     NS.AccountEditorListWidget = AccountEditorListWidget;
 

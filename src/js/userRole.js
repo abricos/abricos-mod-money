@@ -130,6 +130,12 @@ Component.entryPoint = function(NS){
                     this.showHelp();
                     return true;
             }
+        },
+        toJSON: function(){
+            return {
+                r: this.getRoleValue(),
+                u: this.getUser().get('id')
+            }
         }
     }, {
         ATTRS: {
@@ -156,17 +162,6 @@ Component.entryPoint = function(NS){
             }, this);
 
         },
-        each: function(fn){
-            var ownerid = this.get('ownerid'),
-                isAccount = this.get('isAccount');
-
-            this.get('roleList').each(function(role){
-                if (role.get(isAccount ? 'accountid' : 'groupid') !== ownerid){
-                    return;
-                }
-                fn.call(this, role);
-            }, this);
-        },
         _renderRole: function(role){
             var tp = this.template,
                 ownerid = this.get('ownerid'),
@@ -181,7 +176,15 @@ Component.entryPoint = function(NS){
             this._ws[this._ws.length] = w;
         },
         _renderRoleList: function(){
-            this.each(this._renderRole, this);
+            var ownerid = this.get('ownerid'),
+                isAccount = this.get('isAccount');
+
+            this.get('roleList').each(function(role){
+                if (role.get(isAccount ? 'accountid' : 'groupid') !== ownerid){
+                    return;
+                }
+                this._renderRole(role);
+            }, this);
         },
         showEditor: function(){
             if (this.usersWidget){
@@ -283,6 +286,13 @@ Component.entryPoint = function(NS){
                     this.cancelEdChanges();
                     return true;
             }
+        },
+        toJSON: function(){
+            var ws = this._ws, ret = [];
+            for (var i = 0; i < ws.length; i++){
+                ret[ret.length] = ws[i].toJSON();
+            }
+            return ret;
         }
     }, {
         ATTRS: {

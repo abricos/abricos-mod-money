@@ -1,6 +1,7 @@
 var Component = new Brick.Component();
 Component.requires = {
     mod: [
+        {name: 'sys', files: ['form.js']},
         {name: '{C#MODNAME}', files: ['userRole.js', 'currency.js']}
     ]
 };
@@ -10,8 +11,12 @@ Component.entryPoint = function(NS){
         COMPONENT = this,
         SYS = Brick.mod.sys;
 
-    NS.AccountEditorRowWidget = Y.Base.create('accountEditorRowWidget', SYS.AppWidget, [], {
+    NS.AccountEditorRowWidget = Y.Base.create('accountEditorRowWidget', SYS.AppWidget, [
+        SYS.Form
+    ], {
         onInitAppWidget: function(err, appInstance){
+            this.publish('menuClick');
+
             var tp = this.template,
                 account = this.get('account'),
                 accountid = account.get('id'),
@@ -29,55 +34,56 @@ Component.entryPoint = function(NS){
                 readOnly: readOnly,
                 selected: account.get('currency')
             });
+
+            if (readOnly){
+                this.get('boundingBox').all('.isROD').set('disabled', 'disabled');
+            }
+
+            this.set('model', account);
+        },
+        destructor: function(){
+            this.rolesWidget.destroy();
+            this.currencyWidget.destroy();
+        },
+        onClick: function(e){
+            var facade = {
+                action: e.dataClick,
+                account: this.get('account')
+            };
+            switch (e.dataClick) {
+                case 'remove':
+                    this.fire('menuClick', facade);
+                    break;
+            }
+        },
+        toJSON: function(){
+            this.updateModelFromUI();
+            var d = this.get('model').toJSON();
+            d.roles = this.rolesWidget.toJSON();
+            return d;
         }
     }, {
         ATTRS: {
             component: {value: COMPONENT},
             templateBlockName: {value: 'row'},
             account: {value: null},
-            isFirst: {value: false}
+            isVisibleButtons: {
+                setter: function(val){
+                    var elButtons = Y.one(this.template.gel('buttons'));
+                    if (elButtons){
+                        if (val){
+                            elButtons.removeClass('hide');
+                        } else {
+                            elButtons.addClass('hide');
+                        }
+                    }
+                    return val;
+                }
+            }
         }
     });
 
-    NS.AccountEditorWidget = Y.Base.create('accountEditorWidget', SYS.AppWidget, [], {
-        buildTData: function(){
-            return {
-                'gstclass': this.get('groupid') > 0 ? 'isgedit' : 'isgnew'
-            };
-        },
-        onInitAppWidget: function(err, appInstance){
-            this.set('waiting', true);
-            appInstance.groupList(function(err, result){
-                this.set('waiting', false);
-                if (!err){
-                    this.set('groupList', result.groupList);
-                }
-                this.renderGroup();
-            }, this);
-        },
-        renderGroup: function(){
-            var appInstance = this.get('appInstance'),
-                groupid = this.get('groupid'),
-                group = groupid > 0 ?
-                    this.get('groupList').getById(groupid) :
-                    new NS.Group({appInstance: appInstance});
-
-            this.set('model', group);
-
-        },
-        onSubmitFormAction: function(){
-            this.set('waiting', true);
-
-            var model = this.get('model');
-
-            this.get('appInstance').configSave(model, function(err, result){
-                this.set('waiting', false);
-            }, this);
-        },
-        onClick: function(e){
-
-        }
-    }, {
+    NS.AccountEditorWidget = Y.Base.create('accountEditorWidget', SYS.AppWidget, [], {}, {
         ATTRS: {
             component: {value: COMPONENT},
             templateBlockName: {value: 'widget'},
@@ -93,18 +99,79 @@ Component.entryPoint = function(NS){
                 groupid = group.get('id');
 
             if (groupid === 0){
-                var account = new NS.Account({appInstance: appInstance});
-                this._renderAccount(account);
+                this.createAccount();
             } else {
                 this.get('group').accountEach(this._renderAccount, this);
             }
         },
-        _renderAccount: function(account){
+        _renderAccount: function(account, isInsert){
+            var elList = Y.one(this.template.gel('list')),
+                elChilds = elList.get('children'),
+                div = Y.Node.create('<div></div>');
+
+            if (isInsert && elChilds.size() > 0){
+                elChilds.item(0).insert(div, 'before');
+            } else {
+                elList.appendChild(div);
+            }
+
             var w = new NS.AccountEditorRowWidget({
-                srcNode: Y.one(this.template.gel('list')).appendChild('<div></div>'),
+                boundingBox: div,
                 account: account
             });
+            div._widget = w;
+            w.on('menuClick', this._rowMenuClick, this);
             this._ws[this._ws.length] = w;
+            this._updateWidgetList();
+        },
+        _updateWidgetList: function(){
+            var elChilds = Y.one(this.template.gel('list')).get('children');
+            elChilds.each(function(node){
+                if (node._widget){
+                    node._widget.set('isVisibleButtons', elChilds.size() > 1);
+                }
+            });
+        },
+        createAccount: function(){
+            var account = new NS.Account({
+                appInstance: this.get('appInstance'),
+                tp: 1,
+                cc: Abricos.config.locale === 'ru-RU' ? 'RUB' : 'USD'
+            });
+            this._renderAccount(account, true);
+        },
+        removeAccount: function(account){
+            var ws = this._ws, nws = [];
+            for (var i = 0; i < ws.length; i++){
+                if (ws[i].get('account') !== account){
+                    nws[nws.length] = ws[i];
+                } else {
+                    ws[i].destroy();
+                }
+            }
+            this._ws = nws;
+            this._updateWidgetList();
+        },
+        _rowMenuClick: function(e){
+            switch (e.action) {
+                case 'remove':
+                    this.removeAccount(e.account);
+                    break;
+            }
+        },
+        toJSON: function(){
+            var ws = this._ws, d = [];
+            for (var i = 0; i < ws.length; i++){
+                d[d.length] = ws[i].toJSON();
+            }
+            return d;
+        },
+        onClick: function(e){
+            switch (e.dataClick) {
+                case 'create':
+                    this.createAccount();
+                    return true;
+            }
         }
 
     }, {
