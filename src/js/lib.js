@@ -68,7 +68,7 @@ Component.entryPoint = function(NS){
 
     SYS.Application.build(COMPONENT, {
         groupList: {
-            request: 'accountList,groupUserRoleList,accountUserRoleList,userList',
+            request: 'accountList,userList',
             cache: 'groupList',
             response: function(d){
                 return new NS.GroupList({appInstance: this, items: d.list});
@@ -78,22 +78,9 @@ Component.entryPoint = function(NS){
             args: ['group']
         },
         accountList: {
-            request: 'accountUserRoleList',
             cache: 'accountList',
             response: function(d){
                 return new NS.AccountList({appInstance: this, items: d.list});
-            }
-        },
-        groupUserRoleList: {
-            cache: 'groupUserRoleList',
-            response: function(d){
-                return new NS.Group.UserRoleList({appInstance: this, items: d.list});
-            }
-        },
-        accountUserRoleList: {
-            cache: 'accountUserRoleList',
-            response: function(d){
-                return new NS.Account.UserRoleList({appInstance: this, items: d.list});
             }
         },
         userList: {
@@ -111,9 +98,9 @@ Component.entryPoint = function(NS){
         }
     }, [], {
         ATTRS: {
-            isLoadAppStructure: {
-                value: true
-            }
+            isLoadAppStructure: {value: true},
+            UserRole: {value: NS.UserRole},
+            UserRoleList: {value: NS.UserRoleList}
         }
     });
 

@@ -173,7 +173,6 @@ Component.entryPoint = function(NS){
                     return true;
             }
         }
-
     }, {
         ATTRS: {
             component: {value: COMPONENT},

@@ -25,14 +25,12 @@ class Money {
 
         $models = $this->models = AbricosModelManager::GetManager('money');
 
+        $models->RegisterClass('UserRole', 'MoneyUserRole');
+        $models->RegisterClass('UserRoleList', 'MoneyUserRoleList');
         $models->RegisterClass('Group', 'MoneyGroup');
         $models->RegisterClass('GroupList', 'MoneyGroupList');
-        $models->RegisterClass('GroupUserRole', 'MoneyGroupUserRole');
-        $models->RegisterClass('GroupUserRoleList', 'MoneyGroupUserRoleList');
         $models->RegisterClass('Account', 'MoneyAccount');
         $models->RegisterClass('AccountList', 'MoneyAccountList');
-        $models->RegisterClass('AccountUserRole', 'MoneyAccountUserRole');
-        $models->RegisterClass('AccountUserRoleList', 'MoneyAccountUserRoleList');
         $models->RegisterClass('User', 'MoneyUser');
         $models->RegisterClass('UserList', 'MoneyUserList');
     }
@@ -45,10 +43,8 @@ class Money {
                 return $this->AccountListToJSON();
             case 'groupList':
                 return $this->GroupListToJSON();
-            case 'groupUserRoleList':
-                return $this->GroupUserRoleListToJSON();
-            case 'accountUserRoleList':
-                return $this->AccountUserRoleListToJSON();
+            case 'groupSave':
+                return $this->GroupSaveToJSON($d->group);
             case 'userList':
                 return $this->UserListToJSON();
         }
@@ -74,7 +70,7 @@ class Money {
 
         $modelManager = AbricosModelManager::GetManager('money');
 
-        $res = $modelManager->ToJSON('Account,Group,AccountUserRole,GroupUserRole,User');
+        $res = $modelManager->ToJSON('Group,UserRole,UserRoleList,Account,AccountUserRole,GroupUserRole,User');
         if (empty($res)){
             return null;
         }
@@ -109,6 +105,17 @@ class Money {
             $list->Add($this->models->InstanceClass('Account', $d));
         }
 
+        $accountIds = $list->ToArray('id');
+
+        $rows = MoneyQuery::AUserRoleListByAId($this->db, $accountIds);
+        while (($d = $this->db->fetch_array($rows))){
+            $account = $list->Get($d['accountid']);
+            if (empty($account)){
+                continue;
+            }
+            $account->roles->Add($this->models->InstanceClass('UserRole', $d));
+        }
+
         return $this->_cacheAccountList = $list;
     }
 
@@ -119,6 +126,9 @@ class Money {
 
     private $_cacheGroupList;
 
+    /**
+     * @return MoneyGroupList
+     */
     public function GroupList(){
         if (isset($this->_cacheGroupList)){
             return $this->_cacheGroupList;
@@ -127,70 +137,102 @@ class Money {
             return 403;
         }
 
-        $accountList = $this->AccountList();
-        $groupIds = $accountList->ToArray('id');
+        $groupIds = $this->AccountList()->ToArray('groupid');
 
-        $list = $this->models->InstanceClass('GroupUserRoleList');
+        /** @var MoneyGroupList $list */
+        $list = $this->models->InstanceClass('GroupList');
         $rows = MoneyQuery::GroupListByIds($this->db, $groupIds, Abricos::$user->id);
         while (($d = $this->db->fetch_array($rows))){
             $list->Add($this->models->InstanceClass('Group', $d));
         }
 
+        $rows = MoneyQuery::GUserRoleListByGId($this->db, $groupIds);
+        while (($d = $this->db->fetch_array($rows))){
+            $group = $list->Get($d['groupid']);
+            if (empty($group)){
+                continue;
+            }
+            $group->roles->Add($this->models->InstanceClass('UserRole', $d));
+        }
+
         return $this->_cacheGroupList = $list;
     }
 
-    public function GroupUserRoleListToJSON(){
-        $res = $this->GroupUserRoleList();
-        return $this->ResultToJSON('groupUserRoleList', $res);
+    public function GroupSaveToJSON($d){
+        $res = $this->GroupSave($d);
+        if (is_integer($res)){
+            $ret = new stdClass();
+            $ret->err = $res;
+            return $ret;
+        }
+
+        return $res;
     }
 
-    private $_cacheGroupUserRoleList;
-
-    public function GroupUserRoleList(){
-        if (isset($this->_cacheGroupUserRoleList)){
-            return $this->_cacheGroupUserRoleList;
-        }
-        if (!$this->manager->IsViewRole()){
+    public function GroupSave($d){
+        if (!$this->manager->IsWriteRole()){
             return 403;
         }
 
-        $groupList = $this->GroupList();
-        $groupIds = $groupList->ToArray('id');
+        $parser = Abricos::TextParser(true);
+        $d->id = intval($d->id);
+        $d->title = $parser->Parser($d->title);
 
-        $list = $this->models->InstanceClass('GroupUserRoleList');
-        $rows = MoneyQuery::GUserRoleListByGId($this->db, $groupIds);
-        while (($d = $this->db->fetch_array($rows))){
-            $list->Add($this->models->InstanceClass('GroupUserRole', $d));
+        if ($d->id === 0){
+            $d->id = MoneyQuery::GroupAppend($this->db, $this->userid, $d);
+
+            // добавление ролей
+            foreach ($d->roles as $r){
+                MoneyQuery::GUserRoleAppend($this->db, $d->id, $r->u, $r->r);
+            }
+            $this->CategoryInit($d->id);
+        } else {
+            $groupList = $this->GroupList();
+            $group = $groupList->Get($d->id);
+
+            if (empty($group)){
+                return 500;
+            }
+
+            $role = $this->GroupUserRoleList()->Get($d->id);
+
+            if (!empty($role) && $role->role === MoneyAccountRole::ADMIN){
+
+                // Только админ может: изменять данные по бухгалтерии (название, роли пользователей)
+                MoneyQuery::GroupUpdate($this->db, $d->id, $d);
+
+                $rows = MoneyQuery::GUserRoleListByGId($this->db, array($d->id));
+
+                $dbRoles = $this->ToArrayId($rows, "u");
+                foreach ($d->roles as $role){
+                    if (empty($dbRoles[$role->u])){
+                        MoneyQuery::GUserRoleAppend($this->db, $d->id, $role->u, $role->r);
+                    } else {
+                        MoneyQuery::GUserRoleUpdate($this->db, $d->id, $role->u, $role->r);
+                    }
+                }
+
+                foreach ($dbRoles as $dbRole){
+                    $find = false;
+                    foreach ($d->roles as $role){
+                        if ($dbRole['u'] == $role->u){
+                            $find = true;
+                        }
+                    }
+                    if (!$find && $this->userid != $dbRole['u']){ // свою роль удалить нельзя
+                        MoneyQuery::GUserRoleRemove($this->db, $d->id, $dbRole['u']);
+                    }
+                }
+            }
         }
 
-        return $this->_cacheGroupUserRoleList = $list;
-    }
 
-    public function AccountUserRoleListToJSON(){
-        $res = $this->AccountUserRoleList();
-        return $this->ResultToJSON('accountUserRoleList', $res);
-    }
+        $ret = new stdClass();
+        $ret->groupid = $d->id;
 
-    private $_cacheAccountUserRoleList;
 
-    public function AccountUserRoleList(){
-        if (isset($this->_cacheAccountUserRoleList)){
-            return $this->_cacheAccountUserRoleList;
-        }
-        if (!$this->manager->IsViewRole()){
-            return 403;
-        }
-
-        $accountList = $this->AccountList();
-        $accountIds = $accountList->ToArray('id');
-
-        $list = $this->models->InstanceClass('AccountUserRoleList');
-        $rows = MoneyQuery::AUserRoleListByAId($this->db, $accountIds);
-        while (($d = $this->db->fetch_array($rows))){
-            $list->Add($this->models->InstanceClass('AccountUserRole', $d));
-        }
-
-        return $this->_cacheAccountUserRoleList = $list;
+        $ret->src = $d;
+        return $ret;
     }
 
     public function UserListToJSON(){
@@ -208,8 +250,16 @@ class Money {
             return 403;
         }
 
-        $userIds = $this->GroupUserRoleList()->ToArray('userid');
-        $userIds += $this->AccountUserRoleList()->ToArray('userid');
+        $userIds = array();
+        $list = $this->GroupList();
+        for ($i = 0; $i < $list->Count(); $i++){
+            $userIds += $list->GetByIndex($i)->roles->ToArray('id');
+        }
+
+        $list = $this->AccountList();
+        for ($i = 0; $i < $list->Count(); $i++){
+            $userIds += $list->GetByIndex($i)->roles->ToArray('id');
+        }
 
         $list = $this->models->InstanceClass('UserList');
         $rows = MoneyQuery::UserListByIds($this->db, $userIds);
@@ -218,6 +268,47 @@ class Money {
         }
         return $this->_cacheUserList = $list;
     }
+
+
+    private function CategoryInit($gid){
+        // TODO: необходимо завести таблицу базовых категорий для все создающихся бухгалтерий
+        $ord = 1;
+        $this->CategoryAppendMethod($gid, "Зарплата", false, 0, $ord++);
+        $this->CategoryAppendMethod($gid, "Прочие доходы", false, 0, $ord++);
+
+        $ord = 1;
+        $id = $this->CategoryAppendMethod($gid, "Без категории", true, 0, $ord++);
+
+        $id = $this->CategoryAppendMethod($gid, "Прочие расходы", true, 0, $ord++);
+        $this->CategoryAppendMethod($gid, "Проезд", true, $id, $ord++);
+        $this->CategoryAppendMethod($gid, "Сотовая связь", true, $id, $ord++);
+        $this->CategoryAppendMethod($gid, "Разовые", true, $id, $ord++);
+        $this->CategoryAppendMethod($gid, "Праздник", true, $id, $ord++);
+
+        $id = $this->CategoryAppendMethod($gid, "Еда и продукты", true, 0, $ord++);
+        $this->CategoryAppendMethod($gid, "Молочное", true, $id, $ord++);
+        $this->CategoryAppendMethod($gid, "Фрукты, овощи", true, $id, $ord++);
+        $this->CategoryAppendMethod($gid, "Мясо, колбасы", true, $id, $ord++);
+        $this->CategoryAppendMethod($gid, "Обеды, перекусы", true, $id, $ord++);
+        $this->CategoryAppendMethod($gid, "Крупы, хлеб и т.д.", true, $id, $ord++);
+        $this->CategoryAppendMethod($gid, "К чаю, сладкое", true, $id, $ord++);
+        $this->CategoryAppendMethod($gid, "Напитки", true, $id, $ord++);
+
+        $id = $this->CategoryAppendMethod($gid, "Дом", true, 0, $ord++);
+        $this->CategoryAppendMethod($gid, "Комунальные платежи", true, $id, $ord++);
+        $this->CategoryAppendMethod($gid, "Дети", true, $id, $ord++);
+        $this->CategoryAppendMethod($gid, "Животные", true, $id, $ord++);
+
+        $id = $this->CategoryAppendMethod($gid, "Автомобиль", true, 0, $ord++);
+        $this->CategoryAppendMethod($gid, "Бензин", true, $id, $ord++);
+        $this->CategoryAppendMethod($gid, "Запчасти, ремонт", true, $id, $ord++);
+
+        $id = $this->CategoryAppendMethod($gid, "Одежда", true, 0, $ord++);
+        $this->CategoryAppendMethod($gid, "Обувь", true, $id, $ord++);
+        $this->CategoryAppendMethod($gid, "Летняя", true, $id, $ord++);
+        $this->CategoryAppendMethod($gid, "Зимняя", true, $id, $ord++);
+    }
+
 }
 
 ?>

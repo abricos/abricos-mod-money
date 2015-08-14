@@ -75,11 +75,11 @@ class MoneyQuery {
         return $db->query_read($sql);
     }
 
-    public static function GroupAppend(Ab_Database $db, $userid, $gd){
+    public static function GroupAppend(Ab_Database $db, $userid, $d){
         $sql = "
 			INSERT INTO ".$db->prefix."money_group (userid, title, dateline, upddate) VALUES (
 				".bkint($userid).",
-				'".bkstr($gd->tl)."',
+				'".bkstr($d->title)."',
 				".TIMENOW.",
 				".TIMENOW."
 			)
@@ -91,7 +91,7 @@ class MoneyQuery {
     public static function GroupUpdate(Ab_Database $db, $groupid, $gd){
         $sql = "
 			UPDATE ".$db->prefix."money_group
-			SET title='".bkstr($gd->tl)."',
+			SET title='".bkstr($gd->title)."',
 				upddate=".TIMENOW."
 			WHERE groupid=".bkint($groupid)."
 		";
@@ -259,9 +259,8 @@ class MoneyQuery {
         }
         $sql = "
 			SELECT
-				concat(ur.groupid,'-',ur.userid) as id,
+				ur.userid as id,
 				ur.groupid,
-				ur.userid,
 				ur.role
 			FROM ".$db->prefix."money_guserrole ur
 			WHERE ".implode(" OR ", $wh)."
@@ -308,9 +307,8 @@ class MoneyQuery {
         }
         $sql = "
 			SELECT
-				concat(ur.accountid,'-',ur.userid) as id,
+				ur.userid as id,
 				ur.accountid,
-				ur.userid,
 				ur.role
 			FROM ".$db->prefix."money_auserrole ur
 			WHERE ".implode(" OR ", $wh)."

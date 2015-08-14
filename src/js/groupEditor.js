@@ -13,7 +13,6 @@ Component.entryPoint = function(NS){
 
     NS.GroupEditorWidget = Y.Base.create('groupEditorWidget', SYS.AppWidget, [
         SYS.Form
-        // , SYS.FormAction
     ], {
         buildTData: function(){
             return {

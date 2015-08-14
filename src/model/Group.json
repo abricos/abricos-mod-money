@@ -19,6 +19,9 @@
     "upddate": {
       "type": "int",
       "json": "upd"
+    },
+    "roles": {
+      "type": "list:UserRoleList"
     }
   }
 }

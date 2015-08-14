@@ -151,56 +151,11 @@ class MoneyManager extends Ab_ModuleManager {
             return null;
         }
 
-        $parser = Abricos::TextParser(true);
-        $gd->id = intval($gd->id);
-        $gd->tl = $parser->Parser($gd->tl);
 
         $dbGroup = null;
         if ($gd->id == 0){
-            $gd->id = MoneyQuery::GroupAppend($this->db, $this->userid, $gd);
-
-            // добавление ролей
-            foreach ($gd->roles as $r){
-                MoneyQuery::GUserRoleAppend($this->db, $gd->id, $r->u, $r->r);
-            }
-
-            $dbGroup = MoneyQuery::GroupById($this->db, $gd->id, $this->userid);
-
-            $this->CategoryInit($gd->id);
         } else {
-            $dbGroup = MoneyQuery::GroupById($this->db, $gd->id, $this->userid);
 
-            if (empty($dbGroup)){
-                return null;
-            }
-
-            if ($dbGroup['r'] == MoneyAccountRole::ADMIN){
-                // Только админ может: изменять данные по бухгалтерии (название, роли пользователей)
-                MoneyQuery::GroupUpdate($this->db, $gd->id, $gd);
-
-                $rows = MoneyQuery::GUserRoleListByGId($this->db, array($gd->id));
-
-                $dbRoles = $this->ToArrayId($rows, "u");
-                foreach ($gd->roles as $role){
-                    if (empty($dbRoles[$role->u])){
-                        MoneyQuery::GUserRoleAppend($this->db, $gd->id, $role->u, $role->r);
-                    } else {
-                        MoneyQuery::GUserRoleUpdate($this->db, $gd->id, $role->u, $role->r);
-                    }
-                }
-
-                foreach ($dbRoles as $dbRole){
-                    $find = false;
-                    foreach ($gd->roles as $role){
-                        if ($dbRole['u'] == $role->u){
-                            $find = true;
-                        }
-                    }
-                    if (!$find && $this->userid != $dbRole['u']){ // свою роль удалить нельзя
-                        MoneyQuery::GUserRoleRemove($this->db, $gd->id, $dbRole['u']);
-                    }
-                }
-            }
         }
 
         if (empty($dbGroup)){
@@ -526,44 +481,6 @@ class MoneyManager extends Ab_ModuleManager {
     }
 
 
-    private function CategoryInit($gid){
-        // TODO: необходимо фразы вывести в языковый файл
-        $ord = 1;
-        $this->CategoryAppendMethod($gid, "Зарплата", false, 0, $ord++);
-        $this->CategoryAppendMethod($gid, "Прочие доходы", false, 0, $ord++);
-
-        $ord = 1;
-        $id = $this->CategoryAppendMethod($gid, "Без категории", true, 0, $ord++);
-
-        $id = $this->CategoryAppendMethod($gid, "Прочие расходы", true, 0, $ord++);
-        $this->CategoryAppendMethod($gid, "Проезд", true, $id, $ord++);
-        $this->CategoryAppendMethod($gid, "Сотовая связь", true, $id, $ord++);
-        $this->CategoryAppendMethod($gid, "Разовые", true, $id, $ord++);
-        $this->CategoryAppendMethod($gid, "Праздник", true, $id, $ord++);
-
-        $id = $this->CategoryAppendMethod($gid, "Еда и продукты", true, 0, $ord++);
-        $this->CategoryAppendMethod($gid, "Молочное", true, $id, $ord++);
-        $this->CategoryAppendMethod($gid, "Фрукты, овощи", true, $id, $ord++);
-        $this->CategoryAppendMethod($gid, "Мясо, колбасы", true, $id, $ord++);
-        $this->CategoryAppendMethod($gid, "Обеды, перекусы", true, $id, $ord++);
-        $this->CategoryAppendMethod($gid, "Крупы, хлеб и т.д.", true, $id, $ord++);
-        $this->CategoryAppendMethod($gid, "К чаю, сладкое", true, $id, $ord++);
-        $this->CategoryAppendMethod($gid, "Напитки", true, $id, $ord++);
-
-        $id = $this->CategoryAppendMethod($gid, "Дом", true, 0, $ord++);
-        $this->CategoryAppendMethod($gid, "Комунальные платежи", true, $id, $ord++);
-        $this->CategoryAppendMethod($gid, "Дети", true, $id, $ord++);
-        $this->CategoryAppendMethod($gid, "Животные", true, $id, $ord++);
-
-        $id = $this->CategoryAppendMethod($gid, "Автомобиль", true, 0, $ord++);
-        $this->CategoryAppendMethod($gid, "Бензин", true, $id, $ord++);
-        $this->CategoryAppendMethod($gid, "Запчасти, ремонт", true, $id, $ord++);
-
-        $id = $this->CategoryAppendMethod($gid, "Одежда", true, 0, $ord++);
-        $this->CategoryAppendMethod($gid, "Обувь", true, $id, $ord++);
-        $this->CategoryAppendMethod($gid, "Летняя", true, $id, $ord++);
-        $this->CategoryAppendMethod($gid, "Зимняя", true, $id, $ord++);
-    }
 
     private $_groupCache = array();
 

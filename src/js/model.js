@@ -18,7 +18,46 @@ Component.entryPoint = function(NS){
         ADMIN: 3
     };
 
-    NS.Account = Y.Base.create('account', SYS.AppModel, [], {
+    var UserRolesBase = function(){
+    };
+    UserRolesBase.NAME = 'userRolesBase';
+    UserRolesBase.prototype = {
+        getUserRole: function(userid){
+            return this.get('roles').getById(userid);
+        },
+        getMyRole: function(){
+            var r = this.getUserRole(UID);
+            return r ? r.get('role') : 0;
+        },
+        isAdminRole: function(){
+            return this.getMyRole() === NS.AURoleType.ADMIN;
+        },
+        isWriteRole: function(){
+            return this.isAdminRole() || this.getMyRole() === NS.AURoleType.WRITE;
+        },
+        isReadRole: function(){
+            return this.isWriteRole() || this.getMyRole() === NS.AURoleType.READ;
+        },
+        isEditRole: function(){
+            return this.isAdminRole();
+        },
+        isOperRole: function(){
+            return this.isWriteRole();
+        }
+    };
+    NS.UserRolesBase = UserRolesBase;
+
+    NS.UserRole = Y.Base.create('userRole', SYS.AppModel, [], {
+        structureName: 'UserRole'
+    });
+
+    NS.UserRoleList = Y.Base.create('userRoleList', SYS.AppModelList, [], {
+        appItem: NS.UserRole
+    });
+
+    NS.Account = Y.Base.create('account', SYS.AppModel, [
+        NS.UserRolesBase
+    ], {
         structureName: 'Account',
         getTitle: function(){
             var title = this.get('title'),
@@ -32,57 +71,17 @@ Component.entryPoint = function(NS){
         getCurrency: function(){
             var ccId = this.get('currency');
             return NS.currencyList.getById(ccId);
-        },
-        getUserRole: function(userid){
-            var roleList = this.appInstance.getFromCache('accountUserRoleList');
-            if (!roleList){
-                return null;
-            }
-            return roleList.getUserRole(this.get('id'), userid);
-        },
-        getMyRole: function(){
-            var r = this.getUserRole(UID);
-            return r ? r.get('role') : 0;
-        },
-        isAdminRole: function(){
-            return this.getMyRole() === NS.AURoleType.ADMIN;
-        },
-        isWriteRole: function(){
-            return this.isAdminRole() || this.getMyRole() === NS.AURoleType.WRITE;
-        },
-        isReadRole: function(){
-            return this.isWriteRole() || this.getMyRole() === NS.AURoleType.READ;
-        },
-        isEditRole: function(){
-            return this.isAdminRole();
-        },
-        isOperRole: function(){
-            return this.isWriteRole();
         }
-    });
 
-    NS.Account.UserRole = Y.Base.create('accountUserRole', SYS.AppModel, [], {
-        structureName: 'AccountUserRole'
-    });
-
-    NS.Account.UserRoleList = Y.Base.create('accountUserRoleList', SYS.AppModelList, [], {
-        appItem: NS.Account.UserRole,
-        getUserRole: function(accountid, userid){
-            var ret = null;
-            this.each(function(role){
-                if (role.get('accountid') === accountid && role.get('userid') === userid){
-                    ret = role;
-                }
-            });
-            return ret;
-        }
     });
 
     NS.AccountList = Y.Base.create('accountList', SYS.AppModelList, [], {
         appItem: NS.Account
     });
 
-    NS.Group = Y.Base.create('group', SYS.AppModel, [], {
+    NS.Group = Y.Base.create('group', SYS.AppModel, [
+        NS.UserRolesBase
+    ], {
         structureName: 'Group',
         getTitle: function(){
             var title = this.get('title');
@@ -90,32 +89,6 @@ Component.entryPoint = function(NS){
                 return title;
             }
             return Abricos.I18n.get('mod.money.group.nottitle');
-        },
-        getUserRole: function(userid){
-            var roleList = this.appInstance.getFromCache('groupUserRoleList');
-            if (!roleList){
-                return null;
-            }
-            return roleList.getUserRole(this.get('id'), userid);
-        },
-        getMyRole: function(){
-            var r = this.getUserRole(UID);
-            return r ? r.get('role') : 0;
-        },
-        isAdminRole: function(){
-            return this.getMyRole() === NS.AURoleType.ADMIN;
-        },
-        isWriteRole: function(){
-            return this.isAdminRole() || this.getMyRole() === NS.AURoleType.WRITE;
-        },
-        isReadRole: function(){
-            return this.isWriteRole() || this.getMyRole() === NS.AURoleType.READ;
-        },
-        isEditRole: function(){
-            return this.isAdminRole();
-        },
-        isOperRole: function(){
-            return this.isWriteRole();
         },
         accountEach: function(fn, context){
             var groupid = this.get('groupid');
@@ -126,24 +99,6 @@ Component.entryPoint = function(NS){
                 fn.call(context || this, account)
             }, this);
         }
-    });
-
-    NS.Group.UserRole = Y.Base.create('groupUserRole', SYS.AppModel, [], {
-        structureName: 'GroupUserRole'
-    });
-
-    NS.Group.UserRoleList = Y.Base.create('groupUserRoleList', SYS.AppModelList, [], {
-        appItem: NS.Group.UserRole,
-        getUserRole: function(groupid, userid){
-            var ret = null;
-            this.each(function(role){
-                if (role.get('groupid') === groupid && role.get('userid') === userid){
-                    ret = role;
-                }
-            });
-            return ret;
-        }
-
     });
 
     NS.GroupList = Y.Base.create('groupList', SYS.AppModelList, [], {
