@@ -21,35 +21,21 @@ Component.entryPoint = function(NS){
                 account = this.get('account'),
                 acc = account.toJSON();
 
-            tp.gel('tl').innerHTML = account.getTitle();
-            tp.gel('cc').innerHTML = account.getCurrency().get('sign');
+            tp.setHTML({
+                'tl': account.getTitle(),
+                'cc': account.getCurrency().get('sign'),
+                'val': NS.numberFormat(acc.balance)
+            });
 
-            var elv = Y.one(tp.gel('val'));
-            elv.setHTML(NS.numberFormat(acc.balance));
+            tp.replaceClass('val', 'text-success', 'text-danger', acc.balance >= 0);
 
-            if (acc.balance >= 0){
-                elv.replaceClass('red', 'green');
-            } else {
-                elv.replaceClass('green', 'red');
-            }
-
-            if (!account.isEditRole()){
-                Y.one(tp.gel('bedit')).addClass('hide');
-                Y.one(tp.gel('brem')).addClass('hide');
-            }
-            if (!account.isOperRole()){
-                Y.one(tp.gel('badd')).addClass('hide');
-            }
+            tp.visible('bedit,brem', account.isEditRole());
+            tp.visible('badd', account.isOperRole());
         },
-        _isSelectedSetter: function(val){
-            var elSel = Y.one(this.template.gel('sel'));
+        _isSelectedSetter: function(isSelected){
+            this.template.toggleClass('sel', 'sel', isSelected);
 
-            if (val){
-                elSel.addClass('sel');
-            } else {
-                elSel.removeClass('sel');
-            }
-            return !!val;
+            return !!isSelected;
         },
         onClick: function(e){
             switch (e.dataClick) {
@@ -96,7 +82,7 @@ Component.entryPoint = function(NS){
             this._ws = [];
         },
         renderAccount: function(account){
-            var elList = Y.one(this.template.gel('list')),
+            var elList = this.template.one('list'),
                 div = Y.Node.create('<div></div>'),
                 ws = this._ws;
 
@@ -141,15 +127,17 @@ Component.entryPoint = function(NS){
         }
     });
 
-    NS.AccountListWidget = Y.Base.create('accountListWidget', SYS.AppWidget, [], {
-        onInitAppWidget: function(err, appInstance){
+    NS.AccountListWidget = Y.Base.create('accountListWidget', SYS.AppWidget, [
+        NS.GroupByIdExt
+    ], {
+        onBeforeLoadGroupData: function(){
             this.publish('menuClick');
             this.publish('accountMenuClick');
 
             this._wgs = {};
 
             var tp = this.template,
-                elList = Y.one(tp.gel('list'));
+                elList = tp.one('list');
 
             for (var i = 1; i <= 3; i++){
                 var div = Y.Node.create('<div></div>');
@@ -160,29 +148,15 @@ Component.entryPoint = function(NS){
                 });
                 this._wgs[i].on('accountMenuClick', this._onAccountMenuClick, this);
             }
-
-            this.set('waiting', true);
-            appInstance.groupList(function(err, result){
-                this.set('waiting', false);
-                if (!err){
-                    this.set('groupList', result.groupList);
-                    this.set('accountList', result.accountList);
-                }
-                this.renderList();
-            }, this);
         },
-        _onAccountMenuClick: function(e){
-            this.fire('accountMenuClick', {account: e.account, action: e.action});
-        },
-        renderList: function(){
+        onLoadGroupData: function(err, group){
+            if (!group){
+                return;
+            }
             var tp = this.template,
-                groupList = this.get('groupList'),
-                groupid = this.get('groupid'),
-                group = groupList.getById(groupid);
+                groupid = group.get('id');
 
-            this.set('group', group);
-
-            tp.gel('gtl').innerHTML = group.getTitle();
+            tp.setHTML('gtl', group.getTitle());
 
             this.get('accountList').each(function(account){
                 if (groupid !== account.get('groupid')){
@@ -201,7 +175,9 @@ Component.entryPoint = function(NS){
                 this._wgs[agid].renderAccount(account);
             }, this);
         },
-
+        _onAccountMenuClick: function(e){
+            this.fire('accountMenuClick', {account: e.account, action: e.action});
+        },
         selectAccount: function(account){
             this.set('selectedAccount', account);
         },
@@ -231,10 +207,6 @@ Component.entryPoint = function(NS){
         ATTRS: {
             component: {value: COMPONENT},
             templateBlockName: {value: 'widget'},
-            groupid: {value: null},
-            group: {value: null},
-            groupList: {value: null},
-            accountList: {value: null},
             selectedAccount: {
                 setter: '_selectedAccountSetter'
             }

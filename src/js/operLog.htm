@@ -1,0 +1,149 @@
+<!--{widget}-->
+<div id="{i#id}" class="operlog panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">
+            {#mod.money.operlist.widget.1} <img id="{i#loading}" src="/images/loading.gif"/>
+        </h3>
+    </div>
+    <div class="panel-body">
+        <table class="period">
+            <tbody>
+            <tr>
+                <td>
+
+                </td>
+                <td>
+                    <div id="{i#period}"></div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div class="listw" id="{i#list}"></div>
+    </div>
+</div>
+
+<!--{list}-->
+<div id="{i#id}" class="operlist">
+    <div class="pgwrp">
+        <div id="{i#pagtop}" class="pgel"></div>
+    </div>
+    <div id="{i#table}"></div>
+</div>
+
+<!--{table}-->
+<table>
+    <thead>
+    <tr>
+        <th class="d">{#mod.money.operlist.table.1}</th>
+        <th class="tp">{#mod.money.operlist.table.2}</th>
+        <th class="v">{#mod.money.operlist.table.3}</th>
+        <th class="acc">{#mod.money.operlist.table.4}</th>
+        <th class="cat">{#mod.money.operlist.table.5}</th>
+        <th class="dsc">{#mod.money.operlist.table.6}</th>
+        <th class="" colspan="2"></th>
+    </tr>
+    </thead>
+    {v#filter}
+    <tbody>{v#rows}</tbody>
+</table>
+
+<!--{rowfilter}-->
+<thead>
+<tr>
+    <th class="d">{v#d}</th>
+    <th class="tp">{v#tp}</th>
+    <th class="v">{v#v}</th>
+    <th class="acc">{v#acc}</th>
+    <th class="cat">{v#cat}</th>
+    <th class="dsc"></th>
+    <th colspan="2"></th>
+</tr>
+</thead>
+
+<!--{filterval}-->
+<div class="ft">
+    <div class="tl" title="{#mod.money.operlist.filterval.1}">
+        {v#v}
+    </div>
+    <div id="{i#bclear}--{v#tp}" class="bclear" title="{#mod.money.operlist.filterval.2}"></div>
+</div>
+
+<!--{row}-->
+<tr>
+    <td class="d">
+        <a id="{i#bfd}-{v#id}"
+           href="#"
+           title='{#mod.money.operlist.row.1}"'>
+            {v#d}
+        </a>
+    </td>
+    {v#td}
+    <td class="dsc">
+        <div class="fixrw">
+            {v#dsc}
+            <div class="shadow"></div>
+        </div>
+    </td>
+    {v#btns}
+</tr>
+
+<!--{rowtdbase}-->
+<td class="tp">
+    <a id="{i#bftype}-{v#id}" href="#" title="Установить фильтр: Тип">
+        {v#tp}
+    </a>
+</td>
+<td class="v"><span class="{v#expcls}">{v#v} </span> {v#cc}</td>
+<td class="acc">
+    <div class="fixrw">
+        <a id="{i#bfacc}-{v#id}"
+           href="#"
+           title='{#mod.money.operlist.rowtdbase.1}'>
+            {v#acc}
+        </a>
+
+        <div class="shadow"></div>
+    </div>
+</td>
+<td class="cat">
+    <div class="fixrw">
+        <a id="{i#bfcat}-{v#id}"
+           href="#"
+           title='{#mod.money.operlist.rowtdbase.2}'>
+            {v#cat}
+        </a>
+
+        <div class="shadow"></div>
+    </div>
+</td>
+
+<!--{rowtdmove}-->
+<td class="tp"><span title="{#mod.money.operlist.rowtdmove.1}">{#mod.money.operlist.rowtdmove.2}</span></td>
+<td class="v">{v#v} {v#cc}</td>
+<td colspan="2" class="mv">
+    <div class="fixrw">
+        {v#facc} -&gt; {v#tacc}
+        <div class="shadow"></div>
+    </div>
+</td>
+
+<!--{rbtnsn}-->
+<td class="emp"></td>
+<td class="emp"></td>
+
+<!--{rbtns}-->
+<td class="bt btedit">
+    <div id="{i#bedit}-{v#id}" class="b bedit" title="{#mod.money.operlist.rbtns.1}"></div>
+</td>
+<td class="bt btrem">
+    <div id="{i#bremove}-{v#id}" class="b bremove" title="{#mod.money.operlist.rbtns.2}"></div>
+</td>
+
+<!--{rowsum}-->
+<tr class="summa {v#first}">
+    <td class="v" colspan="3">
+        <span class="{v#expcls}">{v#v}</span> {v#cc}
+    </td>
+    <td colspan="5"></td>
+</tr>

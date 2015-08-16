@@ -1,7 +1,7 @@
 var Component = new Brick.Component();
 Component.requires = {
     mod: [
-        {name: '{C#MODNAME}', files: ['accountList.js']}
+        {name: '{C#MODNAME}', files: ['oper.js', 'operLog.js', 'accountList.js']}
     ]
 };
 Component.entryPoint = function(NS){
@@ -10,43 +10,34 @@ Component.entryPoint = function(NS){
         COMPONENT = this,
         SYS = Brick.mod.sys;
 
-
-    NS.GroupViewWidget = Y.Base.create('groupViewWidget', SYS.AppWidget, [], {
+    NS.GroupViewWidget = Y.Base.create('groupViewWidget', SYS.AppWidget, [
+        NS.GroupByIdExt
+    ], {
         buildTData: function(){
             return {groupid: this.get('groupid')}
         },
-        onInitAppWidget: function(err, appInstance){
-            this.set('waiting', true);
-            appInstance.groupList(function(err, result){
-                this.set('waiting', false);
-                if (!err){
-                    this.set('groupList', result.groupList);
-                    this.set('accountList', result.accountList);
-                }
-                this.renderGroup();
-            }, this);
-        },
-        onClick: function(e){
-            switch (e.dataClick) {
-                case '':
-                    return true;
-            }
-        },
-        renderGroup: function(){
-            var groupid = this.get('groupid'),
-                groupList = this.get('groupList'),
-                group = groupList ? groupList.getById(groupid) : null,
-                tp = this.template;
+        onLoadGroupData: function(err, group){
+            var tp = this.template;
 
             if (!group){
-                Y.one(tp.gel('ws')).addClass('hide');
-                Y.one(tp.gel('notfound')).removeClass('hide');
+                tp.toggleView(true, 'notfound', 'ws');
                 return;
             }
+            var groupid = group.get('id');
 
             this.accountsWidget = new NS.AccountListWidget({
                 boundingBox: tp.gel('acclist'),
-                groupid: group.get('id')
+                groupid: groupid
+            });
+
+            this.operWidget = new NS.OperationWidget({
+                srcNode: tp.gel('oper'),
+                groupid: groupid
+            });
+
+            this.operLogWidget = new NS.OperLogWidget({
+                srcNode: tp.gel('operlog'),
+                groupid: groupid
             });
 
             this.setFirstAccount();
@@ -61,6 +52,12 @@ Component.entryPoint = function(NS){
             }, this);
             this.accountsWidget.set('selectedAccount', first);
             return first;
+        },
+        onClick: function(e){
+            switch (e.dataClick) {
+                case '':
+                    return true;
+            }
         },
     }, {
         ATTRS: {

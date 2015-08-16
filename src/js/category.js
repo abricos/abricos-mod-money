@@ -1,9 +1,3 @@
-/*
- @package Abricos
- @copyright Copyright (C) 2008 Abricos All rights reserved.
- @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
- */
-
 var Component = new Brick.Component();
 Component.requires = {
     mod: [
@@ -12,123 +6,55 @@ Component.requires = {
 };
 Component.entryPoint = function(NS){
 
-    var Dom = YAHOO.util.Dom,
-        E = YAHOO.util.Event,
-        L = YAHOO.lang;
+    var Y = Brick.YUI,
+        COMPONENT = this,
+        SYS = Brick.mod.sys;
 
-    var UID = Brick.env.user.id;
-    var buildTemplate = this.buildTemplate;
+    NS.CurrencySelectWidget = Y.Base.create('currencySelectWidget', SYS.AppWidget, [
+        NS.GroupByIdExt
+    ], {
+        onLoadGroupData: function(err, group){
 
-    var CategoryCreateWidget = function(container, list, isExpense){
-        this.init(container, list, isExpense);
-    };
-    CategoryCreateWidget.prototype = {
-        init: function(container, list, isExpense){
-            this.list = list;
-            this.isExpense = isExpense;
-
-            var TM = buildTemplate(this, 'create');
-            container.innerHTML = TM.replace('create');
-
-            this.render();
-        },
-        destroy: function(){
-            var el = this._TM.getEl('create.id');
-            el.parentNode.removeChild(el);
-        },
-        getSaveData: function(){
-            return {
-                'pid': this.selectWidget.getValue(),
-                'tl': this._TM.getEl('create.val').value
-            };
-        },
-        render: function(){
-            this.selectWidget = new CategorySelectWidget(this._TM.getEl('create.sel'), this.list, this.isExpense, {
-                'showChoiseRow': false,
-                'showNewRow': false,
-                'showRootRow': true
-            });
         }
-    };
-    NS.CategoryCreateWidget = CategoryCreateWidget;
-
-    var CategorySelectWidget = function(container, list, isExpense, cfg){
-        cfg = L.merge({
-            'showChoiseRow': true,
-            'showNewRow': false,
-            'showEditRow': false,
-            'showRootRow': false,
-            'userid': UID
-        }, cfg || {});
-        this.init(container, list, isExpense, cfg);
-    };
-    CategorySelectWidget.prototype = {
-        init: function(container, list, isExpense, cfg){
-            this.container = container;
-            this.list = list;
-            this.isExpense = isExpense;
-            this.cfg = cfg;
-            buildTemplate(this, 'select,srow,stab,scrow,snrow,serow,srtrow');
-
-            this.changedEvent = new YAHOO.util.CustomEvent('changeEvent');
-
-            this.render();
-        },
-        destory: function(){
-        },
-        render: function(){
-            var TM = this._TM, list = this.list, isExpense = this.isExpense,
-                cfg = this.cfg, stop = 1;
-
-            var buildRows = function(pid, level){
-                if (stop++ > 1000){
-                    return;
-                }
-
-                var lst = "", tab = "";
-                for (var i = 0; i < level; i++){
-                    tab += TM.replace('stab');
-                }
-
-                list.foreach(function(cat){
-                    if (cat.parentid != pid ||
-                        isExpense != cat.isExpense){
+        /*
+        onInitAppWidget: function(err, appInstance, options){
+            var tp = this.template, lst = "";
+            NS.currencyList.each(function(currency){
+                lst += tp.replace('row', currency.toJSON());
+            });
+            var el = Y.one(tp.gel('id'));
+            el.setHTML(lst);
+            if (options && options.arguments && options.arguments[0] && options.arguments[0].selected){
+                this.set('selected', options.arguments[0].selected);
+            }
+        }
+        /**/
+    }, {
+        ATTRS: {
+            component: {value: COMPONENT},
+            templateBlockName: {value: 'select,row'},
+            /*
+            selected: {
+                value: Abricos.config.locale === 'ru-RU' ? 'RUB' : 'USD',
+                setter: function(val){
+                    var el = Y.one(this.template.gel('id'));
+                    if (!el){
                         return;
                     }
-
-                    lst += TM.replace('srow', {
-                        'id': cat.id,
-                        'tl': cat.title,
-                        'tab': tab
-                    });
-                    lst += buildRows(cat.id, level + 1);
-                });
-                return lst;
-            };
-            var lst = buildRows(0, 0);
-            this.container.innerHTML = TM.replace('select', {
-                'crow': cfg['showChoiseRow'] ? TM.replace('scrow') : '',
-                'nrow': cfg['showNewRow'] ? TM.replace('snrow') : '',
-                'erow': cfg['showEditRow'] ? TM.replace('serow') : '',
-                'rtrow': cfg['showRootRow'] ? TM.replace('srtrow') : '',
-                'rows': lst
-            });
-            var __self = this;
-            E.on(TM.getEl('select.id'), 'change', function(){
-                __self.onChange();
-            });
-        },
-        onChange: function(){
-            this.changedEvent.fire(this);
-        },
-        getValue: function(){
-            return this._TM.getEl('select.id').value;
-        },
-        setValue: function(value){
-            this._TM.getEl('select.id').value = value;
+                    el.set('value', val);
+                    return val;
+                },
+                getter: function(){
+                    var el = Y.one(this.template.gel('id'));
+                    if (!el){
+                        return;
+                    }
+                    return el.get('value');
+                }
+            }
+             /**/
         }
-    };
-    NS.CategorySelectWidget = CategorySelectWidget;
+    });
 
 
 };

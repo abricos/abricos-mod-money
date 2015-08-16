@@ -9,7 +9,7 @@ Component.requires = {
         ]
         },
         {name: 'uprofile', files: ['lib.js']},
-        {name: '{C#MODNAME}', files: ['model.js']}
+        {name: '{C#MODNAME}', files: ['model.js', 'base.js']}
     ]
 };
 Component.entryPoint = function(NS){

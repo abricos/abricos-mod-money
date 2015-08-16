@@ -27,33 +27,7 @@ Component.entryPoint = function(NS){
         this.init(container, group, cfg);
     };
     OperListWidget.prototype = {
-        init: function(container, group, cfg){
-            this.filter = {};
-            this.group = group;
-            this.opers = new NS.OperList();
-            this.cfg = cfg;
 
-            var TM = buildTemplate(this, 'list,table,rowfilter,row,rowtdbase,rowtdmove,rowsum,rbtns,rbtnsn,rowfilter,filterval');
-            container.innerHTML = TM.replace('list');
-
-            this.pagTop = new YAHOO.widget.Paginator({
-                containers: TM.getEl('list.pagtop'),
-                rowsPerPage: 15
-            });
-            this.pagTop.subscribe('changeRequest', this.onPaginatorChanged, this, true);
-
-            this._savedHeight = 20;
-
-            var __self = this;
-            E.on(container, 'click', function(e){
-                var el = E.getTarget(e);
-                if (__self.onClick(el)){
-                    E.preventDefault(e);
-                }
-            });
-        },
-        destroy: function(){
-        },
         onClick: function(el){
 
             var TId = this._TId,
@@ -91,8 +65,7 @@ Component.entryPoint = function(NS){
 
             return false;
         },
-        onClickAction: function(action, oper){
-        },
+
         addFilter: function(action, oper){
             var val = "";
             switch (action) {
