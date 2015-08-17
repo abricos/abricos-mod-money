@@ -36,6 +36,7 @@ Component.entryPoint = function(NS){
 
             this.on('accountChange', this._onAccountChange, this);
             this._onAccountChange();
+            this.set('oper', null);
         },
         _onCategoryChange: function(e){
             var val = e.newVal | 0;
@@ -46,23 +47,23 @@ Component.entryPoint = function(NS){
             }
         },
         _showCreateCategory: function(){
-            if (this.catCreateWidget){
+            if (this.categoryCreateWidget){
                 return;
             }
             var tp = this.template;
 
-            this.catCreateWidget = new NS.CategoryCreateWidget({
+            this.categoryCreateWidget = new NS.CategoryCreateWidget({
                 boundingBox: tp.append('catcreate', '<div></div>'),
                 groupid: this.get('groupid'),
                 isExpense: this.get('isExpense')
             });
         },
         _hideCreateCategory: function(){
-            if (!this.catCreateWidget){
+            if (!this.categoryCreateWidget){
                 return;
             }
-            this.catCreateWidget.destroy();
-            this.catCreateWidget = null;
+            this.categoryCreateWidget.destroy();
+            this.categoryCreateWidget = null;
         },
         _onAccountChange: function(){
             var account = this.get('account');
@@ -74,7 +75,62 @@ Component.entryPoint = function(NS){
                 atl: account.getTitle(),
                 cc: account.getCurrencySign(),
             });
-        }
+        },
+        _operSetter: function(val){
+            var tp = this.template;
+
+            tp.toggleView(!!val, 'bcreate', 'bsave,bcancel');
+
+            if (!val){
+                return val;
+            }
+            var acc = NS.moneyManager.findAccount(oper.accountid);
+            this.setAccount(acc);
+            gel('in').value = oper.value == 0 ? '' : oper.value;
+            gel('dsc').value = oper.descript;
+            this.dateTimeWidget.setValue(oper.date);
+            this.catsWidget.setValue(oper.categoryid);
+            return val;
+        },
+        onClick: function(e){
+
+        },
+        onKeyPress: function(e){
+            if (e.keyCode !== 13){
+                return;
+            }
+            this.save();
+            return true;
+        },
+        save: function(){
+            if (this.get('waiting')){
+                return;
+            }
+            var tp = this.template,
+                oper = this.get('oper'),
+                dt = this.dateTimeWidget.getValue(),
+                val = tp.gel('in').value + '',
+                categoryid = this.categorySelectWidget.get('selected');
+
+            var sd = {
+                'id': oper ? oper.get('id') : 0,
+                'isexpense': this.get('isExpense'),
+                'accountid': this.get('account').get('id'),
+                'value': val.replace(/\s/gi, '').replace(/,/gi, '.'),
+                'upddate': (dt ? dt : new Date()).getTime() / 1000,
+                'categoryid': categoryid,
+                'descript': tp.gel('dsc').value
+            };
+            if (categoryid === -1){
+                sd['categoryData'] = this.categoryCreateWidget.toJSON();
+            }
+
+            this.set('waiting', true);
+            this.get('appInstance').operSave(sd, function(){
+                this.set('waiting', false);
+                this.set('oper', null);
+            }, this);
+        },
     }, {
         ATTRS: {
             component: {value: COMPONENT},
@@ -100,6 +156,9 @@ Component.entryPoint = function(NS){
             },
             isExpense: {
                 writeOnce: true
+            },
+            oper: {
+                setter: '_operSetter'
             }
         }
     });
@@ -137,12 +196,40 @@ Component.entryPoint = function(NS){
             }
             tp.show(name);
             tp.addClass('t' + name, 'sel');
-            // this.tabs[name].setOper(null);
+            // this.tabs[name].set('oper', null);
         },
+        _operSetter: function(val){
+            var tabs = this.tabs;
+
+            if (oper.methodid > 0 && oper.method){
+                this.showPage('move');
+                tabs['move'].setOper(oper);
+            } else if (oper.isExpense){
+                this.showPage('expense');
+                tabs['expense'].setOper(oper);
+            } else if (!oper.isExpense){
+                this.showPage('income');
+                tabs['income'].setOper(oper);
+            }
+
+            return val;
+        },
+        onClick: function(e){
+            switch (e.dataClick) {
+                case 'expense':
+                case 'income':
+                case 'move':
+                    this.showPage(e.dataClick);
+                    return true;
+            }
+        }
     }, {
         ATTRS: {
             component: {value: COMPONENT},
-            templateBlockName: {value: 'widget'}
+            templateBlockName: {value: 'widget'},
+            oper: {
+                setter: '_operSetter'
+            }
         }
     });
 

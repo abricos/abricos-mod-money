@@ -88,7 +88,11 @@ Component.entryPoint = function(NS){
             response: function(d){
                 return new NS.UserList({appInstance: this, items: d.list});
             }
-        }
+        },
+        operSave: {
+            args: ['oper']
+        },
+
     }, {
         initializer: function(){
             this.initCallbackFire();

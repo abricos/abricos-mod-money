@@ -19,6 +19,8 @@ class Money {
      */
     public $models;
 
+    protected $_cache = array();
+
     public function __construct(MoneyManager $manager){
         $this->manager = $manager;
         $this->db = $manager->db;
@@ -49,8 +51,14 @@ class Money {
                 return $this->GroupSaveToJSON($d->group);
             case 'userList':
                 return $this->UserListToJSON();
+            case 'operSave':
+                return $this->OperSaveToJSON($d->oper);
         }
         return null;
+    }
+
+    public function ClearCache(){
+        $this->_cache = array();
     }
 
     private function ResultToJSON($name, $res){
@@ -88,14 +96,12 @@ class Money {
         return $this->ResultToJSON('accountList', $res);
     }
 
-    private $_cacheAccountList;
-
     /**
      * @return int|MoneyAccountList
      */
     public function AccountList(){
-        if (isset($this->_cacheAccountList)){
-            return $this->_cacheAccountList;
+        if (isset($this->_cache['AccountList'])){
+            return $this->_cache['AccountList'];
         }
         if (!$this->manager->IsViewRole()){
             return 403;
@@ -118,7 +124,7 @@ class Money {
             $account->roles->Add($this->models->InstanceClass('UserRole', $d));
         }
 
-        return $this->_cacheAccountList = $list;
+        return $this->_cache['AccountList'] = $list;
     }
 
     public function GroupListToJSON(){
@@ -126,14 +132,12 @@ class Money {
         return $this->ResultToJSON('groupList', $res);
     }
 
-    private $_cacheGroupList;
-
     /**
      * @return MoneyGroupList
      */
     public function GroupList(){
-        if (isset($this->_cacheGroupList)){
-            return $this->_cacheGroupList;
+        if (isset($this->_cache['GroupList'])){
+            return $this->_cache['GroupList'];
         }
         if (!$this->manager->IsViewRole()){
             return 403;
@@ -166,7 +170,72 @@ class Money {
             $group->categories->Add($this->models->InstanceClass('Category', $d));
         }
 
-        return $this->_cacheGroupList = $list;
+        return $this->_cache['GroupList'] = $list;
+    }
+
+    public function OperSaveToJSON($d){
+        $res = $this->OperSave($d);
+        if (is_integer($res)){
+            $ret = new stdClass();
+            $ret->err = $res;
+            return $ret;
+        }
+
+        return $res;
+    }
+
+    public function OperSave($od){
+        if (!$this->manager->IsWriteRole()){
+            return 403;
+        }
+
+        $account = $this->AccountList()->Get($od->accountid);
+
+        if (empty($account) || !$account->IsWriteRole()){
+            return 403;
+        }
+        $group = $this->GroupList()->Get($account->groupid);
+        if (empty($group)){
+            return 403;
+        }
+
+        $ret = new stdClass();
+
+        $parser = Abricos::TextParser(true);
+        $od->isexpense = empty($od->isexpense) ? 0 : 1;
+        $od->descript = $parser->Parser($od->descript);
+        $od->value = doubleval($od->value);
+
+        $isNewCategory = $od->categoryid === -1 && $group->IsWriteRole();
+        if ($isNewCategory){
+            $cnew = $od->categoryData;
+            $cnew->title = $parser->Parser($cnew->title);
+            $od->categoryid = $this->CategoryAppendMethod($group->id, $cnew->title, $od->isexpense, $cnew->parentid);
+        }
+
+        if ($od->id == 0){
+            $od->id = MoneyQuery::OperAppendByObj($this->db, Abricos::$user->id, $od->accountid, $od);
+        } else {
+            MoneyQuery::OperUpdateByObj($this->db, $od->id, $od->accountid, $od);
+        }
+
+        $ret->operid = $od->id;
+
+        MoneyQuery::AccountUpdateBalance($this->db, $od->accountid);
+
+        $this->ClearCache();
+
+        $account = $this->AccountList()->Get($od->accountid);
+        $ret->balance = new stdClass();
+        $ret->balance->accountid = $account->id;
+        $ret->balance->value = $account->balance;
+
+        if ($isNewCategory){
+            $group = $this->GroupList()->Get($account->groupid);
+            $ret->categories = $group->categories->ToJSON();
+        }
+
+        return $ret;
     }
 
     public function GroupSaveToJSON($d){
@@ -190,7 +259,7 @@ class Money {
         $d->title = $parser->Parser($d->title);
 
         if ($d->id === 0){
-            $d->id = MoneyQuery::GroupAppend($this->db, $this->userid, $d);
+            $d->id = MoneyQuery::GroupAppend($this->db, Abricos::$user->id, $d);
 
             // добавление ролей
             foreach ($d->roles as $r){
@@ -230,7 +299,7 @@ class Money {
                             $find = true;
                         }
                     }
-                    if (!$find && $this->userid != $dbRole['u']){ // свою роль удалить нельзя
+                    if (!$find && Abricos::$user->id != $dbRole['u']){ // свою роль удалить нельзя
                         MoneyQuery::GUserRoleRemove($this->db, $d->id, $dbRole['u']);
                     }
                 }
@@ -241,7 +310,6 @@ class Money {
         $ret = new stdClass();
         $ret->groupid = $d->id;
 
-
         $ret->src = $d;
         return $ret;
     }
@@ -251,11 +319,9 @@ class Money {
         return $this->ResultToJSON('userList', $res);
     }
 
-    private $_cacheUserList;
-
     public function UserList(){
-        if (isset($this->_cacheUserList)){
-            return $this->_cacheUserList;
+        if (isset($this->_cache['UserList'])){
+            return $this->_cache['UserList'];
         }
         if (!$this->manager->IsViewRole()){
             return 403;
@@ -277,9 +343,23 @@ class Money {
         while (($d = $this->db->fetch_array($rows))){
             $list->Add($this->models->InstanceClass('User', $d));
         }
-        return $this->_cacheUserList = $list;
+        return $this->_cache['UserList'] = $list;
     }
 
+    private function CategoryAppendMethod($groupid, $title, $isExpense, $parentid = 0, $order = 0){
+        if (!$this->manager->IsWriteRole()){
+            return null;
+        }
+        $group = $this->GroupList()->Get($groupid);
+        if (empty($group) || !$group->IsWriteRole()){
+            return null;
+        }
+
+        $parser = Abricos::TextParser(true);
+        $title = $parser->Parser($title);
+        $isExpense = !empty($isExpense) ? 1 : 0;
+        return MoneyQuery::CategoryAppend($this->db, $this->userid, $groupid, $title, $isExpense, $parentid, $order);
+    }
 
     private function CategoryInit($gid){
         // TODO: необходимо завести таблицу базовых категорий для все создающихся бухгалтерий

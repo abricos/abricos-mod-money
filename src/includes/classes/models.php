@@ -2,6 +2,7 @@
 
 /**
  * Class MoneyUserRole
+ *
  * @property int $id User ID
  * @property int $role User Role Value
  */
@@ -20,6 +21,7 @@ class MoneyUserRoleList extends AbricosModelList {
 
 /**
  * Class MoneyCategory
+ *
  * @property int $id Category ID
  * @property int $parentid Parent Category ID
  * @property int $useid User ID
@@ -44,9 +46,11 @@ class MoneyCategoryList extends AbricosModelList {
 
 /**
  * Class MoneyGroup
+ *
  * @property MoneyUserRoleList $roles
+ * @property MoneyCategoryList $categories
  */
-class MoneyGroup extends AbricosModel {
+class MoneyGroup extends MoneyUserRoleModel {
     protected $_structModule = 'money';
     protected $_structName = 'Group';
 }
@@ -61,6 +65,7 @@ class MoneyGroupList extends AbricosModelList {
 
 /**
  * Class MoneyGroupUserRole
+ *
  * @property int $groupid Group ID
  * @property int $userid User ID
  * @property int $role Role Value
@@ -88,12 +93,47 @@ class MoneyGroupUserRoleList extends AbricosModelList {
     }
 }
 
+class MoneyUserRoleModel extends AbricosModel {
 
-class MoneyAccount extends AbricosModel {
-    protected $_structModule = 'money';
-    protected $_structName = 'Account';
+    public function IsAdminRole(){
+        return $this->role === MoneyAccountRole::ADMIN;
+    }
+
+    public function IsWriteRole(){
+        return $this->IsAdminRole()
+        || $this->role === MoneyAccountRole::WRITE;
+    }
+
+    public function IsReadRole(){
+        return $this->IsWriteRole()
+        || $this->role === MoneyAccountRole::READ;
+    }
 }
 
+/**
+ * Class MoneyAccount
+ *
+ * @property int $groupid Group ID
+ * @property string $title Title
+ * @property string $descript Description
+ * @property int $role Role Value
+ * @property int $type Account Type
+ * @property double $initbalance Init Balance
+ * @property double $balance Current Balance
+ * @property string $currency Currency Code (ID)
+ * @property int $upddate Update Date
+ * @property MoneyUserRoleList $roles User Role List
+ */
+class MoneyAccount extends MoneyUserRoleModel {
+    protected $_structModule = 'money';
+    protected $_structName = 'Account';
+
+}
+
+/**
+ * Class MoneyAccountList
+ * @method MoneyAccount Get(int $accountid)
+ */
 class MoneyAccountList extends AbricosModelList {
     protected $_structModule = 'money';
     protected $_structName = 'AccountList';

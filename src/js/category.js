@@ -28,8 +28,8 @@ Component.entryPoint = function(NS){
         },
         toJSON: function(){
             return {
-                pid: this.selectWidget.get('selected'),
-                tl: this.template.gel('val').value
+                parentid: this.selectWidget.get('selected'),
+                title: this.template.gel('val').value
             }
         }
     }, {
@@ -98,7 +98,7 @@ Component.entryPoint = function(NS){
             selected: {
                 getter: function(val){
                     var el = this.template.one('id');
-                    return el ? el.get('value') : val;
+                    return (el ? el.get('value') : val) | 0;
                 },
                 setter: function(val){
                     var el = this.template.one('id');

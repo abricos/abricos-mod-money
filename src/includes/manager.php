@@ -320,46 +320,6 @@ class MoneyManager extends Ab_ModuleManager {
         return $ad->id;
     }
 
-    public function OperSave($od){
-        if (!$this->IsWriteRole()){
-            return null;
-        }
-
-        $dbAccount = MoneyQuery::Account($this->db, $this->userid, $od->aid);
-        if (empty($dbAccount) || $dbAccount['r'] < MoneyAccountRole::WRITE){
-            return null;
-        }
-
-        $ret = new stdClass();
-
-        $fps = Abricos::TextParser(true);
-        $od->ise = empty($od->ise) ? 0 : 1;
-        $od->dsc = $fps->Parser($od->dsc);
-        $od->v = doubleval($od->v);
-
-        if ($od->cid == -1){
-            $cnew = $od->catnew;
-            $cnew->tl = $fps->Parser($cnew->tl);
-            $od->cid = $this->CategoryAppendMethod($dbAccount['gid'], $cnew->tl, $od->ise, $cnew->pid);
-
-            $rows = MoneyQuery::CategoryList($this->db, array($dbAccount['gid']));
-            $ret->categories = $this->ToArray($rows);
-        }
-        if ($od->id == 0){
-            $od->id = MoneyQuery::OperAppendByObj($this->db, $this->userid, $od->aid, $od);
-        } else {
-            MoneyQuery::OperUpdateByObj($this->db, $od->id, $od->aid, $od);
-        }
-
-        MoneyQuery::AccountUpdateBalance($this->db, $od->aid);
-
-        $account = MoneyQuery::Account($this->db, $this->userid, $od->aid);
-        $ret->balance = new stdClass();
-        $ret->balance->accountid = $account['id'];
-        $ret->balance->value = $account['bc'];
-        return $ret;
-    }
-
     public function OperRemove($operid){
         $dbOper = MoneyQuery::OperInfo($this->db, $operid);
         $dbAccount = MoneyQuery::Account($this->db, $this->userid, $dbOper['accountid']);
@@ -481,28 +441,6 @@ class MoneyManager extends Ab_ModuleManager {
     }
 
 
-
-    private $_groupCache = array();
-
-    private function CategoryAppendMethod($groupid, $title, $isExpense, $parentid = 0, $order = 0){
-        if (!$this->IsWriteRole()){
-            return null;
-        }
-
-        if (!isset($this->_groupCache[$groupid])){
-            $this->_groupCache[$groupid] = MoneyQuery::GroupById($this->db, $groupid, $this->userid);
-        }
-        $dbGroup = $this->_groupCache[$groupid];
-
-        if (empty($dbGroup) || $dbGroup['r'] < MoneyAccountRole::WRITE){
-            return null;
-        }
-
-        $parser = Abricos::TextParser(true);
-        $title = $parser->Parser($title);
-        $isExpense = !empty($isExpense) ? 1 : 0;
-        return MoneyQuery::CategoryAppend($this->db, $this->userid, $groupid, $title, $isExpense, $parentid, $order);
-    }
 
     public function Bos_MenuData(){
         if (!$this->IsViewRole()){

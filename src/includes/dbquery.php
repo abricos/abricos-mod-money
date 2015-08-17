@@ -369,7 +369,7 @@ class MoneyQuery {
     }
 
     public static function OperAppendByObj(Ab_Database $db, $userid, $accountid, $od){
-        return MoneyQuery::OperAppend($db, $userid, $accountid, $od->ise, $od->v, $od->d, $od->cid, $od->dsc);
+        return MoneyQuery::OperAppend($db, $userid, $accountid, $od->isexpense, $od->value, $od->upddate, $od->categoryid, $od->descript);
     }
 
     public static function OperUpdate(Ab_Database $db, $operid, $accountid, $operval, $operdate, $catid, $descript){
@@ -388,7 +388,7 @@ class MoneyQuery {
     }
 
     public static function OperUpdateByObj(Ab_Database $db, $operid, $accountid, $od){
-        return MoneyQuery::OperUpdate($db, $operid, $accountid, $od->v, $od->d, $od->cid, $od->dsc);
+        return MoneyQuery::OperUpdate($db, $operid, $accountid, $od->value, $od->upddate, $od->categoryid, $od->descript);
     }
 
     public static function OperRemove(Ab_Database $db, $operid, $accountid){
