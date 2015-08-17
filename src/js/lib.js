@@ -100,7 +100,9 @@ Component.entryPoint = function(NS){
         ATTRS: {
             isLoadAppStructure: {value: true},
             UserRole: {value: NS.UserRole},
-            UserRoleList: {value: NS.UserRoleList}
+            UserRoleList: {value: NS.UserRoleList},
+            Category: {value: NS.Category},
+            CategoryList: {value: NS.CategoryList}
         }
     });
 

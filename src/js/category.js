@@ -10,51 +10,102 @@ Component.entryPoint = function(NS){
         COMPONENT = this,
         SYS = Brick.mod.sys;
 
-    NS.CurrencySelectWidget = Y.Base.create('currencySelectWidget', SYS.AppWidget, [
+    NS.CategoryCreateWidget = Y.Base.create('categoryCreateWidget', SYS.AppWidget, [
         NS.GroupByIdExt
     ], {
-        onLoadGroupData: function(err, group){
+        onLoadGroupData: function(err, group, options){
+            var tp = this.template,
+                isExpense = this.get('isExpense');
 
-        }
-        /*
-        onInitAppWidget: function(err, appInstance, options){
-            var tp = this.template, lst = "";
-            NS.currencyList.each(function(currency){
-                lst += tp.replace('row', currency.toJSON());
+            this.selectWidget = new NS.CategorySelectWidget({
+                boundingBox: tp.gel('sel'),
+                groupid: this.get('groupid'),
+                isExpense: options.isExpense,
+                showChoiseRow: false,
+                showNewRow: false,
+                showRootRow: true
             });
-            var el = Y.one(tp.gel('id'));
-            el.setHTML(lst);
-            if (options && options.arguments && options.arguments[0] && options.arguments[0].selected){
-                this.set('selected', options.arguments[0].selected);
+        },
+        toJSON: function(){
+            return {
+                pid: this.selectWidget.get('selected'),
+                tl: this.template.gel('val').value
             }
         }
-        /**/
     }, {
         ATTRS: {
             component: {value: COMPONENT},
-            templateBlockName: {value: 'select,row'},
-            /*
-            selected: {
-                value: Abricos.config.locale === 'ru-RU' ? 'RUB' : 'USD',
-                setter: function(val){
-                    var el = Y.one(this.template.gel('id'));
-                    if (!el){
-                        return;
-                    }
-                    el.set('value', val);
-                    return val;
-                },
-                getter: function(){
-                    var el = Y.one(this.template.gel('id'));
-                    if (!el){
-                        return;
-                    }
-                    return el.get('value');
-                }
-            }
-             /**/
+            templateBlockName: {value: 'create'}
         }
     });
 
+    NS.CategorySelectWidget = Y.Base.create('categorySelectWidget', SYS.AppWidget, [
+        NS.GroupByIdExt
+    ], {
+        onLoadGroupData: function(err, group, options){
+            var tp = this.template,
+                isExpense = this.get('isExpense'),
+                stop = 1;
 
+            var buildRows = function(pid, level){
+                if (stop++ > 1000){
+                    return;
+                }
+
+                var lst = "", tab = "";
+                for (var i = 0; i < level; i++){
+                    tab += tp.replace('stab');
+                }
+
+                group.get('categories').each(function(category){
+                    var cat = category.toJSON();
+                    if (cat.parentid != pid ||
+                        isExpense != cat.isexpense){
+                        return;
+                    }
+
+                    lst += tp.replace('srow', {
+                        id: cat.id,
+                        tl: cat.title,
+                        tab: tab
+                    });
+                    lst += buildRows.call(this, cat.id, level + 1);
+                }, this);
+                return lst;
+            };
+            var lst = buildRows.call(this, 0, 0);
+            this.get('boundingBox').setHTML(tp.replace('select', {
+                crow: this.get('showChoiseRow') ? tp.replace('scrow') : '',
+                nrow: this.get('showNewRow') ? tp.replace('snrow') : '',
+                erow: this.get('showEditRow') ? tp.replace('serow') : '',
+                rtrow: this.get('showRootRow') ? tp.replace('srtrow') : '',
+                rows: lst
+            }));
+
+            tp.one('id').on('change', function(){
+                this.set('selected', tp.one('id').get('value'));
+            }, this);
+        }
+    }, {
+        ATTRS: {
+            component: {value: COMPONENT},
+            templateBlockName: {value: 'select,srow,stab,scrow,snrow,serow,srtrow'},
+            isExpense: {},
+            showChoiseRow: {value: true},
+            showNewRow: {value: false},
+            showEditRow: {value: false},
+            showRootRow: {value: false},
+            selected: {
+                getter: function(val){
+                    var el = this.template.one('id');
+                    return el ? el.get('value') : val;
+                },
+                setter: function(val){
+                    var el = this.template.one('id');
+                    el ? el.set('value', val) : 0;
+                    return val;
+                }
+            }
+        }
+    });
 };

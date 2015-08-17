@@ -19,6 +19,30 @@ class MoneyUserRoleList extends AbricosModelList {
 }
 
 /**
+ * Class MoneyCategory
+ * @property int $id Category ID
+ * @property int $parentid Parent Category ID
+ * @property int $useid User ID
+ * @property int $groupid Group ID
+ * @property string $title Title
+ * @property int $isexpense True - is Expense
+ * @property int $ord Order
+ * @property int $upddate Update Date
+ */
+class MoneyCategory extends AbricosModel {
+    protected $_structModule = 'money';
+    protected $_structName = 'Category';
+}
+
+/**
+ * Class MoneyCategoryList
+ * @method MoneyCategory Get(int $id)
+ */
+class MoneyCategoryList extends AbricosModelList {
+
+}
+
+/**
  * Class MoneyGroup
  * @property MoneyUserRoleList $roles
  */

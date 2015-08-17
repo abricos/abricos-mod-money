@@ -33,6 +33,8 @@ class Money {
         $models->RegisterClass('AccountList', 'MoneyAccountList');
         $models->RegisterClass('User', 'MoneyUser');
         $models->RegisterClass('UserList', 'MoneyUserList');
+        $models->RegisterClass('Category', 'MoneyCategory');
+        $models->RegisterClass('CategoryList', 'MoneyCategoryList');
     }
 
     public function AJAX($d){
@@ -70,7 +72,7 @@ class Money {
 
         $modelManager = AbricosModelManager::GetManager('money');
 
-        $res = $modelManager->ToJSON('Group,UserRole,UserRoleList,Account,AccountUserRole,GroupUserRole,User');
+        $res = $modelManager->ToJSON('Group,Category,CategoryList,UserRole,UserRoleList,Account,AccountUserRole,GroupUserRole,User');
         if (empty($res)){
             return null;
         }
@@ -153,6 +155,15 @@ class Money {
                 continue;
             }
             $group->roles->Add($this->models->InstanceClass('UserRole', $d));
+        }
+
+        $rows = MoneyQuery::CategoryList($this->db, $groupIds);
+        while (($d = $this->db->fetch_array($rows))){
+            $group = $list->Get($d['groupid']);
+            if (empty($group)){
+                continue;
+            }
+            $group->categories->Add($this->models->InstanceClass('Category', $d));
         }
 
         return $this->_cacheGroupList = $list;

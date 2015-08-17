@@ -26,13 +26,13 @@ class MoneyQuery {
         $sql = "
 			SELECT 
 				c.categoryid as id,
-				c.parentcategoryid as pid,
-				c.userid as uid,
-				c.groupid as gid,
-				c.title as tl,
-				c.isexpense as ise,
+				c.parentcategoryid as parentid,
+				c.userid,
+				c.groupid,
+				c.title,
+				c.isexpense,
 				c.ord,
-				c.upddate as upd
+				c.upddate
 			FROM ".$db->prefix."money_category c
 			WHERE ".implode(" OR ", $wh)."
 		";

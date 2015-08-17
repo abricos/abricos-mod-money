@@ -22,8 +22,10 @@ Component.entryPoint = function(NS){
         accountList: {},
     };
     GroupByIdExt.prototype = {
-        onInitAppWidget: function(err, appInstance){
-            this.onBeforeLoadGroupData();
+        onInitAppWidget: function(err, appInstance, options){
+            options = options || {};
+            options.arguments = options.arguments || [];
+            this.onBeforeLoadGroupData(err, appInstance, options.arguments[0]);
             this.set('waiting', true);
             appInstance.groupList(function(err, result){
                 this.set('waiting', false);
@@ -32,7 +34,7 @@ Component.entryPoint = function(NS){
                     this.set('accountList', result.accountList);
                 }
                 var group = this.get('group');
-                this.onLoadGroupData(err, group);
+                this.onLoadGroupData(err, group, options.arguments[0]);
             }, this);
         },
         onBeforeLoadGroupData: function(){
@@ -67,5 +69,21 @@ Component.entryPoint = function(NS){
         }
     }
     NS.SelectedAccountExt = SelectedAccountExt;
+
+    var KeyPressExt = function(){
+    };
+    KeyPressExt.NAME = 'keyPressExt';
+    KeyPressExt.prototype = {
+        initializer: function(){
+            this.get('boundingBox').on('keypress', function(e){
+                if (this.onKeyPress(e)){
+                    e.halt();
+                }
+            }, this);
+        },
+        onKeyPress: function(){
+        }
+    }
+    NS.KeyPressExt = KeyPressExt;
 
 };

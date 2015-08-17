@@ -18,6 +18,14 @@ Component.entryPoint = function(NS){
         ADMIN: 3
     };
 
+    NS.Category = Y.Base.create('category', SYS.AppModel, [], {
+        structureName: 'Category'
+    });
+
+    NS.CategoryList = Y.Base.create('categoryList', SYS.AppModelList, [], {
+        appItem: NS.Category
+    });
+
     var UserRolesBase = function(){
     };
     UserRolesBase.NAME = 'userRolesBase';
@@ -71,6 +79,10 @@ Component.entryPoint = function(NS){
         getCurrency: function(){
             var ccId = this.get('currency');
             return NS.currencyList.getById(ccId);
+        },
+        getCurrencySign: function(){
+            var currency = this.getCurrency();
+            return currency ? currency.get('sign') : "";
         }
 
     });

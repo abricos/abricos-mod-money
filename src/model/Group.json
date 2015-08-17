@@ -22,6 +22,9 @@
     },
     "roles": {
       "type": "list:UserRoleList"
+    },
+    "categories": {
+      "type": "list:CategoryList"
     }
   }
 }

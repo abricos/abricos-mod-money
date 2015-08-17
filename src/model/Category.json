@@ -1,0 +1,35 @@
+{
+  "version": "0.1.0",
+  "fields": {
+    "id": {
+      "type": "int"
+    },
+    "parentid": {
+      "type": "int",
+      "json": "pid"
+    },
+    "groupid": {
+      "type": "int",
+      "json": "gid"
+    },
+    "title": {
+      "type": "string",
+      "json": "tl"
+    },
+    "userid": {
+      "type": "int",
+      "json": "uid"
+    },
+    "isexpense": {
+      "type": "int",
+      "json": "ise"
+    },
+    "or": {
+      "type": "int"
+    },
+    "update": {
+      "type": "int",
+      "json": "upd"
+    }
+  }
+}

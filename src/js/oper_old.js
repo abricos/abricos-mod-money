@@ -7,46 +7,13 @@ Component.requires = {
 };
 Component.entryPoint = function(NS){
 
-    var Dom = YAHOO.util.Dom,
-        E = YAHOO.util.Event,
-        L = YAHOO.lang;
-
-    var buildTemplate = this.buildTemplate;
-
     var OperEditorWidget = function(container, account, isExpense){
         this.init(container, account, isExpense);
     };
     OperEditorWidget.prototype = {
         init: function(container, account, isExpense){
-            this.isExpense = isExpense;
-
-
-            this.catsWidget.changedEvent.subscribe(this.catsChanged, this, true);
-
-            this.catCreateWidget = null;
-
-            this.dateTimeWidget = new Brick.mod.widget.DateInputWidget(TM.getEl('editor.dt'), {
-                'date': new Date(),
-                'showBClear': false,
-                'showBTime': false,
-                'showTime': false
-            });
-
-            var __self = this;
-            E.on(container, 'keypress', function(e){
-                if (__self.onKeyPress(E.getTarget(e), e)){
-                    E.stopEvent(e);
-                }
-            });
-            this.setAccount(account);
-
-            NS.moneyManager.categoriesChangedEvent.subscribe(this.onCategoriesChanged, this, true);
 
             this.setOper(null);
-        },
-        destory: function(){
-            this.catsWidget.changedEvent.unsubscribe(this.catsChanged);
-            NS.moneyManager.categoriesChangedEvent.unsubscribe(this.onCategoriesChanged);
         },
         onCategoriesChanged: function(){
             this.catsWidget.render();
@@ -60,30 +27,7 @@ Component.entryPoint = function(NS){
                 this.hideCreateCategory();
             }
         },
-        showCreateCategory: function(){
-            if (!L.isNull(this.catCreateWidget)){
-                return;
-            }
 
-            this.catCreateWidget =
-                new NS.CategoryCreateWidget(this._TM.getEl('editor.catcreate'), this.group.categories, this.isExpense, {
-                    'showNewRow': false
-                });
-        },
-        hideCreateCategory: function(){
-            if (L.isNull(this.catCreateWidget)){
-                return;
-            }
-            this.catCreateWidget.destroy();
-            this.catCreateWidget = null;
-        },
-        setAccount: function(acc){
-            this.account = acc;
-            var TM = this._TM;
-            TM.getEl('editor.atl').innerHTML = acc.getTitle();
-            var cc = acc.currency;
-            TM.getEl('editor.cc').innerHTML = L.isNull(cc) ? "" : acc.currency.sign;
-        },
         onClick: function(el){
             var tp = this._TId['editor'];
             switch (el.id) {
