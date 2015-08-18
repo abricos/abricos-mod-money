@@ -37,6 +37,8 @@ class Money {
         $models->RegisterClass('UserList', 'MoneyUserList');
         $models->RegisterClass('Category', 'MoneyCategory');
         $models->RegisterClass('CategoryList', 'MoneyCategoryList');
+        $models->RegisterClass('Oper', 'MoneyOper');
+        $models->RegisterClass('OperList', 'MoneyOperList');
     }
 
     public function AJAX($d){
@@ -80,7 +82,7 @@ class Money {
 
         $modelManager = AbricosModelManager::GetManager('money');
 
-        $res = $modelManager->ToJSON('Group,Category,CategoryList,UserRole,UserRoleList,Account,AccountUserRole,GroupUserRole,User');
+        $res = $modelManager->ToJSON('Group,Category,CategoryList,UserRole,UserRoleList,Account,User,Oper');
         if (empty($res)){
             return null;
         }

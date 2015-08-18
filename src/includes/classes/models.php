@@ -27,7 +27,7 @@ class MoneyUserRoleList extends AbricosModelList {
  * @property int $useid User ID
  * @property int $groupid Group ID
  * @property string $title Title
- * @property int $isexpense True - is Expense
+ * @property int $isexpense True - is Expense, else Income
  * @property int $ord Order
  * @property int $upddate Update Date
  */
@@ -61,36 +61,6 @@ class MoneyGroup extends MoneyUserRoleModel {
  */
 class MoneyGroupList extends AbricosModelList {
 
-}
-
-/**
- * Class MoneyGroupUserRole
- *
- * @property int $groupid Group ID
- * @property int $userid User ID
- * @property int $role Role Value
- */
-class MoneyGroupUserRole extends AbricosModel {
-    protected $_structModule = 'money';
-    protected $_structName = 'GroupUserRole';
-}
-
-/**
- * Class MoneyGroupUserRoleList
- */
-class MoneyGroupUserRoleList extends AbricosModelList {
-
-    /**
-     * @param int $groupid
-     * @param int $userid
-     * @return MoneyGroupUserRole
-     */
-    public function Get($groupid, $userid = 0){
-        if ($userid === 0){
-            $userid = Abricos::$user->id;
-        }
-        return parent::Get(intval($groupid).'_'.intval($userid));
-    }
 }
 
 class MoneyUserRoleModel extends AbricosModel {
@@ -127,7 +97,6 @@ class MoneyUserRoleModel extends AbricosModel {
 class MoneyAccount extends MoneyUserRoleModel {
     protected $_structModule = 'money';
     protected $_structName = 'Account';
-
 }
 
 /**
@@ -139,21 +108,37 @@ class MoneyAccountList extends AbricosModelList {
     protected $_structName = 'AccountList';
 }
 
-class MoneyAccountUserRole extends AbricosModel {
-    protected $_structModule = 'money';
-    protected $_structName = 'AccountUserRole';
-}
-
-class MoneyAccountUserRoleList extends AbricosModelList {
-
-}
-
 class MoneyUser extends AbricosModel {
     protected $_structModule = 'money';
     protected $_structName = 'User';
 }
 
 class MoneyUserList extends AbricosModelList {
+
+}
+
+/**
+ * Class MoneyOper
+ * @property int $accountid Account ID
+ * @property int $userid User ID
+ * @property int $groupid Group ID
+ * @property int $isexpense True - is Expense, else Income
+ * @property double $value Value
+ * @property int $date Value Date
+ * @property int $categoryid Category ID
+ * @property string $descript Description
+ * @property int $methodid Method ID
+ * @property int $upddate Update Date
+ */
+class MoneyOper extends AbricosModel {
+    protected $_structModule = 'money';
+    protected $_structName = 'Oper';
+}
+
+/**
+ * Class MoneyOperList
+ */
+class MoneyOperList extends AbricosModelList {
 
 }
 

@@ -1,0 +1,46 @@
+{
+  "version": "0.1.0",
+  "fields": {
+    "id": {
+      "type": "int"
+    },
+    "accountid": {
+      "type": "int",
+      "json": "aid"
+    },
+    "userid": {
+      "type": "int",
+      "json": "uid"
+    },
+    "isexpense": {
+      "type": "bool",
+      "json": "ise"
+    },
+    "value": {
+      "type": "double",
+      "json": "v",
+      "dbField": "v"
+    },
+    "date": {
+      "type": "int",
+      "json": "d",
+      "dbField": "d"
+    },
+    "categoryid": {
+      "type": "int",
+      "json": "cid"
+    },
+    "descript": {
+      "type": "string",
+      "json": "dsc"
+    },
+    "methodid": {
+      "type": "int",
+      "json": "mid"
+    },
+    "upddate": {
+      "type": "int",
+      "json": "upd"
+    }
+  }
+}

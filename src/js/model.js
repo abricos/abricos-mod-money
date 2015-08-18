@@ -132,6 +132,14 @@ Component.entryPoint = function(NS){
         appItem: NS.User
     });
 
+    NS.Oper = Y.Base.create('oper', SYS.AppModel, [], {
+        structureName: 'Oper'
+    });
+
+    NS.OperList = Y.Base.create('operList', SYS.AppModelList, [], {
+        appItem: NS.Oper
+    });
+
     NS.Currency = Y.Base.create('currency', SYS.AppItem, [], {}, {
         ATTRS: {
             id: {value: ''},

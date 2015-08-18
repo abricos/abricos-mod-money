@@ -53,11 +53,15 @@ Component.entryPoint = function(NS){
                     widget: 'GroupEditorWidget'
                 });
             } else {
-                this.showWorkspacePage({
-                    component: 'groupView',
-                    widget: 'GroupViewWidget',
-                    args: [firstGroupId]
-                });
+                var wsPage =this.get('workspacePage') || {};
+                if (!wsPage.component){
+                    wsPage = {
+                        component: 'groupView',
+                        widget: 'GroupViewWidget',
+                        args: [firstGroupId]
+                    };
+                }
+                this.showWorkspacePage(wsPage);
             }
 
         }

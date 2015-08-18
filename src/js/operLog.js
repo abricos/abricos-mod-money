@@ -12,44 +12,46 @@ Component.entryPoint = function(NS){
         COMPONENT = this,
         SYS = Brick.mod.sys;
 
-    NS.OperListWidget = Y.Base.create('operListWidget', SYS.AppWidget, [], {
-        onInitAppWidget: function(err, appInstance){
+    NS.OperListWidget = Y.Base.create('operListWidget', SYS.AppWidget, [
+        NS.GroupByIdExt
+    ], {
+        onBeforeLoadGroupData: function(err, appInstance){
             var tp = this.template;
 
             this._savedHeight = 20;
 
             this.filter = {};
             /*
-            // this.opers = new NS.OperList();
+             // this.opers = new NS.OperList();
 
-            this.pagTop = new YAHOO.widget.Paginator({
-                containers: tp.gel('pagtop'),
-                rowsPerPage: 15
-            });
-            this.pagTop.subscribe('changeRequest', this.onPaginatorChanged, this, true);
-            /**/
+             this.pagTop = new YAHOO.widget.Paginator({
+             containers: tp.gel('pagtop'),
+             rowsPerPage: 15
+             });
+             this.pagTop.subscribe('changeRequest', this.onPaginatorChanged, this, true);
+             /**/
 
+            this.on('periodChange', this._onPeriodChange, this);
+        },
+        onLoadGroupData: function(err, group, options){
+            this.reloadOperList();
+        },
+        reloadOperList: function(){
+            var period = this.get('period');
+            var config = {
+                groupid: this.get('groupid'),
+                period: this.get('periodUnix')
+            };
             this.set('waiting', true);
-            appInstance.groupList(function(err, result){
-                this.set('waiting', false);
+            this.get('appInstance').operList(config, function(err, result){
+                this.set('waiting', true);
                 if (!err){
-                    this.set('groupList', result.groupList);
-                    this.set('accountList', result.accountList);
+
                 }
-                this._onLoadData();
             }, this);
         },
-        _onLoadData: function(){
-            var groupid = this.get('groupid'),
-                groupList = this.get('groupList'),
-                group = groupList ? groupList.getById(groupid) : null,
-                tp = this.template;
-
-            this.set('group', group);
-
-            if (!group){
-                return;
-            }
+        _onPeriodChange: function(){
+            console.log(arguments);
         },
         onClick: function(e){
             switch (e.dataClick) {
@@ -61,42 +63,91 @@ Component.entryPoint = function(NS){
         ATTRS: {
             component: {value: COMPONENT},
             templateBlockName: {value: 'list,table,rowfilter,row,rowtdbase,rowtdmove,rowsum,rbtns,rbtnsn,rowfilter,filterval'},
-            groupList: {},
-            accountList: {},
-            groupid: {value: 0},
-            group: {}
+            operList: {},
+            fromDate: {
+                setter: function(val){
+                    this.set('period', [val, this.get('endDate')]);
+                },
+                getter: function(){
+                    return this.get('period')[0];
+                }
+            },
+            endDate: {
+                setter: function(val){
+                    this.set('period', [this.get('fromDate'), val]);
+                },
+                getter: function(){
+                    return this.get('period')[1];
+                }
+            },
+            period: {
+                validator: function(val){
+                    return (Y.Lang.isArray(val) &&
+                    val.length == 2 &&
+                    (val[0] instanceof Date) && (val[1] instanceof Date));
+                }
+            },
+            periodUnix: {
+                readOnly: true,
+                getter: function(){
+                    var p = this.get('period');
+                    return [p[0] / 1000, p[1] / 1000];
+                }
+            }
         }
     });
 
-    NS.OperLogWidget = Y.Base.create('operLogWidget', SYS.AppWidget, [], {
-        onInitAppWidget: function(err, appInstance){
-            this.set('waiting', true);
-            appInstance.groupList(function(err, result){
-                this.set('waiting', false);
-                if (!err){
-                    this.set('groupList', result.groupList);
-                    this.set('accountList', result.accountList);
-                }
-                this._onLoadData();
-            }, this);
+    NS.OperLogWidget = Y.Base.create('operLogWidget', SYS.AppWidget, [
+        NS.GroupByIdExt
+    ], {
+        buildTData: function(){
+            return {
+                groupid: this.get('groupid')
+            }
         },
-        _onLoadData: function(){
-            var groupid = this.get('groupid'),
-                groupList = this.get('groupList'),
-                group = groupList ? groupList.getById(groupid) : null,
-                tp = this.template;
-
-            this.set('group', group);
-
-            this.listWidget = new NS.OperListWidget({
-                srcNode: tp.gel('list'),
-                groupid: groupid
-            });
-
+        onLoadGroupData: function(err, group, options){
             if (!group){
                 return;
             }
+
+            var tp = this.template,
+                groupid = group.get('id');
+
+            tp.setHTML('title', group.getTitle());
+
+            this.periodWidget = new Brick.mod.widget.PeriodWidget(tp.gel('period'));
+            this.periodWidget.getPeriod = function(){
+                var period = this.getValue();
+                return [period['fdt'], period['edt']];
+            }
+            this.periodWidget.selectType('week');
+            this.periodWidget.periodChangedEvent.subscribe(this.onPeriodChanged, this, true);
+
+            this.listWidget = new NS.OperListWidget({
+                srcNode: tp.gel('list'),
+                groupid: groupid,
+                period: this.periodWidget.getPeriod()
+            });
+            /*
+             var __self = this;
+             this.listWidget.onClickAction = function(action, oper){
+             __self.onRowClickAction(action, oper);
+             };/**/
+
+            // NS.moneyManager.balanceChangedEvent.subscribe(this.onBalanceChanged, this, true);
+
         },
+        onPeriodChanged: function(){
+            this.listWidget.set('period', this.periodWidget.getPeriod());
+        },
+        /*
+         setPeriod: function(fromdt, enddt){
+         this.fromdt = fromdt;
+         this.enddt = enddt;
+         this.opers = null;
+         this.loadPeriod();
+         },
+         /**/
         onClick: function(e){
             switch (e.dataClick) {
                 case '':
@@ -107,10 +158,14 @@ Component.entryPoint = function(NS){
         ATTRS: {
             component: {value: COMPONENT},
             templateBlockName: {value: 'widget'},
-            groupList: {},
-            accountList: {},
-            groupid: {value: 0},
-            group: {}
         }
     });
+
+    NS.OperLogWidget.parseURLParam = function(args){
+        args = args || [];
+        return {
+            groupid: (args[0] | 0)
+        };
+    };
+
 };

@@ -1,8 +1,19 @@
 <!--{widget}-->
-<div id="{i#id}" class="operlog panel panel-default">
+<div class="operlog panel panel-default">
     <div class="panel-heading">
         <h3 class="panel-title">
-            {#mod.money.operlist.widget.1} <img id="{i#loading}" src="/images/loading.gif"/>
+            <a data-url="oper.log({v#groupid})" href="#">
+                {#mod.money.operlist.widget.1}
+            </a>
+
+            <div data-wait="hide" class="pull-right">
+                <a data-url="group.view({v#groupid})" href="#">
+                    Бухгалтерия "<span id="{i#title}"></span>"
+                </a>
+            </div>
+            <div data-wait="show" class="pull-right">
+                <img src="/images/loading.gif"/> Загрузка данных...
+            </div>
         </h3>
     </div>
     <div class="panel-body">

@@ -296,16 +296,7 @@ Component.entryPoint = function(NS){
     };
     OperLogWidget.prototype = {
         init: function(container, group){
-            this.group = group;
-            var TM = buildTemplate(this, 'widget');
-            container.innerHTML = TM.replace('widget');
 
-            this.listWidget = new NS.OperListWidget(TM.getEl('widget.list'), group);
-
-            var __self = this;
-            this.listWidget.onClickAction = function(action, oper){
-                __self.onRowClickAction(action, oper);
-            };
 
             var edt = new Date(),
                 fdt = DM.add(edt, DM.DAY, -7);
@@ -315,16 +306,7 @@ Component.entryPoint = function(NS){
 
             this.opers = null;
 
-            NS.moneyManager.balanceChangedEvent.subscribe(this.onBalanceChanged, this, true);
 
-            this.periodWidget = new Brick.mod.widget.PeriodWidget(TM.getEl('widget.period'));
-            this.periodWidget.periodChangedEvent.subscribe(this.onPeriodChanged, this, true);
-
-            this.periodWidget.selectType('week');
-        },
-        destroy: function(){
-            NS.moneyManager.balanceChangedEvent.unsubscribe(this.onBalanceChanged);
-            this.periodWidget.periodChangedEvent.unsubscribe(this.onPeriodChanged);
         },
         onRowClickAction: function(action, oper){
             switch (action) {
@@ -348,14 +330,6 @@ Component.entryPoint = function(NS){
                     break;
             }
         },
-        onRowClickEdit: function(oper){
-        },
-        onRowClickRemove: function(oper){
-        },
-        onPeriodChanged: function(){
-            var pd = this.periodWidget.getValue();
-            this.setPeriod(pd['fdt'], pd['edt']);
-        },
         onBalanceChanged: function(e, prm){
             var acc = prm[0],
                 byRemoveOper = prm[1];
@@ -368,17 +342,8 @@ Component.entryPoint = function(NS){
             }
             this.loadPeriod();
         },
-        setPeriod: function(fromdt, enddt){
-            this.fromdt = fromdt;
-            this.enddt = enddt;
-            this.opers = null;
-            this.loadPeriod();
-        },
         addFilter: function(type, oper){
             this.listWidget.addFilter(type, oper);
-        },
-        clearFilter: function(){
-
         },
         updateOpers: function(opers){
             this.opers = opers;

@@ -42,26 +42,20 @@ Component.entryPoint = function(NS){
         'accessdenied': function(){
             return NS.URL.ws + 'about/AccessDeniedWidget/'
         },
-        'group': {
-            'view': function(groupid){
-                return NS.URL.ws + 'groupview/GroupViewWidget/' + groupid + '/';
+        group: {
+            view: function(groupid){
+                return NS.URL.ws + 'groupView/GroupViewWidget/' + groupid + '/';
             },
-            'create': function(){
-                return NS.URL.ws + 'groupeditor/GroupEditWidget/0/'
+            create: function(){
+                return NS.URL.ws + 'groupEditor/GroupEditWidget/0/'
             },
-            'edit': function(groupid){
-                return NS.URL.ws + 'groupeditor/GroupEditWidget/' + groupid + '/';
+            edit: function(groupid){
+                return NS.URL.ws + 'groupEditor/GroupEditWidget/' + groupid + '/';
             }
         },
-        'account': {
-            'list': function(){
-                return NS.URL.ws + 'account/AccountListWidget/p1/p2/p3/';
-            },
-            'view': function(acc){
-                return AWS + 'view/' + (acc ? acc + '/' : '');
-            },
-            'create': function(){
-                return AWS + 'create/';
+        oper: {
+            log: function(groupid){
+                return NS.URL.ws + 'operLog/OperLogWidget/' + groupid + '/';
             }
         }
     };
@@ -92,7 +86,12 @@ Component.entryPoint = function(NS){
         operSave: {
             args: ['oper']
         },
-
+        operList: {
+            args: ['operListConfig'],
+            response: function(d){
+                return new NS.OperList({appInstance: this, items: d.list});
+            }
+        },
     }, {
         initializer: function(){
             this.initCallbackFire();

@@ -409,15 +409,15 @@ class MoneyQuery {
         $sql = "
 			SELECT
 				o.operid as id,
-				o.accountid as aid,
-				o.userid as uid,
-				o.isexpense as ise,
+				o.accountid,
+				o.userid,
+				o.isexpense,
 				o.operval as v,
 				o.operdate as d,
-				o.categoryid as cid,
-				o.descript as dsc,
-				o.methodid as mid,
-				o.upddate as upd
+				o.categoryid,
+				o.descript,
+				o.methodid,
+				o.upddate
 			FROM ".$db->prefix."money_oper o
 			WHERE (o.operdate>=".bkint($fromdt)." AND o.operdate<=".bkint($enddt).") 
 				AND (".implode($aw, " OR ").")
