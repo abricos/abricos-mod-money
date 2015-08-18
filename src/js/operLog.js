@@ -46,12 +46,12 @@ Component.entryPoint = function(NS){
             this.get('appInstance').operList(config, function(err, result){
                 this.set('waiting', true);
                 if (!err){
-
+                    console.log(result);
                 }
             }, this);
         },
         _onPeriodChange: function(){
-            console.log(arguments);
+            this.reloadOperList();
         },
         onClick: function(e){
             switch (e.dataClick) {

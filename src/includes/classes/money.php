@@ -55,6 +55,8 @@ class Money {
                 return $this->UserListToJSON();
             case 'operSave':
                 return $this->OperSaveToJSON($d->oper);
+            case 'operList':
+                return $this->OperListToJSON($d->operListConfig);
         }
         return null;
     }
@@ -402,6 +404,41 @@ class Money {
         $this->CategoryAppendMethod($gid, "Зимняя", true, $id, $ord++);
     }
 
+    public function OperListToJSON($config){
+        $res = $this->OperList($config);
+        $ret = $this->ResultToJSON('operList', $res);
+        $ret->operListConfig = $config;
+        return $ret;
+    }
+
+    /**
+     * @param $config
+     * @return MoneyOperList
+     */
+    public function OperList($config){
+        if (!$this->manager->IsViewRole()){
+            return 403;
+        }
+        $accountList = $this->AccountList();
+        $aids = array();
+        for ($i = 0; $i < $accountList->Count(); $i++){
+            $account = $accountList->GetByIndex($i);
+            if ($config->groupid === $account->groupid){
+                array_push($aids, $account->id);
+            }
+        }
+        $fromdt = $config->period[0];
+        $enddt = $config->period[1];
+        $lastupdate = 0;
+
+        $list = $this->models->InstanceClass('OperList');
+
+        $rows = MoneyQuery::OperListByAIds($this->db, $aids, $fromdt, $enddt, $lastupdate);
+        while (($d = $this->db->fetch_array($rows))){
+            $list->Add($this->models->InstanceClass('Oper', $d));
+        }
+        return $list;
+    }
 }
 
 ?>

@@ -429,13 +429,6 @@ class MoneyManager extends Ab_ModuleManager {
         $rows = MoneyQuery::AccountList($this->db, $this->userid, $groupid);
         $accounts = $this->ToArray($rows, $aids, "id");
 
-        $rows = MoneyQuery::OperListByAIds($this->db, $aids, $fromdt, $enddt, $lastupdate);
-
-        $ret = new stdClass();
-        $ret->opers = $this->ToArray($rows);
-
-        $rows = MoneyQuery::OperMoveListByAIds($this->db, $aids, $fromdt, $enddt, $lastupdate);
-        $ret->moves = $this->ToArray($rows);
 
         return $ret;
     }

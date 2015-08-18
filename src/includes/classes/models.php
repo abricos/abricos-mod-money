@@ -102,6 +102,7 @@ class MoneyAccount extends MoneyUserRoleModel {
 /**
  * Class MoneyAccountList
  * @method MoneyAccount Get(int $accountid)
+ * @method MoneyAccount GetByIndex(int $i)
  */
 class MoneyAccountList extends AbricosModelList {
     protected $_structModule = 'money';
