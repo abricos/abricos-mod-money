@@ -1,4 +1,4 @@
-.aw-money .aclist {
+.aw-money .accountList {
 
   .panel-title {
     position: relative;
@@ -49,59 +49,60 @@
   }
 
   /* * * * * Account Row * * * * */
-  .arow {
+  .accountRow {
     position: relative;
     cursor: pointer;
     margin-bottom: 7px;
     padding: 0 3px;
+
+    &:hover {
+      background-color: #FFF0C6;
+    }
+
+    .sel {
+      font-weight: bold;
+    }
+
+    /* * * * * * Menu * * * * */
+    .amenu {
+      position: absolute;
+      right: 1px;
+      top: 3px;
+      background-color: #FFF;
+      border: 1px solid #dadada;
+      display: none;
+    }
+
+    &:hover .amenu {
+      display: inherit;
+    }
+
+    .amenu .b {
+      border-right: 1px solid #DADADA;
+      cursor: pointer;
+      float: left;
+      height: 18px;
+      padding-left: 3px;
+      padding-top: 2px;
+      width: 18px;
+    }
+
+    .amenu .badd {
+      background: url("/modules/money/images/icons001.png") no-repeat scroll -57px -24px transparent;
+    }
+
+    .amenu .bedit {
+      background: url("/modules/money/images/icons001.png") no-repeat scroll -29px -24px transparent;
+    }
+
+    .amenu .brem {
+      background: url("/modules/money/images/icons001.png") no-repeat scroll -42px -24px transparent;
+    }
+
+    .amenu .bc {
+      height: 14px;
+      width: 12px;
+    }
   }
 
-  .arow:hover {
-    background-color: #FFF0C6;
-  }
-
-  .arow .sel {
-    font-weight: bold;
-  }
-
-  /* * * * * * Menu * * * * */
-  .arow .amenu {
-    position: absolute;
-    right: 1px;
-    top: 3px;
-    background-color: #FFF;
-    border: 1px solid #dadada;
-    display: none;
-  }
-
-  .arow:hover .amenu {
-    display: inherit;
-  }
-
-  .arow .amenu .b {
-    border-right: 1px solid #DADADA;
-    cursor: pointer;
-    float: left;
-    height: 18px;
-    padding-left: 5px;
-    padding-top: 4px;
-    width: 18px;
-  }
-
-  .arow .amenu .badd {
-    background: url("/modules/money/images/icons001.png") no-repeat scroll -57px -24px transparent;
-  }
-
-  .arow .amenu .bedit {
-    background: url("/modules/money/images/icons001.png") no-repeat scroll -29px -24px transparent;
-  }
-
-  .arow .amenu .brem {
-    background: url("/modules/money/images/icons001.png") no-repeat scroll -42px -24px transparent;
-  }
-
-  .arow .amenu .bc {
-    height: 14px;
-    width: 12px;
-  }
 }

@@ -89,7 +89,7 @@ Component.entryPoint = function(NS){
             var role = this.get('role'),
                 owner = this.get('owner'),
                 userList = owner.get('appInstance').getFromCache('userList'),
-                userid = role.get('userid'),
+                userid = role.get('id'),
                 user = userList.getById(userid);
 
             if (!user){ // TODO: optimize uprofile module
@@ -152,39 +152,17 @@ Component.entryPoint = function(NS){
             this._ws = [];
             var tp = this.template;
             if (this.get('readOnly')){
-                Y.one(tp.gel('btns')).addClass('hide');
+                tp.hide('btns');
             }
-
-            this.set('waiting', true);
-            this.get('appInstance').groupList(function(err, result){
-                this.set('waiting', false);
-                this._renderRoleList();
-            }, this);
-
+            this.get('roleList').each(this._renderRole, this);
         },
         _renderRole: function(role){
-            var tp = this.template,
-                ownerid = this.get('ownerid'),
-                isAccount = this.get('isAccount');
-            var div = Y.Node.create('<div></div>');
-            Y.one(tp.gel('list')).appendChild(div);
             var w = new NS.RoleRowWidget({
-                boundingBox: div,
+                boundingBox: this.template.append('list', '<div></div>'),
                 role: role,
                 owner: this
             });
             this._ws[this._ws.length] = w;
-        },
-        _renderRoleList: function(){
-            var ownerid = this.get('ownerid'),
-                isAccount = this.get('isAccount');
-
-            this.get('roleList').each(function(role){
-                if (role.get(isAccount ? 'accountid' : 'groupid') !== ownerid){
-                    return;
-                }
-                this._renderRole(role);
-            }, this);
         },
         showEditor: function(){
             if (this.usersWidget){
@@ -256,23 +234,11 @@ Component.entryPoint = function(NS){
             }
         },
         _createRole: function(r, uid){
-            r = r || NS.AURoleType.ADMIN;
-            uid = uid || UID;
-            var app = this.get('appInstance'),
-                ownerid = this.get('ownerid'),
-                isAccount = this.get('isAccount');
-
-            if (isAccount){
-                return new NS.Account.UserRole({
-                    appInstance: app,
-                    id: '1', aid: ownerid, u: uid, r: r
-                });
-            } else {
-                return new NS.Group.UserRole({
-                    appInstance: app,
-                    id: '1', gid: ownerid, u: uid, r: r
-                });
-            }
+            return new NS.UserRole({
+                appInstance: app,
+                id: uid || UID,
+                r: r|| NS.AURoleType.ADMIN
+            });
         },
         onClick: function(e){
             switch (e.dataClick) {
@@ -299,39 +265,7 @@ Component.entryPoint = function(NS){
             component: {value: COMPONENT},
             templateBlockName: {value: 'urlist'},
             readOnly: {value: false},
-            ownerid: {value: 0},
-            isAccount: {value: true},
-            ownerFieldId: {
-                getter: function(){
-                    return this.get('isAccount') ? 'accountid' : 'groupid';
-                }
-            },
-            roleList: {
-                getter: function(){
-                    var app = this.get('appInstance'),
-                        ownerid = this.get('ownerid'),
-                        isAccount = this.get('isAccount');
-
-                    if (ownerid > 0){
-                        var listName = (isAccount ? 'account' : 'group') + 'UserRoleList';
-                        return app.getFromCache(listName);
-                    }
-                    if (!this._roleList){
-                        if (isAccount){
-                            this._roleList = new NS.Account.UserRoleList({
-                                appInstance: app,
-                                items: [{id: '1', aid: ownerid, u: UID, r: NS.AURoleType.ADMIN}]
-                            });
-                        } else {
-                            this._roleList = new NS.Group.UserRoleList({
-                                appInstance: app,
-                                items: [{id: '1', gid: ownerid, u: UID, r: NS.AURoleType.ADMIN}]
-                            });
-                        }
-                    }
-                    return this._roleList;
-                }
-            }
+            roleList: {}
         }
     });
 

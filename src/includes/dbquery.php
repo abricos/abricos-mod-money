@@ -190,11 +190,11 @@ class MoneyQuery {
 			(groupid, userid, accounttype, title, descript, initbalance, currency, dateline, upddate) VALUES (
 				".bkint($groupid).",
 				".bkint($userid).",
-				".bkint($ad->tp).",
-				'".bkstr($ad->tl)."',
-				'".bkstr($ad->dsc)."',
-				".doubleval($ad->ibc).",
-				'".bkstr($ad->cc)."',
+				".bkint($ad->type).",
+				'".bkstr($ad->title)."',
+				'".bkstr($ad->descript)."',
+				".doubleval($ad->initbalance).",
+				'".bkstr($ad->currency)."',
 				".TIMENOW.",
 				".TIMENOW."
 			)

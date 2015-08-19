@@ -1,14 +1,14 @@
 <!--{widget}-->
-<div id="{i#id}" class="aclist">
+<div class="accountList">
     <div class="panel panel-default">
         <div class="panel-heading">
             <h3 class="panel-title">
 
                 <span id="{i#gtl}">&nbsp;</span>
 
-                <div data-click="edit" class="bc bgpedt" title="{#mod.money.accountlist.widget.1}">
+                <a data-url="group.edit({v#id})" href="#" class="bc bgpedt" title="{#mod.money.accountlist.widget.1}">
                     &nbsp;
-                </div>
+                </a>
                 <div data-click="create" class="bc baccnew" title="{#mod.money.accountlist.widget.2}">
                     &nbsp;
                 </div>
@@ -25,7 +25,7 @@
 </div>
 
 <!--{grow}-->
-<div id="{i#id}" class="agrow hide1">
+<div id="{i#grow}" class="agrow">
     <div class="agtl">
         <table>
             <tbody>
@@ -51,7 +51,7 @@
 </div>
 
 <!--{row}-->
-<div id="{i#id}" class="arow">
+<div class="accountRow">
     <div id="{i#sel}">
         <div class="atl" id="{i#tl}"></div>
         <div class="abc">

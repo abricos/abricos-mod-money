@@ -99,10 +99,6 @@ Component.entryPoint = function(NS){
                 }
             });
         },
-        onAccountsClickGroupEdit: function(evt, prm){
-            var uri = NS.navigator.group.edit(this.group.id);
-            Brick.Page.reload(uri);
-        },
         onAccountsClickGroupRemove: function(evt, prm){
             new GroupRemovePanel(this.group, function(){
                 Brick.Page.reload(NS.navigator.ws);

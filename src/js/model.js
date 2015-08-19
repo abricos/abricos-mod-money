@@ -103,7 +103,7 @@ Component.entryPoint = function(NS){
             return Abricos.I18n.get('mod.money.group.nottitle');
         },
         accountEach: function(fn, context){
-            var groupid = this.get('groupid');
+            var groupid = this.get('id');
             this.appInstance.getFromCache('accountList').each(function(account){
                 if (account.get('groupid') !== groupid){
                     return;

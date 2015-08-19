@@ -47,23 +47,24 @@ Component.entryPoint = function(NS){
             tp.gel('menu').innerHTML = lst;
             this.appURLUpdate();
 
+            var wsPage =this.get('workspacePage') || {};
+
+            if (wsPage.component){
+                return;
+            }
+
             if (!firstGroupId){
                 this.showWorkspacePage({
                     component: 'groupEditor',
                     widget: 'GroupEditorWidget'
                 });
             } else {
-                var wsPage =this.get('workspacePage') || {};
-                if (!wsPage.component){
-                    wsPage = {
-                        component: 'groupView',
-                        widget: 'GroupViewWidget',
-                        args: [firstGroupId]
-                    };
-                }
-                this.showWorkspacePage(wsPage);
+                this.showWorkspacePage({
+                    component: 'groupView',
+                    widget: 'GroupViewWidget',
+                    args: [firstGroupId]
+                });
             }
-
         }
     }, {
         ATTRS: {

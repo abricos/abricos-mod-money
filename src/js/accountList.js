@@ -67,7 +67,7 @@ Component.entryPoint = function(NS){
                 title: Abricos.I18n.get('mod.money.account.group.' + groupType)
             }
         },
-        initializer: function(){
+        onInitAppWidget: function(){
             this.publish('accountMenuClick');
             this._clearWidgets();
         },
@@ -80,20 +80,16 @@ Component.entryPoint = function(NS){
                 ws[i].destroy();
             }
             this._ws = [];
+            this.template.hide('grow');
         },
         renderAccount: function(account){
-            var elList = this.template.one('list'),
-                div = Y.Node.create('<div></div>'),
-                ws = this._ws;
-
-            elList.appendChild(div);
-
             var w = new NS.AccountRowWidget({
-                boundingBox: div,
+                boundingBox: this.template.append('list', '<div></div>'),
                 account: account
             });
             w.on('menuClick', this._onRowMenuClick, this);
-            ws[ws.length] = w;
+            this._ws[this._ws.length] = w;
+            this.template.show('grow');
             return w;
         },
         _onRowMenuClick: function(e){
@@ -130,6 +126,9 @@ Component.entryPoint = function(NS){
     NS.AccountListWidget = Y.Base.create('accountListWidget', SYS.AppWidget, [
         NS.GroupByIdExt
     ], {
+        buildTData: function(){
+            return {id: this.get('groupid')}
+        },
         onBeforeLoadGroupData: function(){
             this.publish('menuClick');
             this.publish('accountMenuClick');

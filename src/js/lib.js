@@ -36,10 +36,10 @@ Component.entryPoint = function(NS){
 
     NS.URL = {
         ws: "#app={C#MODNAMEURI}/wspace/ws/",
-        'about': function(){
+        about: function(){
             return NS.URL.ws + 'about/AboutWidget/'
         },
-        'accessdenied': function(){
+        accessdenied: function(){
             return NS.URL.ws + 'about/AccessDeniedWidget/'
         },
         group: {
@@ -47,10 +47,10 @@ Component.entryPoint = function(NS){
                 return NS.URL.ws + 'groupView/GroupViewWidget/' + groupid + '/';
             },
             create: function(){
-                return NS.URL.ws + 'groupEditor/GroupEditWidget/0/'
+                return NS.URL.ws + 'groupEditor/GroupEditorWidget/0/'
             },
             edit: function(groupid){
-                return NS.URL.ws + 'groupEditor/GroupEditWidget/' + groupid + '/';
+                return NS.URL.ws + 'groupEditor/GroupEditorWidget/' + groupid + '/';
             }
         },
         oper: {

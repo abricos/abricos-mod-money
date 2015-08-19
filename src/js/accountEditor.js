@@ -10,6 +10,7 @@ Component.entryPoint = function(NS){
     var Y = Brick.YUI,
         COMPONENT = this,
         SYS = Brick.mod.sys;
+    var UID = Brick.env.user.id;
 
     NS.AccountEditorRowWidget = Y.Base.create('accountEditorRowWidget', SYS.AppWidget, [
         SYS.Form
@@ -23,10 +24,10 @@ Component.entryPoint = function(NS){
                 readOnly = accountid > 0 && !account.isAdminRole();
 
             this.rolesWidget = new NS.RoleListWidget({
+                owner: this,
                 srcNode: tp.gel('ulst'),
                 readOnly: readOnly,
-                isAccount: true,
-                ownerid: accountid
+                roleList: account.get('roles')
             });
 
             this.currencyWidget = new NS.CurrencySelectWidget({
@@ -101,7 +102,7 @@ Component.entryPoint = function(NS){
             if (groupid === 0){
                 this.createAccount();
             } else {
-                this.get('group').accountEach(this._renderAccount, this);
+                group.accountEach(this._renderAccount, this);
             }
         },
         _renderAccount: function(account, isInsert){
@@ -125,7 +126,7 @@ Component.entryPoint = function(NS){
             this._updateWidgetList();
         },
         _updateWidgetList: function(){
-            var elChilds = Y.one(this.template.gel('list')).get('children');
+            var elChilds = this.template.one('list').get('children');
             elChilds.each(function(node){
                 if (node._widget){
                     node._widget.set('isVisibleButtons', elChilds.size() > 1);
@@ -136,7 +137,10 @@ Component.entryPoint = function(NS){
             var account = new NS.Account({
                 appInstance: this.get('appInstance'),
                 tp: 1,
-                cc: Abricos.config.locale === 'ru-RU' ? 'RUB' : 'USD'
+                cc: Abricos.config.locale === 'ru-RU' ? 'RUB' : 'USD',
+                roles: {
+                    list: [{id: UID, r: NS.AURoleType.ADMIN}]
+                }
             });
             this._renderAccount(account, true);
         },

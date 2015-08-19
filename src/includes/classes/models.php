@@ -14,6 +14,7 @@ class MoneyUserRole extends AbricosModel {
 /**
  * Class MoneyUserRoleList
  * @method MoneyUserRole Get(int $userid)
+ * @method MoneyUserRole GetByIndex(int $index)
  */
 class MoneyUserRoleList extends AbricosModelList {
 
