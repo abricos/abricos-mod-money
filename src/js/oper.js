@@ -151,7 +151,7 @@ Component.entryPoint = function(NS){
                     if (groupid === 0 || !app){
                         return null;
                     }
-                    return app.getFromCache('groupList').getById(groupid);
+                    return app.get('groupList').getById(groupid);
                 }
             },
             isExpense: {

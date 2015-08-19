@@ -104,7 +104,7 @@ Component.entryPoint = function(NS){
         },
         accountEach: function(fn, context){
             var groupid = this.get('id');
-            this.appInstance.getFromCache('accountList').each(function(account){
+            this.appInstance.get('accountList').each(function(account){
                 if (account.get('groupid') !== groupid){
                     return;
                 }

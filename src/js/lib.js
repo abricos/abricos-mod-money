@@ -63,49 +63,45 @@ Component.entryPoint = function(NS){
     SYS.Application.build(COMPONENT, {
         groupList: {
             request: 'accountList,userList',
-            cache: 'groupList',
-            response: function(d){
-                return new NS.GroupList({appInstance: this, items: d.list});
-            }
+            attribute: true,
+            type: 'modelList:GroupList'
         },
         groupSave: {
             args: ['group']
         },
         accountList: {
             cache: 'accountList',
-            response: function(d){
-                return new NS.AccountList({appInstance: this, items: d.list});
-            }
+            attribute: true,
+            type: 'modelList:AccountList'
         },
         userList: {
             cache: 'userList',
-            response: function(d){
-                return new NS.UserList({appInstance: this, items: d.list});
-            }
+            attribute: true,
+            type: 'modelList:UserList'
         },
         operSave: {
             args: ['oper']
         },
         operList: {
             args: ['operListConfig'],
-            response: function(d){
-                return new NS.OperList({appInstance: this, items: d.list});
-            }
+            attribute: true,
+            type: 'modelList:OperList'
         },
     }, {
         initializer: function(){
             this.initCallbackFire();
-        },
-        getFromCache: function(name){
-            return this._appCache[name];
         }
     }, [], {
         ATTRS: {
             isLoadAppStructure: {value: true},
+            GroupList: {value: NS.GroupList},
+            AccountList: {value: NS.AccountList},
+            UserList: {value: NS.UserList},
             UserRole: {value: NS.UserRole},
             UserRoleList: {value: NS.UserRoleList},
             Category: {value: NS.Category},
-            CategoryList: {value: NS.CategoryList}
+            CategoryList: {value: NS.CategoryList},
+            OperList: {value: NS.OperList}
         }
     });
 

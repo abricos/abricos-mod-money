@@ -89,7 +89,7 @@ Component.entryPoint = function(NS){
         getUser: function(){
             var role = this.get('role'),
                 owner = this.get('owner'),
-                userList = owner.get('appInstance').getFromCache('userList'),
+                userList = owner.get('appInstance').get('userList'),
                 userid = role.get('id'),
                 user = userList.getById(userid);
 
