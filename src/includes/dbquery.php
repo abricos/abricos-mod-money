@@ -207,11 +207,11 @@ class MoneyQuery {
         $sql = "
 			UPDATE ".$db->prefix."money_account
 			SET
-				accounttype=".bkint($ad->tp).",
-				title='".bkstr($ad->tl)."', 
-				descript='".bkstr($ad->dsc)."',
-				initbalance=".doubleval($ad->ibc).",
-				currency='".bkstr($ad->cc)."',
+				accounttype=".bkint($ad->type).",
+				title='".bkstr($ad->title)."',
+				descript='".bkstr($ad->descript)."',
+				initbalance=".doubleval($ad->initbalance).",
+				currency='".bkstr($ad->currency)."',
 				upddate=".TIMENOW."
 			WHERE accountid=".bkint($accountid)."
 		";

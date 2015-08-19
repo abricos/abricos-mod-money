@@ -24,7 +24,7 @@ Component.entryPoint = function(NS){
                 readOnly = accountid > 0 && !account.isAdminRole();
 
             this.rolesWidget = new NS.RoleListWidget({
-                owner: this,
+                isAccount: true,
                 srcNode: tp.gel('ulst'),
                 readOnly: readOnly,
                 roleList: account.get('roles')

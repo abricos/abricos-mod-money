@@ -46,6 +46,7 @@ Component.entryPoint = function(NS){
         ATTRS: {
             component: {value: COMPONENT},
             templateBlockName: {value: 'help,hacc,hgroup'},
+            isAccount: {},
             role: {
                 value: 0,
                 setter: '_roleSetter'
@@ -240,19 +241,6 @@ Component.entryPoint = function(NS){
                 r: r|| NS.AURoleType.ADMIN
             });
         },
-        onClick: function(e){
-            switch (e.dataClick) {
-                case 'edit':
-                    this.showEditor();
-                    return true;
-                case 'ok':
-                    this.applyEdChanges();
-                    return true;
-                case 'cancel':
-                    this.cancelEdChanges();
-                    return true;
-            }
-        },
         toJSON: function(){
             var ws = this._ws, ret = [];
             for (var i = 0; i < ws.length; i++){
@@ -265,7 +253,13 @@ Component.entryPoint = function(NS){
             component: {value: COMPONENT},
             templateBlockName: {value: 'urlist'},
             readOnly: {value: false},
+            isAccount: {},
             roleList: {}
+        },
+        CLICKS: {
+            edit: {event: 'showEditor'},
+            ok: {event: 'applyEdChanges'},
+            cancel: {event: 'cancelEdChanges'}
         }
     });
 

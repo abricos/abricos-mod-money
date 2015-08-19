@@ -43,7 +43,7 @@ Component.entryPoint = function(NS){
             }
 
             this.rolesWidget = new NS.RoleListWidget({
-                owner: this,
+                isAccount: false,
                 srcNode: tp.gel('ulst'),
                 readOnly: readOnly,
                 roleList: group.get('roles')
@@ -53,15 +53,6 @@ Component.entryPoint = function(NS){
                 srcNode: tp.gel('accountList'),
                 group: group
             });
-        },
-        onClick: function(e){
-            switch (e.dataClick) {
-                case 'save':
-                    this.save();
-                    return true;
-                case 'cancel':
-                    return true;
-            }
         },
         toJSON: function(){
             var d = {
@@ -87,6 +78,11 @@ Component.entryPoint = function(NS){
         ATTRS: {
             component: {value: COMPONENT},
             templateBlockName: {value: 'widget'}
+        },
+        CLICKS: {
+            save: {
+                event: 'save'
+            }
         }
     });
 

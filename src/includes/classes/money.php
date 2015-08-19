@@ -299,11 +299,27 @@ class Money {
             return 500;
         }
 
+        $groupid = $d->id;
+        $accountList = $this->AccountList();
+
+        foreach ($d->accounts as $ad){
+            if ($ad->id === 0 && $group->IsReadRole()){
+                $this->AccountAppendMethod($groupid, $ad);
+            } else {
+                $account = $accountList->Get($ad->id);
+                if (empty($account)){
+                    continue; // hm...
+                }
+                if ($group->IsAdminRole() || $account->IsAdminRole()){
+                    $this->AccountUpdateMethod($ad);
+                }
+            }
+        }
+
         // Только админ может: изменять данные по бухгалтерии (название, роли пользователей)
         if (!$group->IsAdminRole()){
-            return 403;
+            return 0;
         }
-        $groupid = $d->id;
 
         MoneyQuery::GroupUpdate($this->db, $groupid, $d);
 
@@ -328,23 +344,24 @@ class Money {
                 }
             }
             if (!$find){
-                MoneyQuery::GUserRoleRemove($this->db, $d->id, $sRole->id);
+                MoneyQuery::GUserRoleRemove($this->db, $groupid, $sRole->id);
             }
         }
+
         return 0;
     }
 
-    private function AccountSaveDataParse($ad){
+    private function AccountSaveDataParse($d){
         $fps = Abricos::TextParser(true);
 
-        $ad->id = intval($ad->id);
-        $ad->initbalance = doubleval($ad->initbalance); // start balance
-        $ad->title = $fps->Parser($ad->title); // title
-        $ad->descript = $fps->Parser($ad->descript); // descript
-        $ad->type = intval($ad->type); // account type
-        $ad->currency = $fps->Parser($ad->currency); // currency
+        $d->id = intval($d->id);
+        $d->initbalance = doubleval($d->initbalance); // start balance
+        $d->title = $fps->Parser($d->title); // title
+        $d->descript = $fps->Parser($d->descript); // descript
+        $d->type = intval($d->type); // account type
+        $d->currency = $fps->Parser($d->currency); // currency
 
-        return $ad;
+        return $d;
     }
 
     private function AccountAppendMethod($groupid, $d){
@@ -360,10 +377,43 @@ class Money {
         return $d->id;
     }
 
+    private function AccountUpdateMethod($d){
+        $d = $this->AccountSaveDataParse($d);
+
+        $accountid = $d->id;
+        $account = $this->AccountList()->Get($accountid);
+
+        MoneyQuery::AccountUpdate($this->db, $accountid, $d);
+
+        // обновление ролей доступа к аккаунтам
+        foreach ($d->roles as $role){
+            $sRole = $account->roles->Get($role->u);
+            if (empty($sRole)){
+                MoneyQuery::AUserRoleAppend($this->db, $accountid, $role->u, $role->r);
+            } else {
+                MoneyQuery::AUserRoleUpdate($this->db, $accountid, $role->u, $role->r);
+            }
+        }
+
+        for ($i = 0; $i < $account->roles->Count(); $i++){
+            $sRole = $account->roles->GetByIndex($i);
+            if ($sRole->id === Abricos::$user->id){
+                continue; // свою роль удалить нельзя
+            }
+            $find = false;
+            foreach ($d->roles as $role){
+                if ($sRole->id === $role->u){
+                    $find = true;
+                    break;
+                }
+            }
+            if (!$find){
+                MoneyQuery::AUserRoleRemove($this->db, $accountid, $sRole->id);
+            }
+        }
+    }
 
     private function AccountSaveMethod($groupid, $ad){
-        $userid = Abricos::$user->id;
-
         if ($ad->id == 0){
             $ad->id = $this->AccountAppendMethod($groupid, $ad);
 
@@ -376,30 +426,6 @@ class Money {
                 return null;
             }
 
-            MoneyQuery::AccountUpdate($this->db, $ad->id, $ad);
-
-            // обновление ролей доступа к аккаунтам
-            $rows = MoneyQuery::AUserRoleListByAId($this->db, array($ad->id));
-            $dbRoles = $this->ToArrayId($rows, "u");
-            foreach ($ad->roles as $role){
-                if (empty($dbRoles[$role->u])){
-                    MoneyQuery::AUserRoleAppend($this->db, $ad->id, $role->u, $role->r);
-                } else {
-                    MoneyQuery::AUserRoleUpdate($this->db, $ad->id, $role->u, $role->r);
-                }
-            }
-
-            foreach ($dbRoles as $dbRole){
-                $find = false;
-                foreach ($ad->roles as $role){
-                    if ($dbRole['u'] == $role->u){
-                        $find = true;
-                    }
-                }
-                if (!$find && $userid != $dbRole['u']){ // удалять свою роль нельзя
-                    MoneyQuery::AUserRoleRemove($this->db, $ad->id, $dbRole['u']);
-                }
-            }
         }
         MoneyQuery::AccountUpdateBalance($this->db, $ad->id);
         return $ad->id;
