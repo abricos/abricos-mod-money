@@ -30,8 +30,8 @@ Component.entryPoint = function(NS){
             appInstance.groupList(function(err, result){
                 this.set('waiting', false);
                 if (!err){
-                    this.set('groupList', result.groupList);
-                    this.set('accountList', result.accountList);
+                    this.set('groupList', appInstance.get('groupList'));
+                    this.set('accountList', appInstance.get('accountList'));
                 }
                 var group = this.get('group');
                 this.onLoadGroupData(err, group, options.arguments[0]);

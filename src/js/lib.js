@@ -61,32 +61,6 @@ Component.entryPoint = function(NS){
     };
 
     SYS.Application.build(COMPONENT, {
-        groupList: {
-            request: 'accountList,userList',
-            attribute: true,
-            type: 'modelList:GroupList'
-        },
-        groupSave: {
-            args: ['group']
-        },
-        accountList: {
-            cache: 'accountList',
-            attribute: true,
-            type: 'modelList:AccountList'
-        },
-        userList: {
-            cache: 'userList',
-            attribute: true,
-            type: 'modelList:UserList'
-        },
-        operSave: {
-            args: ['oper']
-        },
-        operList: {
-            args: ['operListConfig'],
-            attribute: true,
-            type: 'modelList:OperList'
-        },
     }, {
         initializer: function(){
             this.initCallbackFire();
@@ -102,6 +76,32 @@ Component.entryPoint = function(NS){
             Category: {value: NS.Category},
             CategoryList: {value: NS.CategoryList},
             OperList: {value: NS.OperList}
+        },
+        REQS: {
+            groupList: {
+                attach: 'accountList,userList',
+                attribute: true,
+                type: 'modelList:GroupList'
+            },
+            groupSave: {
+                args: ['group']
+            },
+            accountList: {
+                attribute: true,
+                type: 'modelList:AccountList'
+            },
+            userList: {
+                attribute: true,
+                type: 'modelList:UserList'
+            },
+            operSave: {
+                args: ['oper']
+            },
+            operList: {
+                args: ['operListConfig'],
+                attribute: true,
+                type: 'modelList:OperList'
+            },
         }
     });
 
