@@ -34,34 +34,7 @@ Component.entryPoint = function(NS){
         isAdmin: 50
     });
 
-    NS.URL = {
-        ws: "#app={C#MODNAMEURI}/wspace/ws/",
-        about: function(){
-            return NS.URL.ws + 'about/AboutWidget/'
-        },
-        accessdenied: function(){
-            return NS.URL.ws + 'about/AccessDeniedWidget/'
-        },
-        group: {
-            view: function(groupid){
-                return NS.URL.ws + 'groupView/GroupViewWidget/' + groupid + '/';
-            },
-            create: function(){
-                return NS.URL.ws + 'groupEditor/GroupEditorWidget/0/'
-            },
-            edit: function(groupid){
-                return NS.URL.ws + 'groupEditor/GroupEditorWidget/' + groupid + '/';
-            }
-        },
-        oper: {
-            log: function(groupid){
-                return NS.URL.ws + 'operLog/OperLogWidget/' + groupid + '/';
-            }
-        }
-    };
-
-    SYS.Application.build(COMPONENT, {
-    }, {
+    SYS.Application.build(COMPONENT, {}, {
         initializer: function(){
             this.initCallbackFire();
         }
@@ -102,6 +75,31 @@ Component.entryPoint = function(NS){
                 attribute: true,
                 type: 'modelList:OperList'
             },
+        },
+        URLS: {
+            ws: "#app={C#MODNAMEURI}/wspace/ws/",
+            about: function(){
+                return this.getURL('ws') + 'about/AboutWidget/'
+            },
+            accessdenied: function(){
+                return this.getURL('ws') + 'about/AccessDeniedWidget/'
+            },
+            group: {
+                view: function(groupid){
+                    return this.getURL('ws') + 'groupView/GroupViewWidget/' + groupid + '/';
+                },
+                create: function(){
+                    return this.getURL('ws') + 'groupEditor/GroupEditorWidget/0/'
+                },
+                edit: function(groupid){
+                    return this.getURL('ws') + 'groupEditor/GroupEditorWidget/' + groupid + '/';
+                }
+            },
+            oper: {
+                log: function(groupid){
+                    return this.getURL('ws') + 'operLog/OperLogWidget/' + groupid + '/';
+                }
+            }
         }
     });
 
