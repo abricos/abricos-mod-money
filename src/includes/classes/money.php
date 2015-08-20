@@ -77,6 +77,16 @@ class Money {
         return $ret;
     }
 
+    private function ImplodeJSON($jsons){
+        $ret = new stdClass();
+        foreach($jsons as $json){
+            foreach($json as $key => $value){
+                $ret->$key = $value;
+            }
+        }
+        return $ret;
+    }
+
     public function AppStructureToJSON(){
         if (!$this->manager->IsViewRole()){
             return 403;
@@ -94,6 +104,14 @@ class Money {
         return $ret;
     }
 
+    public function FullDataToJSON(){
+        $this->ClearCache();
+        return $this->ImplodeJSON(array(
+            $this->GroupListToJSON(),
+            $this->AccountListToJSON(),
+            $this->UserListToJSON()
+        ));
+    }
 
     public function AccountListToJSON(){
         $res = $this->AccountList();
@@ -250,7 +268,11 @@ class Money {
             return $ret;
         }
 
-        return $res;
+        $this->ClearCache();
+        $ret = $this->FullDataToJSON();
+        $ret->groupSave = $res;
+
+        return $ret;
     }
 
     public function GroupSave($d){
@@ -271,8 +293,6 @@ class Money {
 
         $ret = new stdClass();
         $ret->groupid = $d->id;
-
-        $ret->src = $d;
         return $ret;
     }
 

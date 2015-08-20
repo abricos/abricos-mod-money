@@ -70,8 +70,13 @@ Component.entryPoint = function(NS){
 
             var d = this.toJSON();
 
-            this.get('appInstance').groupSave(d, function(err, result){
+            var app = this.get('appInstance');
+
+            app.groupSave(d, function(err, result){
                 this.set('waiting', false);
+                if (!err){
+                    this.navigate('group.view', result.groupSave.groupid);
+                }
             }, this);
         }
     }, {
