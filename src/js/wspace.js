@@ -19,14 +19,44 @@ Component.entryPoint = function(NS){
             this.set('waiting', true);
             appInstance.groupList(function(err, result){
                 this.set('waiting', false);
-                if (!err){
-                    this.set('groupList', result.groupList);
-                }
                 this.renderMenuList();
+                appInstance.on('appResponses', this._onAppResponses, this);
+                this.on('workspaceWidgetChange', this._onWorkspaceWidgetChange, this);
             }, this);
         },
+        destructor: function(){
+            Y.detach('appResponses', this._onAppResponses);
+        },
+        _onAppResponses: function(e){
+            if (e.err || !e.result.groupList){
+                return;
+            }
+            this.renderMenuList();
+        },
+        _onWorkspaceWidgetChange: function(){
+            this._updateSelectedGroup();
+        },
+        _updateSelectedGroup: function(){
+            var tp = this.template,
+                selectedGroupId = 0,
+                wsPage = this.get('workspacePage') || {};
+
+            if (wsPage && wsPage.component === 'groupView' && wsPage.widget === 'GroupViewWidget' && wsPage.args){
+                selectedGroupId = wsPage.args[0] | 0;
+            }
+
+            tp.one('menu').all('[data-type]').each(function(node){
+                var id = node.getData('id') | 0;
+                if (id === selectedGroupId){
+                    node.addClass('active');
+                } else {
+                    node.removeClass('active');
+                }
+            }, this);
+
+        },
         renderMenuList: function(){
-            var groupList = this.get('groupList');
+            var groupList = this.get('appInstance').get('groupList');
             if (!groupList){
                 return;
             }
@@ -47,9 +77,11 @@ Component.entryPoint = function(NS){
             tp.gel('menu').innerHTML = lst;
             this.appURLUpdate();
 
-            var wsPage =this.get('workspacePage') || {};
+            var wsPage = this.get('workspacePage') || {};
 
             if (wsPage.component){
+                this.showWorkspacePage();
+                this._updateSelectedGroup();
                 return;
             }
 
@@ -73,9 +105,6 @@ Component.entryPoint = function(NS){
             },
             templateBlockName: {
                 value: 'widget,menuItem'
-            },
-            groupList: {
-                value: null
             }
         }
     });

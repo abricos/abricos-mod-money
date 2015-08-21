@@ -75,7 +75,7 @@ Component.entryPoint = function(NS){
             app.groupSave(d, function(err, result){
                 this.set('waiting', false);
                 if (!err){
-                    this.navigate('group.view', result.groupSave.groupid);
+                    this.go('group.view', result.groupSave.groupid);
                 }
             }, this);
         }

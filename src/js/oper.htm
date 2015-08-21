@@ -76,8 +76,14 @@
     </div>
 
     <div class="text-right">
-        <input id="{i#bcreate}" value="{#mod.money.oper.editor.5}" type="button" class="btn btn-primary"/>
-        <input id="{i#bsave}" value="{#mod.money.oper.editor.6}" type="button" class="btn btn-primary"/>
-        <input id="{i#bcancel}" value="{#mod.money.oper.editor.7}" type="button" class="btn btn-default"/>
+        <button id="{i#bcreate}" data-click="save" class="btn btn-primary">
+            {#mod.money.oper.editor.5}
+        </button>
+        <button id="{i#bsave}" data-click="save" class="btn btn-primary">
+            {#mod.money.oper.editor.6}
+        </button>
+        <button id="{i#bcancel}" data-click="cancel" class="btn btn-default">
+            {#mod.money.oper.editor.7}
+        </button>
     </div>
 </div>

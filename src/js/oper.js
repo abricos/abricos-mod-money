@@ -79,7 +79,7 @@ Component.entryPoint = function(NS){
         _operSetter: function(val){
             var tp = this.template;
 
-            tp.toggleView(!!val, 'bcreate', 'bsave,bcancel');
+            tp.toggleView(!!val, 'bsave,bcancel', 'bcreate');
 
             if (!val){
                 return val;
@@ -91,9 +91,6 @@ Component.entryPoint = function(NS){
             this.dateTimeWidget.setValue(oper.date);
             this.catsWidget.setValue(oper.categoryid);
             return val;
-        },
-        onClick: function(e){
-
         },
         onKeyPress: function(e){
             if (e.keyCode !== 13){
@@ -131,6 +128,9 @@ Component.entryPoint = function(NS){
                 this.set('oper', null);
             }, this);
         },
+        clearForm: function(){
+            this._operSetter(null);
+        }
     }, {
         ATTRS: {
             component: {value: COMPONENT},
@@ -158,8 +158,13 @@ Component.entryPoint = function(NS){
                 writeOnce: true
             },
             oper: {
+                value: null,
                 setter: '_operSetter'
             }
+        },
+        CLICKS: {
+            save: {event: 'save'},
+            cancel: {event: 'clearForm'}
         }
     });
 
