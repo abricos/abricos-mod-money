@@ -82,7 +82,13 @@ Component.entryPoint = function(NS){
 
             tp.toggleView(!!val, 'bsave,bcancel', 'bcreate');
 
+            tp.one('in').focus();
+
             if (!val){
+                tp.setValue({
+                    in: '',
+                    dsc: ''
+                });
                 return val;
             }
             var acc = NS.moneyManager.findAccount(oper.accountid);
@@ -126,7 +132,7 @@ Component.entryPoint = function(NS){
             this.set('waiting', true);
             this.get('appInstance').operSave(sd, function(){
                 this.set('waiting', false);
-                this.set('oper', null);
+                this.clearForm();
             }, this);
         },
         clearForm: function(){
@@ -200,6 +206,9 @@ Component.entryPoint = function(NS){
                 this.tabs[n].set('account', e.newVal);
             }
         },
+        _showPageByClick: function(e){
+            this.showPage(e.dataClick);
+        },
         showPage: function(name){
             var tp = this.template;
 
@@ -226,15 +235,6 @@ Component.entryPoint = function(NS){
             }
 
             return val;
-        },
-        onClick: function(e){
-            switch (e.dataClick) {
-                case 'expense':
-                case 'income':
-                case 'move':
-                    this.showPage(e.dataClick);
-                    return true;
-            }
         }
     }, {
         ATTRS: {
@@ -243,6 +243,11 @@ Component.entryPoint = function(NS){
             oper: {
                 setter: '_operSetter'
             }
+        },
+        CLICKS: {
+            'expense': {event: '_showPageByClick'},
+            'income': {event: '_showPageByClick'},
+            'move': {event: '_showPageByClick'}
         }
     });
 

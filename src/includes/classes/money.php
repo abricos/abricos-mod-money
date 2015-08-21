@@ -297,18 +297,20 @@ class Money {
     }
 
     private function GroupAppendMethod($d){
-        $d->id = MoneyQuery::GroupAppend($this->db, Abricos::$user->id, $d);
+        $groupid = MoneyQuery::GroupAppend($this->db, Abricos::$user->id, $d);
 
         // добавление ролей
         foreach ($d->roles as $r){
-            MoneyQuery::GUserRoleAppend($this->db, $d->id, $r->u, $r->r);
+            MoneyQuery::GUserRoleAppend($this->db, $groupid, $r->u, $r->r);
         }
-        $this->CategoryInit($d->id);
 
         foreach ($d->accounts as $accountData){
-            $this->AccountAppendMethod($d->id, $accountData);
+            $this->AccountAppendMethod($groupid, $accountData);
         }
-        return $d->id;
+
+        $this->CategoryInit($groupid);
+
+        return $groupid;
     }
 
     private function GroupUpdateMethod($d){
@@ -499,10 +501,12 @@ class Money {
         $parser = Abricos::TextParser(true);
         $title = $parser->Parser($title);
         $isExpense = !empty($isExpense) ? 1 : 0;
-        return MoneyQuery::CategoryAppend($this->db, $this->userid, $groupid, $title, $isExpense, $parentid, $order);
+        return MoneyQuery::CategoryAppend($this->db, Abricos::$user->id, $groupid, $title, $isExpense, $parentid, $order);
     }
 
     private function CategoryInit($gid){
+        $this->ClearCache();
+
         // TODO: необходимо завести таблицу базовых категорий для все создающихся бухгалтерий
         $ord = 1;
         $this->CategoryAppendMethod($gid, "Зарплата", false, 0, $ord++);
