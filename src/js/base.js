@@ -20,6 +20,20 @@ Component.entryPoint = function(NS){
         },
         groupList: {},
         accountList: {},
+        firstAccount: {
+            readOnly: true,
+            getter: function(){
+                var groupid = this.get('groupid'),
+                    first = null;
+
+                this.get('accountList').each(function(account){
+                    if (!first && account.get('groupid') === groupid){
+                        first = account;
+                    }
+                }, this);
+                return first;
+            }
+        }
     };
     GroupByIdExt.prototype = {
         onInitAppWidget: function(err, appInstance, options){
@@ -57,7 +71,7 @@ Component.entryPoint = function(NS){
             },
             getter: function(val){
                 if (!val){
-                    val = this.getFirstAccount();
+                    val = this.get('firstAccount');
                 }
                 return val;
             }

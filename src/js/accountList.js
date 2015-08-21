@@ -10,6 +10,34 @@ Component.entryPoint = function(NS){
         COMPONENT = this,
         SYS = Brick.mod.sys;
 
+    NS.AccountSelectWidget = Y.Base.create('accountSelectWidget', SYS.AppWidget, [], {
+        buildTData: function(){
+            var accountList = this.get('accountList'),
+                tp = this.template,
+                lst = "";
+
+            accountList.each(function(account){
+                lst += tp.replace('selrow', account.toJSON());
+            });
+            return {rows: lst};
+        },
+        getValue: function(){
+            return this.template.gel('id').value;
+        },
+        setValue: function(value){
+            this.template.gel('id').value = value;
+        },
+        setReadonly: function(readonly){
+            this.template.gel('id').disabled = readonly ? 'disabled' : '';
+        }
+    }, {
+        ATTRS: {
+            component: {value: COMPONENT},
+            templateBlockName: {value: 'select,selrow'},
+            accountList: {value: null}
+        }
+    });
+
     NS.AccountRowWidget = Y.Base.create('accountRowWidget', SYS.AppWidget, [], {
         buildTData: function(){
             return this.get('account').toJSON();
@@ -37,18 +65,12 @@ Component.entryPoint = function(NS){
 
             return !!isSelected;
         },
-        onClick: function(e){
-            switch (e.dataClick) {
-                case 'edit':
-                case 'create':
-                case 'remove':
-                    this.fire('menuClick', {
-                        account: this.get('account'),
-                        action: e.dataClick
-                    });
-                    return true;
-            }
-        }
+        _onMenuClick: function(e){
+            this.fire('menuClick', {
+                account: this.get('account'),
+                action: e.dataClick
+            });
+        },
     }, {
         ATTRS: {
             component: {value: COMPONENT},
@@ -57,6 +79,12 @@ Component.entryPoint = function(NS){
             isSelected: {
                 setter: '_isSelectedSetter'
             }
+        },
+        CLICKS: {
+            edit: {event: '_onMenuClick'},
+            create: {event: '_onMenuClick'},
+            remove: {event: '_onMenuClick'},
+            select: {event: '_onMenuClick'}
         }
     });
 
@@ -134,18 +162,17 @@ Component.entryPoint = function(NS){
             this.publish('accountMenuClick');
 
             this._wgs = {};
-
-            var tp = this.template,
-                elList = tp.one('list');
-
             for (var i = 1; i <= 3; i++){
-                var div = Y.Node.create('<div></div>');
-                elList.appendChild(div);
                 this._wgs[i] = new NS.AccountGroupRowWidget({
-                    boundingBox: div,
+                    boundingBox: this.template.append('list', '<div></div>'),
                     groupType: i
                 });
                 this._wgs[i].on('accountMenuClick', this._onAccountMenuClick, this);
+            }
+        },
+        destructor: function(){
+            for (var i = 1; i <= 3; i++){
+                Y.detach('accountMenuClick', this._onAccountMenuClick);
             }
         },
         onLoadGroupData: function(err, group){
@@ -173,6 +200,8 @@ Component.entryPoint = function(NS){
                 }
                 this._wgs[agid].renderAccount(account);
             }, this);
+
+            this.selectAccount(this.get('firstAccount'));
         },
         _onAccountMenuClick: function(e){
             this.fire('accountMenuClick', {account: e.account, action: e.action});
@@ -193,15 +222,9 @@ Component.entryPoint = function(NS){
             }
             return ret;
         },
-        onClick: function(e){
-            switch (e.dataClick) {
-                case 'edit':
-                case 'create':
-                case 'remove':
-                    this.fire('menuClick', {group: this.get('group'), action: e.dataClick});
-                    return true;
-            }
-        }
+        _onMenuClick: function(e){
+            this.fire('menuClick', {group: this.get('group'), action: e.dataClick});
+        },
     }, {
         ATTRS: {
             component: {value: COMPONENT},
@@ -209,34 +232,11 @@ Component.entryPoint = function(NS){
             selectedAccount: {
                 setter: '_selectedAccountSetter'
             }
-        }
-    });
-
-    NS.AccountSelectWidget = Y.Base.create('accountSelectWidget', SYS.AppWidget, [], {
-        buildTData: function(){
-            var accountList = this.get('accountList'),
-                tp = this.template,
-                lst = "";
-
-            accountList.each(function(account){
-                lst += tp.replace('selrow', account.toJSON());
-            });
-            return {rows: lst};
         },
-        getValue: function(){
-            return this.template.gel('id').value;
-        },
-        setValue: function(value){
-            this.template.gel('id').value = value;
-        },
-        setReadonly: function(readonly){
-            this.template.gel('id').disabled = readonly ? 'disabled' : '';
-        }
-    }, {
-        ATTRS: {
-            component: {value: COMPONENT},
-            templateBlockName: {value: 'select,selrow'},
-            accountList: {value: null}
+        CLICKS: {
+            'edit': {event: '_onMenuClick'},
+            'create': {event: '_onMenuClick'},
+            'remove': {event: '_onMenuClick'}
         }
     });
 

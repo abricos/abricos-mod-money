@@ -46,7 +46,7 @@ Component.entryPoint = function(NS){
             this.get('appInstance').operList(config, function(err, result){
                 this.set('waiting', true);
                 if (!err){
-                    console.log(result);
+                    // console.log(result);
                 }
             }, this);
         },

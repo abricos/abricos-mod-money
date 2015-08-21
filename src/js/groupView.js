@@ -29,6 +29,8 @@ Component.entryPoint = function(NS){
                 boundingBox: tp.gel('acclist'),
                 groupid: groupid
             });
+            this.accountsWidget.on('selectedAccountChange', this._onAccountsSelectedChanged, this);
+            this.accountsWidget.on('accountMenuClick', this._onAccountMenuClick, this);
 
             this.operWidget = new NS.OperationWidget({
                 srcNode: tp.gel('oper'),
@@ -39,34 +41,21 @@ Component.entryPoint = function(NS){
                 srcNode: tp.gel('operlog'),
                 groupid: groupid
             });
-
-            this.setFirstAccount();
         },
-        setFirstAccount: function(){
-            var groupid = this.get('groupid'),
-                first = null;
-            this.get('accountList').each(function(account){
-                if (!first && account.get('groupid') === groupid){
-                    first = account;
-                }
-            }, this);
-            this.accountsWidget.set('selectedAccount', first);
-            return first;
+        _onAccountsSelectedChanged: function(e){
+            this.operWidget.set('selectedAccount', e.newVal);
         },
-        onClick: function(e){
-            switch (e.dataClick) {
-                case '':
-                    return true;
+        _onAccountMenuClick: function(e){
+            switch(e.action){
+                case 'select':
+                    this.accountsWidget.selectAccount(e.account);
+                    break;
             }
-        },
+        }
     }, {
         ATTRS: {
             component: {value: COMPONENT},
             templateBlockName: {value: 'widget'},
-            groupList: {value: null},
-            accountList: {value: null},
-            group: {value: null},
-            groupid: {value: 0}
         }
     });
 

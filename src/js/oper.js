@@ -65,8 +65,9 @@ Component.entryPoint = function(NS){
             this.categoryCreateWidget.destroy();
             this.categoryCreateWidget = null;
         },
-        _onAccountChange: function(){
-            var account = this.get('account');
+        _onAccountChange: function(e){
+            var account = e ? e.newVal : this.get('account');
+
             if (!account){
                 return;
             }
@@ -135,7 +136,7 @@ Component.entryPoint = function(NS){
         ATTRS: {
             component: {value: COMPONENT},
             templateBlockName: {value: 'editor'},
-            account: {},
+            account: {value: null},
             groupid: {
                 readOnly: true,
                 getter: function(){
@@ -191,6 +192,13 @@ Component.entryPoint = function(NS){
             };
 
             this.showPage('expense');
+            this.on('selectedAccountChange', this._onSelectedAccountChange, this);
+        },
+        _onSelectedAccountChange: function(e){
+            console.log(e.newVal.get('id'));
+            for (var n in this.tabs){
+                this.tabs[n].set('account', e.newVal);
+            }
         },
         showPage: function(name){
             var tp = this.template;
