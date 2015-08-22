@@ -72,7 +72,7 @@ Component.entryPoint = function(NS){
             },
             operList: {
                 args: ['operListConfig'],
-                attribute: true,
+                attribute: false,
                 type: 'modelList:OperList'
             },
         },

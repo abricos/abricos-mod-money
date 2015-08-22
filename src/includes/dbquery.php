@@ -423,6 +423,7 @@ class MoneyQuery {
 				AND (".implode($aw, " OR ").")
 				".($lastUpdate > 0 ? " AND o.upddate>".bkint($lastUpdate) : "")."
 				AND o.deldate=0
+			ORDER by o.operdate DESC, o.upddate DESC
 			LIMIT 300
 		";
         return $db->query_read($sql);

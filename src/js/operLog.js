@@ -17,17 +17,18 @@ Component.entryPoint = function(NS){
     ], {
         onBeforeLoadGroupData: function(err, appInstance){
             this.publish('rowClick');
+            this.publish('menuClick');
 
             this.on('periodChange', this._onPeriodChange, this);
         },
         onLoadGroupData: function(err, group, options){
             this.reloadOperList();
         },
-        reloadOperList: function(){
-            var period = this.get('period');
+        reloadOperList: function(period){
+            period = period || this.get('period');
             var config = {
                 groupid: this.get('groupid'),
-                period: this.get('periodUnix')
+                period: [period[0] / 1000, period[1] / 1000]
             };
             this.set('waiting', true);
             this.get('appInstance').operList(config, function(err, result){
@@ -48,12 +49,11 @@ Component.entryPoint = function(NS){
                 return;
             }
 
-            var tp = this.template, lst = "",
-                sum = {},
+            var tp = this.template, lst = "", sum = {},
                 filter = this.get('filter'),
                 dmets = {},
-                index = 0,
                 roundDay = function(d){
+                    d = new Date(d * 1000);
                     return new Date(d.getFullYear(), d.getMonth(), d.getDate());
                 };
 
@@ -143,10 +143,8 @@ Component.entryPoint = function(NS){
                     }),
                     'td': std
                 });
-                index++;
 
             }, this);
-
 
             var first = true;
             for (var n in sum){
@@ -172,7 +170,7 @@ Component.entryPoint = function(NS){
                     case 'date':
                         fdv['d'] = tp.replace('filterval', {
                             'tp': n,
-                            'v': Brick.dateExt.convert(v.getTime() / 1000, 2, true)
+                            'v': Brick.dateExt.convert(v, 2, true)
                         });
                         break;
                     case 'type':
@@ -182,8 +180,8 @@ Component.entryPoint = function(NS){
                         });
                         break;
                     case 'account':
-                        var acc = MM.findAccount(v);
-                        if (!L.isNull(acc)){
+                        var acc = accountList.getById(v);
+                        if (acc){
                             fdv['acc'] = tp.replace('filterval', {
                                 'tp': n,
                                 'v': acc.getTitle()
@@ -238,11 +236,17 @@ Component.entryPoint = function(NS){
             this.set('filter', {});
             this.renderOperList();
         },
-        _onPeriodChange: function(){
-            this.reloadOperList();
+        _onPeriodChange: function(e){
+            this.reloadOperList(e.newVal);
         },
         onClick: function(e){
             switch (e.dataClick) {
+                case 'clear-filter':
+                    this.fire('menuClick', {
+                        action: e.dataClick,
+                        filter: e.target.getData('id')
+                    });
+                    return true;
                 case 'filter-date':
                 case 'filter-type':
                 case 'filter-account':
@@ -285,16 +289,7 @@ Component.entryPoint = function(NS){
                     (val[0] instanceof Date) && (val[1] instanceof Date));
                 }
             },
-            periodUnix: {
-                readOnly: true,
-                getter: function(){
-                    var p = this.get('period');
-                    return [p[0] / 1000, p[1] / 1000];
-                }
-            },
-            operList: {
-                value: null
-            }
+            operList: {value: null}
         }
     });
 
@@ -302,9 +297,7 @@ Component.entryPoint = function(NS){
         NS.GroupByIdExt
     ], {
         buildTData: function(){
-            return {
-                groupid: this.get('groupid')
-            }
+            return {groupid: this.get('groupid')}
         },
         onLoadGroupData: function(err, group, options){
             if (!group){
@@ -329,13 +322,20 @@ Component.entryPoint = function(NS){
                 groupid: groupid,
                 period: this.periodWidget.getPeriod()
             });
+            this.listWidget.on('menuClick', this._onOperListMenuClick, this);
             this.listWidget.on('rowClick', this._onOperRowClick, this);
+        },
+        destructor: function(){
+            this.listWidget.destroy();
         },
         onPeriodChanged: function(){
             this.listWidget.set('period', this.periodWidget.getPeriod());
         },
         addFilter: function(type, oper){
             this.listWidget.addFilter(type, oper);
+        },
+        removeFilter: function(type){
+            this.listWidget.removeFilter(type);
         },
         _onOperRowClick: function(e){
             switch (e.action) {
@@ -344,6 +344,13 @@ Component.entryPoint = function(NS){
                 case 'filter-account':
                 case 'filter-category':
                     this.addFilter(e.action.replace('filter-', ''), e.oper);
+                    break;
+            }
+        },
+        _onOperListMenuClick: function(e){
+            switch (e.action) {
+                case 'clear-filter':
+                    this.removeFilter(e.filter);
                     break;
             }
         },
