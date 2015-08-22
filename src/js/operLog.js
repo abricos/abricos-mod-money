@@ -1,6 +1,6 @@
 var Component = new Brick.Component();
 Component.requires = {
-    yui: ['datatype', 'aui-pagination'],
+    yui: ['datatype'],
     mod: [
         {name: 'sys', files: ['widgets.js']},
         {name: 'widget', files: ['period.js']},
@@ -16,18 +16,7 @@ Component.entryPoint = function(NS){
         NS.GroupByIdExt
     ], {
         onBeforeLoadGroupData: function(err, appInstance){
-            this._savedHeight = 20;
-
-            this.filter = {};
-
-            var tp = this.template;
-
-            /*
-             this.pagTop = Y.Pagination({
-             itemsPerPage: 15,
-             boundingBox: tp.one('pagtop')
-             });
-             /**/
+            this.publish('rowClick');
 
             this.on('periodChange', this._onPeriodChange, this);
         },
@@ -50,7 +39,6 @@ Component.entryPoint = function(NS){
             }, this);
         },
         renderOperList: function(){
-
             var app = this.get('appInstance'),
                 accountList = app.get('accountList'),
                 operList = this.get('operList'),
@@ -62,27 +50,18 @@ Component.entryPoint = function(NS){
 
             var tp = this.template, lst = "",
                 sum = {},
-                filter = this.filter,
+                filter = this.get('filter'),
                 dmets = {},
-                index = 0, fromrec = 0,
+                index = 0,
                 roundDay = function(d){
                     return new Date(d.getFullYear(), d.getMonth(), d.getDate());
                 };
 
-
             operList.each(function(oper){
-                /*accountid: 1
-                 categoryid: 0
-                 date: 1440178020
-                 descript: ""
-                 id: 6
-                 isexpense: true
-                 methodid: 0
-                 upddate: 1440178054
-                 userid: 1
-                 value: 5464/**/
                 var attrs = oper.toJSON(),
                     account = accountList.getById(attrs.accountid),
+                    currency = account ? NS.currencyList.getById(account.get('currency')) : null,
+                    sign = currency ? currency.get('sign') : '',
                     cat = group.get('categories').getById(attrs.categoryid),
                     val = attrs.value,
                     ccid = account.get('currency');
@@ -130,17 +109,6 @@ Component.entryPoint = function(NS){
                     sum[ccid] += val;
                 }
 
-                // TODO: create instance pagination
-                /*
-                 if (index < fromrec){
-                 index++;
-                 return;
-                 } else if (index >= fromrec + 15){
-                 index++;
-                 return;
-                 }
-                 /**/
-
                 var std = "";
                 if (attrs.methodid == 0){
                     std = tp.replace('rowtdbase', {
@@ -148,7 +116,7 @@ Component.entryPoint = function(NS){
                         expcls: attrs.isexpense ? 'red' : 'green',
                         tp: attrs.isexpense ? '-' : '+',
                         v: NS.numberFormat(val),
-                        // cc: account.currency.sign,
+                        cc: sign,
                         acc: account ? account.getTitle() : '',
                         cat: cat ? cat.get('title') : ''
                     });
@@ -182,12 +150,13 @@ Component.entryPoint = function(NS){
 
             var first = true;
             for (var n in sum){
-                var val = sum[n];
+                var val = sum[n],
+                    currency = NS.currencyList.getById(n);
                 lst += tp.replace('rowsum', {
                     'first': first ? 'first' : '',
                     'expcls': val < 0 ? 'red' : 'green',
                     'v': NS.numberFormat(val),
-                    // 'cc': NS.currencyList.get(n).sign
+                    'cc': currency ? currency.get('sign') : ''
                 });
                 first = false;
             }
@@ -222,11 +191,11 @@ Component.entryPoint = function(NS){
                         }
                         break;
                     case 'category':
-                        var cat = group.categories.get(v);
-                        if (!L.isNull(cat)){
+                        var cat = group.get('categories').getById(v);
+                        if (cat){
                             fdv['cat'] = tp.replace('filterval', {
                                 'tp': n,
-                                'v': cat.title
+                                'v': cat.get('title')
                             });
                         }
                         break;
@@ -238,19 +207,55 @@ Component.entryPoint = function(NS){
                 'rows': lst
             }));
 
-            /*
-            var rg = Dom.getRegion(elTable);
-
-            var h = this._savedHeight = Math.max(this._savedHeight, rg.height);
-            Dom.setStyle(elTable, 'min-height', h + 'px');
-
-            this.pagTop.setState({'totalRecords': index});
-            this.pagTop.render();
-            /**/
+        },
+        addFilter: function(action, oper){
+            if (!oper){
+                return;
+            }
+            var val = "", attrs = oper.toJSON();
+            switch (action) {
+                case 'date':
+                    val = attrs.date;
+                    break;
+                case 'type':
+                    val = attrs.isexpense;
+                    break;
+                case 'account':
+                    val = attrs.accountid;
+                    break;
+                case 'category':
+                    val = attrs.categoryid;
+                    break;
+            }
+            this.get('filter')[action] = val;
+            this.renderOperList();
+        },
+        removeFilter: function(action){
+            delete this.get('filter')[action];
+            this.renderOperList();
+        },
+        clearFilter: function(){
+            this.set('filter', {});
+            this.renderOperList();
         },
         _onPeriodChange: function(){
             this.reloadOperList();
         },
+        onClick: function(e){
+            switch (e.dataClick) {
+                case 'filter-date':
+                case 'filter-type':
+                case 'filter-account':
+                case 'filter-category':
+                case 'edit':
+                case 'remove':
+                    this.fire('rowClick', {
+                        action: e.dataClick,
+                        oper: this.get('operList').getById(e.target.getData('id') | 0)
+                    });
+                    return true;
+            }
+        }
     }, {
         ATTRS: {
             component: {value: COMPONENT},
@@ -324,30 +329,22 @@ Component.entryPoint = function(NS){
                 groupid: groupid,
                 period: this.periodWidget.getPeriod()
             });
-            /*
-             var __self = this;
-             this.listWidget.onClickAction = function(action, oper){
-             __self.onRowClickAction(action, oper);
-             };/**/
-
-            // NS.moneyManager.balanceChangedEvent.subscribe(this.onBalanceChanged, this, true);
-
+            this.listWidget.on('rowClick', this._onOperRowClick, this);
         },
         onPeriodChanged: function(){
             this.listWidget.set('period', this.periodWidget.getPeriod());
         },
-        /*
-         setPeriod: function(fromdt, enddt){
-         this.fromdt = fromdt;
-         this.enddt = enddt;
-         this.opers = null;
-         this.loadPeriod();
-         },
-         /**/
-        onClick: function(e){
-            switch (e.dataClick) {
-                case '':
-                    return true;
+        addFilter: function(type, oper){
+            this.listWidget.addFilter(type, oper);
+        },
+        _onOperRowClick: function(e){
+            switch (e.action) {
+                case 'filter-date':
+                case 'filter-type':
+                case 'filter-account':
+                case 'filter-category':
+                    this.addFilter(e.action.replace('filter-', ''), e.oper);
+                    break;
             }
         },
     }, {

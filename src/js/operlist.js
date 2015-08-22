@@ -30,32 +30,6 @@ Component.entryPoint = function(NS){
 
         onClick: function(el){
 
-            var TId = this._TId,
-                prefix = el.id.replace(/([0-9]+$)/, ''),
-                numid = el.id.replace(prefix, ""),
-                oper = numid > 0 ? this.opers.get(numid) : null;
-
-            switch (prefix) {
-                case TId['row']['bfd'] + '-':
-                    this.onClickAction('filterdate', oper);
-                    return true;
-                case TId['rowtdbase']['bftype'] + '-':
-                    this.onClickAction('filtertype', oper);
-                    return true;
-                case TId['rowtdbase']['bfacc'] + '-':
-                    this.onClickAction('filteraccount', oper);
-                    return true;
-                case TId['rowtdbase']['bfcat'] + '-':
-                    this.onClickAction('filtercategory', oper);
-                    return true;
-                case TId['rbtns']['bedit'] + '-':
-                    this.onClickAction('edit', oper);
-                    return true;
-                case TId['rbtns']['bremove'] + '-':
-                    this.onClickAction('remove', oper);
-                    return true;
-            }
-
             // клик отмены фильтра
             var arr = el.id.split('--');
             if (arr.length == 2 && arr[0] == TId['filterval']['bclear']){
@@ -65,35 +39,6 @@ Component.entryPoint = function(NS){
 
             return false;
         },
-
-        addFilter: function(action, oper){
-            var val = "";
-            switch (action) {
-                case 'date':
-                    val = oper.date;
-                    break;
-                case 'type':
-                    val = oper.isExpense;
-                    break;
-                case 'account':
-                    val = oper.accountid;
-                    break;
-                case 'category':
-                    val = oper.categoryid;
-                    break;
-            }
-            this.filter[action] = val;
-            this.render();
-        },
-        removeFilter: function(action){
-            delete this.filter[action];
-            this.render();
-        },
-
-        clearFilter: function(){
-            this.filter = {};
-            this.render();
-        },
         setOpers: function(opers){
             this.opers = opers;
 
@@ -102,15 +47,6 @@ Component.entryPoint = function(NS){
 
             this.render();
         },
-        onPaginatorChanged: function(state){
-            this.pagTop.setState({'page': state.page});
-            this.pagTop.render();
-            this.render();
-        },
-        render: function(){
-
-
-        }
     };
     NS.OperListWidget = OperListWidget;
 
