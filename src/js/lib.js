@@ -100,6 +100,9 @@ Component.entryPoint = function(NS){
                 },
                 edit: function(groupid){
                     return this.getURL('ws') + 'groupEditor/GroupEditorWidget/' + groupid + '/';
+                },
+                config: function(groupid){
+                    return this.getURL('ws') + 'groupConfig/GroupConfigWidget/' + groupid + '/';
                 }
             },
             oper: {
