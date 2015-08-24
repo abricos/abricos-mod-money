@@ -21,6 +21,26 @@ class MoneyUserRoleList extends AbricosModelList {
 }
 
 /**
+ * Class MoneyBalance
+ *
+ * @property int $id Account ID
+ * @property int $balance Account Balance
+ */
+class MoneyBalance extends AbricosModel {
+    protected $_structModule = 'money';
+    protected $_structName = 'Balance';
+}
+
+/**
+ * Class MoneyBalanceList
+ * @method MoneyBalance Get(int $accountid)
+ * @method MoneyBalance GetByIndex(int $index)
+ */
+class MoneyBalanceList extends AbricosModelList {
+
+}
+
+/**
  * Class MoneyCategory
  *
  * @property int $id Category ID

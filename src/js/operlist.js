@@ -23,18 +23,6 @@ Component.entryPoint = function(NS){
                 case 'remove':
                     this.onRowClickRemove(oper);
                     break;
-                case 'filterdate':
-                    this.addFilter('date', oper);
-                    break;
-                case 'filtertype':
-                    this.addFilter('type', oper);
-                    break;
-                case 'filteraccount':
-                    this.addFilter('account', oper);
-                    break;
-                case 'filtercategory':
-                    this.addFilter('category', oper);
-                    break;
             }
         },
         onBalanceChanged: function(e, prm){

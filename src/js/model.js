@@ -140,6 +140,14 @@ Component.entryPoint = function(NS){
         appItem: NS.Oper
     });
 
+    NS.Balance = Y.Base.create('balance', SYS.AppModel, [], {
+        structureName: 'Balance'
+    });
+
+    NS.BalanceList = Y.Base.create('balanceList', SYS.AppModelList, [], {
+        appItem: NS.Balance
+    });
+
     NS.Currency = Y.Base.create('currency', SYS.AppItem, [], {}, {
         ATTRS: {
             id: {value: ''},

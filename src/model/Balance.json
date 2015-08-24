@@ -1,0 +1,13 @@
+{
+  "version": "0.1.0",
+  "type": "model",
+  "fields": {
+    "id": {
+      "type": "int"
+    },
+    "balance": {
+      "type": "double",
+      "json": "bc"
+    }
+  }
+}

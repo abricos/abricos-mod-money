@@ -25,7 +25,7 @@ Component.entryPoint = function(NS){
                 isExpense: this.get('isExpense')
             });
 
-            this.categorySelectWidget.on('selectedChange', this._onCategoryChange, this);
+            this.categorySelectWidget.on('categoryChange', this._onCategoryChange, this);
 
             this.dateTimeWidget = new Brick.mod.widget.DateInputWidget(tp.gel('editor.dt'), {
                 'date': new Date(),
@@ -34,12 +34,17 @@ Component.entryPoint = function(NS){
                 'showTime': false
             });
 
-            this.on('accountChange', this._onAccountChange, this);
-            this._onAccountChange();
-            this.set('oper', null);
+            this.after('accountChange', this.renderAccount, this);
+            this.after('operChange', this.renderOper, this);
+
+            this.renderAccount();
+        },
+        destructor: function(){
+            this.categorySelectWidget.destroy();
+            this.dateTimeWidget.destroy();
         },
         _onCategoryChange: function(e){
-            var val = e.newVal | 0;
+            var val = e.value | 0;
             if (val === -1){
                 this._showCreateCategory();
             } else {
@@ -65,8 +70,9 @@ Component.entryPoint = function(NS){
             this.categoryCreateWidget.destroy();
             this.categoryCreateWidget = null;
         },
-        _onAccountChange: function(e){
-            var account = e ? e.newVal : this.get('account');
+
+        renderAccount: function(){
+            var account = this.get('account');
 
             if (!account){
                 return;
@@ -76,28 +82,35 @@ Component.entryPoint = function(NS){
                 atl: account.getTitle(),
                 cc: account.getCurrencySign(),
             });
-        },
-        _operSetter: function(val){
-            var tp = this.template;
 
-            tp.toggleView(!!val, 'bsave,bcancel', 'bcreate');
+            this.renderOper();
+        },
+        renderOper: function(){
+            var tp = this.template,
+                oper = this.get('oper');
+
+            tp.toggleView(!!oper, 'bsave,bcancel', 'bcreate');
 
             tp.one('in').focus();
 
-            if (!val){
+            if (!oper){
+                this.categorySelectWidget.select(0);
                 tp.setValue({
                     in: '',
                     dsc: ''
                 });
-                return val;
+            } else {
+                var acc = NS.moneyManager.findAccount(oper.accountid);
+                this.setAccount(acc);
+                gel('in').value = oper.value == 0 ? '' : oper.value;
+                gel('dsc').value = oper.descript;
+                this.dateTimeWidget.setValue(oper.date);
+                this.categorySelectWidget.setValue(oper.categoryid);
             }
-            var acc = NS.moneyManager.findAccount(oper.accountid);
-            this.setAccount(acc);
-            gel('in').value = oper.value == 0 ? '' : oper.value;
-            gel('dsc').value = oper.descript;
-            this.dateTimeWidget.setValue(oper.date);
-            this.catsWidget.setValue(oper.categoryid);
-            return val;
+        },
+        clearForm: function(){
+            this.set('oper', null);
+            this.renderOper();
         },
         onKeyPress: function(e){
             if (e.keyCode !== 13){
@@ -114,7 +127,7 @@ Component.entryPoint = function(NS){
                 oper = this.get('oper'),
                 dt = this.dateTimeWidget.getValue(),
                 val = tp.gel('in').value + '',
-                categoryid = this.categorySelectWidget.get('selected');
+                categoryid = this.categorySelectWidget.selected();
 
             var sd = {
                 'id': oper ? oper.get('id') : 0,
@@ -135,9 +148,6 @@ Component.entryPoint = function(NS){
                 this.clearForm();
             }, this);
         },
-        clearForm: function(){
-            this._operSetter(null);
-        }
     }, {
         ATTRS: {
             component: {value: COMPONENT},
@@ -165,8 +175,7 @@ Component.entryPoint = function(NS){
                 writeOnce: true
             },
             oper: {
-                value: null,
-                setter: '_operSetter'
+                value: null
             }
         },
         CLICKS: {
@@ -220,7 +229,7 @@ Component.entryPoint = function(NS){
             tp.addClass('t' + name, 'sel');
             // this.tabs[name].set('oper', null);
         },
-        _operSetter: function(val){
+        _updateByOper: function(val){
             var tabs = this.tabs;
 
             if (oper.methodid > 0 && oper.method){
@@ -241,7 +250,7 @@ Component.entryPoint = function(NS){
             component: {value: COMPONENT},
             templateBlockName: {value: 'widget'},
             oper: {
-                setter: '_operSetter'
+                setter: '_updateByOper'
             }
         },
         CLICKS: {

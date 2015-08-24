@@ -20,6 +20,7 @@ Component.entryPoint = function(NS){
             appInstance.groupList(function(err, result){
                 this.set('waiting', false);
                 this.renderMenuList();
+                this._showPageByInit();
                 appInstance.on('appResponses', this._onAppResponses, this);
                 this.on('workspaceWidgetChange', this._onWorkspaceWidgetChange, this);
             }, this);
@@ -55,28 +56,7 @@ Component.entryPoint = function(NS){
             }, this);
 
         },
-        renderMenuList: function(){
-            var groupList = this.get('appInstance').get('groupList');
-            if (!groupList){
-                return;
-            }
-            var tp = this.template,
-                lst = "",
-                firstGroupId;
-
-            groupList.each(function(group){
-                if (!firstGroupId){
-                    firstGroupId = group.get('id');
-                }
-                lst += tp.replace('menuItem', [
-                    group.toJSON(),
-                    {title: group.getTitle()}
-                ]);
-            });
-
-            tp.gel('menu').innerHTML = lst;
-            this.appURLUpdate();
-
+        _showPageByInit: function(){
             var wsPage = this.get('workspacePage') || {};
 
             if (wsPage.component){
@@ -85,7 +65,13 @@ Component.entryPoint = function(NS){
                 return;
             }
 
-            if (!firstGroupId){
+            var groupList = this.get('appInstance').get('groupList');
+            if (!groupList){
+                return;
+            }
+            var group = groupList.item(0);
+
+            if (!group){
                 this.showWorkspacePage({
                     component: 'groupEditor',
                     widget: 'GroupEditorWidget'
@@ -94,9 +80,27 @@ Component.entryPoint = function(NS){
                 this.showWorkspacePage({
                     component: 'groupView',
                     widget: 'GroupViewWidget',
-                    args: [firstGroupId]
+                    args: [group.get('id')]
                 });
             }
+        },
+        renderMenuList: function(){
+            var groupList = this.get('appInstance').get('groupList');
+            if (!groupList){
+                return;
+            }
+            var tp = this.template,
+                lst = "";
+
+            groupList.each(function(group){
+                lst += tp.replace('menuItem', [
+                    group.toJSON(),
+                    {title: group.getTitle()}
+                ]);
+            });
+
+            tp.gel('menu').innerHTML = lst;
+            this.appURLUpdate();
         }
     }, {
         ATTRS: {

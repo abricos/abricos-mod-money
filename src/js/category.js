@@ -28,7 +28,7 @@ Component.entryPoint = function(NS){
         },
         toJSON: function(){
             return {
-                parentid: this.selectWidget.get('selected'),
+                parentid: this.selectWidget.selected(),
                 title: this.template.gel('val').value
             }
         }
@@ -42,8 +42,23 @@ Component.entryPoint = function(NS){
     NS.CategorySelectWidget = Y.Base.create('categorySelectWidget', SYS.AppWidget, [
         NS.GroupByIdExt
     ], {
-        onLoadGroupData: function(err, group, options){
+        onLoadGroupData: function(){
+            this.publish('categoryChange');
+            this.get('appInstance').on('appResponses', this._onAppResponses, this);
+            this.renderList();
+        },
+        destructor: function(){
+            Y.detach('appResponses', this._onAppResponses);
+        },
+        _onAppResponses: function(e){
+            if (e.err || !e.result.groupList){
+                return;
+            }
+            this.renderList();
+        },
+        renderList: function(){
             var tp = this.template,
+                group = this.get('group'),
                 isExpense = this.get('isExpense'),
                 stop = 1;
 
@@ -73,6 +88,9 @@ Component.entryPoint = function(NS){
                 }, this);
                 return lst;
             };
+            if (tp.one('id')){
+                tp.one('id').detachAll();
+            }
             var lst = buildRows.call(this, 0, 0);
             this.get('boundingBox').setHTML(tp.replace('select', {
                 crow: this.get('showChoiseRow') ? tp.replace('scrow') : '',
@@ -82,9 +100,19 @@ Component.entryPoint = function(NS){
                 rows: lst
             }));
 
-            tp.one('id').on('change', function(){
-                this.set('selected', tp.one('id').get('value'));
-            }, this);
+            tp.one('id').on('change', this.onSelectedChange, this);
+        },
+        onSelectedChange: function(){
+            this.fire('categoryChange', {value: this.selected()});
+        },
+        select: function(val){
+            if (!Y.Lang.isNumber(val) || !this.get('group') || !this.template.one('id')){
+                return null;
+            }
+            this.template.setValue('id', val);
+        },
+        selected: function(){
+            return this.template.getValue('id') | 0;
         }
     }, {
         ATTRS: {
@@ -95,17 +123,6 @@ Component.entryPoint = function(NS){
             showNewRow: {value: false},
             showEditRow: {value: false},
             showRootRow: {value: false},
-            selected: {
-                getter: function(val){
-                    var el = this.template.one('id');
-                    return (el ? el.get('value') : val) | 0;
-                },
-                setter: function(val){
-                    var el = this.template.one('id');
-                    el ? el.set('value', val) : 0;
-                    return val;
-                }
-            }
         }
     });
 };

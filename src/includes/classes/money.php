@@ -39,6 +39,8 @@ class Money {
         $models->RegisterClass('CategoryList', 'MoneyCategoryList');
         $models->RegisterClass('Oper', 'MoneyOper');
         $models->RegisterClass('OperList', 'MoneyOperList');
+        $models->RegisterClass('Balance', 'MoneyBalance');
+        $models->RegisterClass('BalanceList', 'MoneyBalanceList');
     }
 
     public function AJAX($d){
@@ -77,10 +79,12 @@ class Money {
         return $ret;
     }
 
-    private function ImplodeJSON($jsons){
-        $ret = new stdClass();
-        foreach($jsons as $json){
-            foreach($json as $key => $value){
+    private function ImplodeJSON($jsons, $ret = null){
+        if (empty($ret)){
+            $ret = new stdClass();
+        }
+        foreach ($jsons as $json){
+            foreach ($json as $key => $value){
                 $ret->$key = $value;
             }
         }
@@ -94,7 +98,7 @@ class Money {
 
         $modelManager = AbricosModelManager::GetManager('money');
 
-        $res = $modelManager->ToJSON('Group,Category,CategoryList,UserRole,UserRoleList,Account,User,Oper');
+        $res = $modelManager->ToJSON('Group,Account,Category,CategoryList,UserRole,UserRoleList,User,Oper,Balance');
         if (empty($res)){
             return null;
         }
@@ -248,13 +252,15 @@ class Money {
         $this->ClearCache();
 
         $account = $this->AccountList()->Get($od->accountid);
+
         $ret->balance = new stdClass();
         $ret->balance->accountid = $account->id;
         $ret->balance->value = $account->balance;
 
         if ($isNewCategory){
-            $group = $this->GroupList()->Get($account->groupid);
-            $ret->categories = $group->categories->ToJSON();
+            $ret = $this->ImplodeJSON(array(
+                $this->GroupListToJSON()
+            ), $ret);
         }
 
         return $ret;

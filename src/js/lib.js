@@ -48,7 +48,8 @@ Component.entryPoint = function(NS){
             UserRoleList: {value: NS.UserRoleList},
             Category: {value: NS.Category},
             CategoryList: {value: NS.CategoryList},
-            OperList: {value: NS.OperList}
+            OperList: {value: NS.OperList},
+            BalanceList: {value: NS.BalanceList}
         },
         REQS: {
             groupList: {
@@ -74,6 +75,12 @@ Component.entryPoint = function(NS){
                 args: ['operListConfig'],
                 attribute: false,
                 type: 'modelList:OperList'
+            },
+            balanceList: {
+                type: 'modelList:BalanceList',
+                response: function(){
+                    console.log(arguments);
+                }
             },
         },
         URLS: {
