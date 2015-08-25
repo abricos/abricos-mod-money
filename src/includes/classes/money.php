@@ -55,6 +55,8 @@ class Money {
                 return $this->GroupSaveToJSON($d->group);
             case 'categorySave':
                 return $this->CategorySaveToJSON($d->category);
+            case 'categoryRemove':
+                return $this->CategoryRemoveToJSON($d->category);
             case 'userList':
                 return $this->UserListToJSON();
             case 'operSave':
@@ -521,8 +523,9 @@ class Money {
             $ret->err = $res;
             return $ret;
         }
-
-        return $res;
+        return $this->ImplodeJSON(array(
+            $this->GroupListToJSON()
+        ), $res);
     }
 
     public function CategorySave($d){
@@ -548,7 +551,7 @@ class Money {
                 return 403;
             }
         }
-        
+
         if ($d->id === 0){
             $d->id = MoneyQuery::CategoryAppend($this->db, Abricos::$user->id,
                 $d->groupid, $d->title, $d->isexpense, $d->parentid, 0);
@@ -560,9 +563,62 @@ class Money {
         $ret = new stdClass();
         $ret->categoryid = $d->id;
 
-        $ret = $this->ImplodeJSON(array(
+        return $ret;
+    }
+
+    public function CategoryRemoveToJSON($d){
+        $res = $this->CategoryRemove($d);
+        if (is_integer($res)){
+            $ret = new stdClass();
+            $ret->err = $res;
+            return $ret;
+        }
+
+        return $this->ImplodeJSON(array(
             $this->GroupListToJSON()
-        ), $ret);
+        ), $res);
+    }
+
+    /**
+     * @param $group MoneyGroup
+     * @param $categoryid
+     */
+    private function CategoryRemoveMethod($group, $categoryid){
+        $count = $group->categories->Count();
+        for ($i = 0; $i < $count; $i++){
+            $category = $group->categories->GetByIndex($i);
+            if ($category->parentid === $categoryid){
+                $this->CategoryRemoveMethod($group, $category->id);
+            }
+        }
+
+        MoneyQuery::CategoryRemove($this->db, $group->id, $categoryid);
+        MoneyQuery::OperRemoveByCategoryId($this->db, $categoryid);
+    }
+
+    public function CategoryRemove($d){
+        if (!$this->manager->IsWriteRole()){
+            return 403;
+        }
+
+        $d->id = intval($d->id);
+        $d->groupid = intval($d->groupid);
+
+        $group = $this->GroupList()->Get($d->groupid);
+        if (empty($group) || !$group->IsWriteRole()){
+            return 403;
+        }
+        $this->CategoryRemoveMethod($group, $d->id);
+
+        $accountList = $this->AccountList();
+        for ($i = 0; $i < $accountList->Count(); $i++){
+            MoneyQuery::AccountUpdateBalance($this->db, $accountList->GetByIndex($i)->id);
+        }
+
+        $this->ClearCache();
+
+        $ret = new stdClass();
+        $ret->categoryid = $d->id;
 
         return $ret;
     }

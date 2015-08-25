@@ -63,6 +63,9 @@ Component.entryPoint = function(NS){
             categorySave: {
                 args: ['category']
             },
+            categoryRemove: {
+                args: ['category']
+            },
             accountList: {
                 attribute: true,
                 type: 'modelList:AccountList'

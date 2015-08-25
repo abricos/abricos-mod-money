@@ -34,7 +34,7 @@ class MoneyQuery {
 				c.ord,
 				c.upddate
 			FROM ".$db->prefix."money_category c
-			WHERE ".implode(" OR ", $wh)."
+			WHERE (".implode(" OR ", $wh).") AND c.deldate=0
 		";
         return $db->query_read($sql);
     }
@@ -61,6 +61,17 @@ class MoneyQuery {
         $sql = "
 			UPDATE ".$db->prefix."money_category
 			SET title='".bkstr($title)."',
+			    upddate=".TIMENOW."
+			WHERE groupid=".bkint($groupid)." AND categoryid=".bkint($categoryid)."
+			LIMIT 1
+		";
+        $db->query_write($sql);
+    }
+
+    public static function CategoryRemove(Ab_Database $db, $groupid, $categoryid){
+        $sql = "
+			UPDATE ".$db->prefix."money_category
+			SET deldate=".TIMENOW.",
 			    upddate=".TIMENOW."
 			WHERE groupid=".bkint($groupid)." AND categoryid=".bkint($categoryid)."
 			LIMIT 1
@@ -112,7 +123,8 @@ class MoneyQuery {
     public static function GroupRemove(Ab_Database $db, $groupid){
         $sql = "
 			UPDATE ".$db->prefix."money_group
-			SET upddate=".TIMENOW.", deldate=".TIMENOW."
+			SET upddate=".TIMENOW.",
+			    deldate=".TIMENOW."
 			WHERE groupid=".bkint($groupid)."
 		";
         $db->query_write($sql);
@@ -407,6 +419,16 @@ class MoneyQuery {
 			UPDATE ".$db->prefix."money_oper
 			SET deldate=".TIMENOW.", upddate=".TIMENOW."
 			WHERE operid=".bkint($operid)." AND accountid=".bkint($accountid)."
+			LIMIT 1
+		";
+        $db->query_write($sql);
+    }
+
+    public static function OperRemoveByCategoryId(Ab_Database $db, $categoryid){
+        $sql = "
+			UPDATE ".$db->prefix."money_oper
+			SET deldate=".TIMENOW.", upddate=".TIMENOW."
+			WHERE categoryid=".bkint($categoryid)."
 			LIMIT 1
 		";
         $db->query_write($sql);

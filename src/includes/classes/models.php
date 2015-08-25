@@ -60,6 +60,7 @@ class MoneyCategory extends AbricosModel {
 /**
  * Class MoneyCategoryList
  * @method MoneyCategory Get(int $id)
+ * @method MoneyCategory GetByIndex(int $i)
  */
 class MoneyCategoryList extends AbricosModelList {
 

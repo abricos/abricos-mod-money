@@ -28,6 +28,7 @@
                     <i class="fa fa-plus-square-o"></i>
                 </a>
             </div>
+            <div class="{i#editor}"></div>
         </th>
     </tr>
     </thead>
@@ -62,7 +63,7 @@
                             </a>
                         </div>
                     </div>
-                    <div id="{i#editor}-{v#id}"></div>
+                    <div id="{i#action}-{v#id}"></div>
                 </td>
             </tr>
         </table>
@@ -89,5 +90,23 @@
             <i class="fa fa-ban"></i>
         </button>
     </span>
+</div>
+
+<!--{remove}-->
+<div>
+    <div class="alert alert-danger">
+        Вы действительно хотите удалить эту категорию со всеми
+        подкатегориями и связанные с ней операции по счетам?
+    </div>
+    <div class="btn-group pull-right" data-wait="hide">
+        <button data-click="save" type="button" class="btn btn-default btn-danger"
+                title="Удалить">
+            <i class="fa fa-trash-o"></i> Удалить
+        </button>
+        <button data-click="cancel" type="button" class="btn btn-default"
+                title="Отмена">
+            <i class="fa fa-ban"></i> Отмена
+        </button>
+    </div>
 </div>
 

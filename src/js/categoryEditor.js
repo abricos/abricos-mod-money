@@ -46,14 +46,18 @@ Component.entryPoint = function(NS){
             }));
         },
         _onRowMenuClick: function(e){
-            var categoryid = e.defineTarget.getData('id');
+            var id = e.defineTarget.getData('id');
             switch (e.dataClick) {
                 case 'edit':
-                    return this.showCategoryEditor(categoryid);
+                    return this.showCategoryEditor(id);
+                case 'add':
+                    return this.showCategoryEditor(id, true);
+                case 'remove':
+                    return this.showCategoryRemove(id);
             }
         },
         _getRowElement: function(name, id){
-            return elEditor = Y.one('#' + this.template.gelid('row.' + name) + '-' + id);
+            return Y.one('#' + this.template.gelid('row.' + name) + '-' + id);
         },
         getCategory: function(id){
             return this.get('group').get('categories').getById(id);
@@ -64,23 +68,61 @@ Component.entryPoint = function(NS){
                 this._activeEditor.widget.destroy()
                 this._activeEditor = null;
             }
+            if (this._activeRemove){
+                this._activeRemove.widget.destroy()
+                this._activeRemove = null;
+            }
         },
-        showCategoryEditor: function(categoryid){
+        showCategoryEditor: function(categoryid, isParent){
             var category = this.getCategory(categoryid);
             if (!category){
                 return;
             }
             this._closeActions();
 
+            if (isParent){
+                var app = this.get('appInstance'),
+                    d = category.toJSON();
+
+                category = new (app.get('Category'))({
+                    appInstance: app,
+                    id: 0,
+                    pid: categoryid,
+                    gid: d.groupid,
+                    ise: this.get('isExpense')
+                });
+            }
+
+            var elInfo = this._getRowElement('info', categoryid);
+            if (!isParent){
+                elInfo = elInfo.addClass('hide');
+            }
+
             this._activeEditor = {
-                info: this._getRowElement('info', categoryid).addClass('hide'),
+                info: elInfo,
                 widget: new NS.CategoryListWidget.EditorWidget({
-                    srcNode: this._getRowElement('editor', categoryid).appendChild('<div></div>'),
+                    srcNode: this._getRowElement('action', categoryid).appendChild('<div></div>'),
+                    category: category,
+                    owner: this
+                })
+            };
+        },
+        showCategoryRemove: function(categoryid){
+            var category = this.getCategory(categoryid);
+            if (!category){
+                return;
+            }
+            this._closeActions();
+
+            this._activeRemove = {
+                widget: new NS.CategoryListWidget.RemoveWidget({
+                    srcNode: this._getRowElement('action', categoryid).appendChild('<div></div>'),
                     category: category,
                     owner: this
                 })
             };
         }
+
     }, {
         ATTRS: {
             component: {value: COMPONENT},
@@ -92,23 +134,28 @@ Component.entryPoint = function(NS){
         }
     });
 
-    NS.CategoryListWidget.EditorWidget = Y.Base.create('editor', SYS.AppWidget, [], {
-        onInitAppWidget: function(){
-            this.template.setValue(this.get('category').toJSON());
-        },
+    var ActionWidget = function(){
+    };
+    ActionWidget.NAME = 'actionWidget';
+    ActionWidget.ATTRS = {
+        component: {value: COMPONENT},
+        owner: {value: null},
+        category: {value: null}
+    };
+    ActionWidget.prototype = {
         cancel: function(){
             this.get('owner')._closeActions();
         },
-        save: function(){
+        toJSON: function(){
+            return this.get('category').toJSON();
+        },
+        _saveMethod: function(method){
             this.set('waiting', true);
 
-            var tp = this.template,
-                owner = this.get('owner'),
-                d = Y.merge(this.get('category').toJSON(), {
-                    title: tp.getValue('title')
-                });
+            var owner = this.get('owner'),
+                d = this.toJSON();
 
-            this.get('appInstance').categorySave(d, function(err, result){
+            this.get('appInstance')['category' + method](d, function(err, result){
                 this.set('waiting', false);
                 if (!err){
                     this.cancel();
@@ -116,13 +163,50 @@ Component.entryPoint = function(NS){
                 }
             }, this);
         }
+    };
+
+    NS.CategoryListWidget.EditorWidget = Y.Base.create('editorWidget', SYS.AppWidget, [
+        ActionWidget
+    ], {
+        onInitAppWidget: function(){
+            this.template.setValue(this.get('category').toJSON());
+        },
+        toJSON: function(){
+            var tp = this.template;
+            return Y.merge(this.get('category').toJSON(), {
+                title: tp.getValue('title')
+            });
+        },
+        save: function(){
+            this._saveMethod('Save');
+        }
     }, {
         ATTRS: {
-            component: {value: COMPONENT},
             templateBlockName: {value: 'editor'},
-            owner: {value: null},
-            category: {value: null}
         },
+        // TODO: move to ActionWidget.CLICKS (release in SYS.WidgetClick)
+        CLICKS: {
+            save: 'save',
+            cancel: 'cancel'
+        }
+    });
+
+    NS.CategoryListWidget.RemoveWidget = Y.Base.create('removeWidget', SYS.AppWidget, [
+        ActionWidget
+    ], {
+        onInitAppWidget: function(){
+            var d = this.get('category').toJSON();
+            console.log(d);
+            this.template.setHTML('title', d.title);
+        },
+        save: function(){
+            this._saveMethod('Remove');
+        }
+    }, {
+        ATTRS: {
+            templateBlockName: {value: 'remove'},
+        },
+        // TODO: move to ActionWidget.CLICKS (release in SYS.WidgetClick)
         CLICKS: {
             save: 'save',
             cancel: 'cancel'

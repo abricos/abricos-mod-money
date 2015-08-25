@@ -24,8 +24,9 @@
       "type": "int",
       "json": "ise"
     },
-    "or": {
-      "type": "int"
+    "order": {
+      "type": "int",
+      "json": "ord"
     },
     "update": {
       "type": "int",
