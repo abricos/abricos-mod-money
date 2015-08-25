@@ -8,6 +8,10 @@
     "balance": {
       "type": "double",
       "json": "bc"
+    },
+    "upddate": {
+      "type": "int",
+      "json": "upd"
     }
   }
 }

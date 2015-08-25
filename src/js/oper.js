@@ -129,14 +129,17 @@ Component.entryPoint = function(NS){
                 oper = this.get('oper'),
                 dt = this.dateTimeWidget.getValue(),
                 val = tp.gel('in').value + '',
-                categoryid = this.categorySelectWidget.selected();
+                categoryid = this.categorySelectWidget.selected(),
+                account = this.get('account'),
+                accountid = account.get('id');
 
             var sd = {
                 'id': oper ? oper.get('id') : 0,
                 'isexpense': this.get('isExpense'),
-                'accountid': this.get('account').get('id'),
+                'accountid': accountid,
                 'value': val.replace(/\s/gi, '').replace(/,/gi, '.'),
-                'upddate': (dt ? dt : new Date()).getTime() / 1000,
+                date: (dt ? dt : new Date()).getTime() / 1000,
+                'upddate': account.get('upddate'),
                 'categoryid': categoryid,
                 'descript': tp.gel('dsc').value
             };
@@ -145,8 +148,15 @@ Component.entryPoint = function(NS){
             }
 
             this.set('waiting', true);
-            this.get('appInstance').operSave(sd, function(){
+            this.get('appInstance').operSave(sd, function(err, result){
                 this.set('waiting', false);
+                if (result.balanceList){
+                    var b = result.balanceList.getById(accountid);
+                    if (b){
+                        account.set('upddate', b.get('upddate'));
+                        account.set('balance', b.get('balance'));
+                    }
+                }
                 this.clearForm();
             }, this);
         },

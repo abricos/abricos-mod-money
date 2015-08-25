@@ -23,6 +23,17 @@ Component.entryPoint = function(NS){
         },
         onLoadGroupData: function(err, group, options){
             this.reloadOperList();
+            this.get('appInstance').on('appResponses', this._onAppResponses, this);
+        },
+        destructor: function(){
+            this.get('appInstance').detach('appResponses', this._onAppResponses, this);
+        },
+        _onAppResponses: function(e){
+            if (e.err || !e.result.balanceList){
+                return;
+            }
+            e.result.balanceList.each(function(b){
+            }, this);
         },
         reloadOperList: function(period){
             period = period || this.get('period');
@@ -136,12 +147,12 @@ Component.entryPoint = function(NS){
                 lst += tp.replace('row', {
                     id: attrs.id,
                     d: Brick.dateExt.convert(attrs.date, 2, true),
-                    'dtl': Brick.dateExt.convert(attrs.date, 0, true),
-                    'dsc': attrs.descript,
+                    dtl: Brick.dateExt.convert(attrs.date, 0, true),
+                    dsc: attrs.descript,
                     btns: tp.replace(account.isOperRole() ? 'rbtns' : 'rbtnsn', {
                         'id': attrs.id
                     }),
-                    'td': std
+                    td: std
                 });
 
             }, this);

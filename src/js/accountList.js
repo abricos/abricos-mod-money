@@ -75,14 +75,13 @@ Component.entryPoint = function(NS){
             if (e.err || !e.result.balanceList){
                 return;
             }
-            var account = this.get('account');
+            var account = this.get('account'),
+                b = e.result.balanceList.getById(account.get('id'));
 
-            e.result.balanceList.each(function(b){
-                if (account.get('id') !== b.get('id')){
-                    return;
-                }
-                this.renderBalance(b.get('balance'));
-            }, this);
+            if (!b){
+                return;
+            }
+            this.renderBalance(b.get('balance'));
         },
         _isSelectedSetter: function(isSelected){
             this.template.toggleClass('sel', 'sel', isSelected);

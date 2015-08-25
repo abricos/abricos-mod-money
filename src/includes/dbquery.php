@@ -258,7 +258,9 @@ class MoneyQuery {
         $sm = empty($row) ? 0 : $row['sm'];
         $sql = "
 			UPDATE ".$db->prefix."money_account
-			SET balance = initbalance + ".doubleval($sm)."
+			SET
+			    balance = initbalance + ".doubleval($sm).",
+			    upddate=".TIMENOW."
 			WHERE accountid=".bkint($accountid)."
 			LIMIT 1
 		";
@@ -392,7 +394,7 @@ class MoneyQuery {
     }
 
     public static function OperAppendByObj(Ab_Database $db, $userid, $accountid, $od){
-        return MoneyQuery::OperAppend($db, $userid, $accountid, $od->isexpense, $od->value, $od->upddate, $od->categoryid, $od->descript);
+        return MoneyQuery::OperAppend($db, $userid, $accountid, $od->isexpense, $od->value, $od->date, $od->categoryid, $od->descript);
     }
 
     public static function OperUpdate(Ab_Database $db, $operid, $accountid, $operval, $operdate, $catid, $descript){

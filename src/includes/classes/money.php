@@ -222,7 +222,8 @@ class Money {
             $account = $accountList->GetByIndex($i);
             $list->Add($this->models->InstanceClass('Balance', array(
                 "id" => $account->id,
-                "balance" => $account->balance
+                "balance" => $account->balance,
+                "upddate" => $account->upddate
             )));
         }
         return $this->_cache['BalanceList'] = $list;
@@ -244,6 +245,14 @@ class Money {
             return 403;
         }
 
+        $parser = Abricos::TextParser(true);
+        $od->isexpense = empty($od->isexpense) ? 0 : 1;
+        $od->descript = $parser->Parser($od->descript);
+        $od->value = doubleval($od->value);
+        $od->accountid = intval($od->accountid);
+        $od->date = intval($od->date);
+        $od->upddate = intval($od->upddate);
+
         $account = $this->AccountList()->Get($od->accountid);
 
         if (empty($account) || !$account->IsWriteRole()){
@@ -255,11 +264,6 @@ class Money {
         }
 
         $ret = new stdClass();
-
-        $parser = Abricos::TextParser(true);
-        $od->isexpense = empty($od->isexpense) ? 0 : 1;
-        $od->descript = $parser->Parser($od->descript);
-        $od->value = doubleval($od->value);
 
         $isNewCategory = $od->categoryid === -1 && $group->IsWriteRole();
         if ($isNewCategory){
@@ -718,11 +722,11 @@ class Money {
         }
         $fromdt = $config->period[0];
         $enddt = $config->period[1];
-        $lastupdate = 0;
+        $upddate = isset($config->upddate) ? $config->upddate : 0;
 
         $list = $this->models->InstanceClass('OperList');
 
-        $rows = MoneyQuery::OperListByAIds($this->db, $aids, $fromdt, $enddt, $lastupdate);
+        $rows = MoneyQuery::OperListByAIds($this->db, $aids, $fromdt, $enddt, $upddate);
         while (($d = $this->db->fetch_array($rows))){
             $list->Add($this->models->InstanceClass('Oper', $d));
         }
