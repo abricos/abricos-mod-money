@@ -166,10 +166,13 @@ Component.entryPoint = function(NS){
                 });
                 this._wgs[i].on('accountMenuClick', this._onAccountMenuClick, this);
             }
+            this._widgetsInitialized = true;
         },
         destructor: function(){
-            for (var i = 1; i <= 3; i++){
-                Y.detach('accountMenuClick', this._onAccountMenuClick);
+            if (this._widgetsInitialized){
+                for (var i = 1; i <= 3; i++){
+                    this._wgs[i].destroy();
+                }
             }
         },
         onLoadGroupData: function(err, group){

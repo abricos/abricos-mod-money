@@ -26,7 +26,7 @@ Component.entryPoint = function(NS){
             }, this);
         },
         destructor: function(){
-            Y.detach('appResponses', this._onAppResponses);
+            this.get('appInstance').on('appResponses', this._onAppResponses, this);
         },
         _onAppResponses: function(e){
             if (e.err || !e.result.groupList){

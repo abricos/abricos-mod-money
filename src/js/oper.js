@@ -211,8 +211,12 @@ Component.entryPoint = function(NS){
             this.showPage('expense');
             this.on('selectedAccountChange', this._onSelectedAccountChange, this);
         },
+        destructor: function(){
+            for (var n in this.tabs){
+                this.tabs[n].destroy()
+            }
+        },
         _onSelectedAccountChange: function(e){
-            console.log(e.newVal.get('id'));
             for (var n in this.tabs){
                 this.tabs[n].set('account', e.newVal);
             }

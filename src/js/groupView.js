@@ -16,6 +16,13 @@ Component.entryPoint = function(NS){
         buildTData: function(){
             return {groupid: this.get('groupid')}
         },
+        destructor: function(){
+            if (this._widgetsInitialized){
+                this.accountsWidget.destroy();
+                this.operWidget.destroy();
+                this.operLogWidget.destroy();
+            }
+        },
         onLoadGroupData: function(err, group){
             var tp = this.template;
 
@@ -24,6 +31,7 @@ Component.entryPoint = function(NS){
                 return;
             }
             var groupid = group.get('id');
+            this._widgetsInitialized = true;
 
             this.accountsWidget = new NS.AccountListWidget({
                 boundingBox: tp.gel('acclist'),
