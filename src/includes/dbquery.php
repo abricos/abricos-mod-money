@@ -57,6 +57,17 @@ class MoneyQuery {
         return $db->insert_id();
     }
 
+    public static function CategoryUpdate(Ab_Database $db, $groupid, $categoryid, $title){
+        $sql = "
+			UPDATE ".$db->prefix."money_category
+			SET title='".bkstr($title)."',
+			    upddate=".TIMENOW."
+			WHERE groupid=".bkint($groupid)." AND categoryid=".bkint($categoryid)."
+			LIMIT 1
+		";
+        $db->query_write($sql);
+    }
+
     public static function UserListByIds(Ab_Database $db, $ids){
         $wh = array("u.userid=".Abricos::$user->id);
         foreach ($ids as $id){

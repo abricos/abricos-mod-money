@@ -4,13 +4,9 @@
 
     <div class="row">
         <div class="col-sm-6">
-            <h4>Расход</h4>
-
             <div id="{i#expenseList}"></div>
         </div>
         <div class="col-sm-6">
-            <h4>Доход</h4>
-
             <div id="{i#incomingList}"></div>
         </div>
     </div>
@@ -24,37 +20,74 @@
 <!--{table}-->
 <table class="table table-striped table-hover table-bordered">
     <thead>
-    <tr><th>
-        <div class="pull-right">
-            <a data-click="add" title="Добавить категорию" href="#">
-                <i class="fa fa-plus-square-o"></i>
-            </a>
-        </div>
-
-    </th></tr>
+    <tr>
+        <th>
+            {v#title}
+            <div class="pull-right">
+                <a data-click="create" title="Добавить категорию" href="#">
+                    <i class="fa fa-plus-square-o"></i>
+                </a>
+            </div>
+        </th>
+    </tr>
     </thead>
     <tbody>{v#rows}</tbody>
 </table>
 
+<!--{expenseTitle}-->Расход
+<!--{incomingTitle}-->Доход
+
 <!--{row}-->
 <tr>
     <td>
-        {v#tab}{v#title}
-        <div class="pull-right">
-            <a data-click="edit" title="Редактировать" href="#">
-                <i class="fa fa-pencil-square-o"></i>
-            </a>
-            &nbsp;
-            <a data-click="add" title="Добавить подкатегорию" href="#">
-                <i class="fa fa-plus-square-o"></i>
-            </a>
-            &nbsp;
-            <a data-click="remove" title="Удалить" href="#">
-                <i class="fa fa-trash-o"></i>
-            </a>
-        </div>
+        <table style="width: 100%">
+            <tr>
+                <td>
+                    {v#tab}
+                </td>
+                <td style="width: 100%;">
+                    <div id="{i#info}-{v#id}">
+                        {v#title}
+                        <div class="pull-right">
+                            <a data-click="edit" data-id="{v#id}" title="Редактировать" href="#">
+                                <i class="fa fa-pencil-square-o"></i>
+                            </a>
+                            &nbsp;
+                            <a data-click="add" data-id="{v#id}" title="Добавить подкатегорию" href="#">
+                                <i class="fa fa-plus-square-o"></i>
+                            </a>
+                            &nbsp;
+                            <a data-click="remove" data-id="{v#id}" title="Удалить" href="#">
+                                <i class="fa fa-trash-o"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div id="{i#editor}-{v#id}"></div>
+                </td>
+            </tr>
+        </table>
+
     </td>
 </tr>
 
 <!--{stab}-->
 &nbsp;&nbsp;&nbsp;&nbsp;
+
+<!--{editor}-->
+<div class="input-group">
+    <input id="{i#title}" type="text" class="form-control"/>
+    <span class="input-group-addon" data-wait="show">
+        <img src="/images/loading.gif"/>
+    </span>
+    <span class="input-group-btn" data-wait="hide">
+        <button data-click="save" type="button" class="btn btn-default"
+                title="Сохранить">
+            <i class="fa fa-floppy-o"></i>
+        </button>
+        <button data-click="cancel" type="button" class="btn btn-default"
+                title="Отмена">
+            <i class="fa fa-ban"></i>
+        </button>
+    </span>
+</div>
+

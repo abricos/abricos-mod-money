@@ -53,6 +53,8 @@ class Money {
                 return $this->GroupListToJSON();
             case 'groupSave':
                 return $this->GroupSaveToJSON($d->group);
+            case 'categorySave':
+                return $this->CategorySaveToJSON($d->category);
             case 'userList':
                 return $this->UserListToJSON();
             case 'operSave':
@@ -441,6 +443,7 @@ class Money {
         }
     }
 
+    /*
     private function AccountSaveMethod($groupid, $ad){
         if ($ad->id == 0){
             $ad->id = $this->AccountAppendMethod($groupid, $ad);
@@ -458,6 +461,7 @@ class Money {
         MoneyQuery::AccountUpdateBalance($this->db, $ad->id);
         return $ad->id;
     }
+    /**/
 
     public function AccountSave($groupid, $sd){
 
@@ -508,6 +512,59 @@ class Money {
         $title = $parser->Parser($title);
         $isExpense = !empty($isExpense) ? 1 : 0;
         return MoneyQuery::CategoryAppend($this->db, Abricos::$user->id, $groupid, $title, $isExpense, $parentid, $order);
+    }
+
+    public function CategorySaveToJSON($d){
+        $res = $this->CategorySave($d);
+        if (is_integer($res)){
+            $ret = new stdClass();
+            $ret->err = $res;
+            return $ret;
+        }
+
+        return $res;
+    }
+
+    public function CategorySave($d){
+        if (!$this->manager->IsWriteRole()){
+            return 403;
+        }
+
+        $fps = Abricos::TextParser(true);
+        $d->id = intval($d->id);
+        $d->isexpense = !empty($d->isexpense) ? 1 : 0;
+        $d->groupid = intval($d->groupid);
+        $d->parentid = intval($d->parentid);
+        $d->title = $fps->Parser($d->title);
+
+        $group = $this->GroupList()->Get($d->groupid);
+        if (empty($group) || !$group->IsWriteRole()){
+            return 403;
+        }
+
+        if (!empty($d->parentid)){
+            $parentCategory = $group->categories->Get($d->parentid);
+            if (empty($parentCategory)){
+                return 403;
+            }
+        }
+        
+        if ($d->id === 0){
+            $d->id = MoneyQuery::CategoryAppend($this->db, Abricos::$user->id,
+                $d->groupid, $d->title, $d->isexpense, $d->parentid, 0);
+        } else {
+            MoneyQuery::CategoryUpdate($this->db, $d->groupid, $d->id, $d->title);
+        }
+
+        $this->ClearCache();
+        $ret = new stdClass();
+        $ret->categoryid = $d->id;
+
+        $ret = $this->ImplodeJSON(array(
+            $this->GroupListToJSON()
+        ), $ret);
+
+        return $ret;
     }
 
     private function CategoryInit($gid){

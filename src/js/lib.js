@@ -60,6 +60,9 @@ Component.entryPoint = function(NS){
             groupSave: {
                 args: ['group']
             },
+            categorySave: {
+                args: ['category']
+            },
             accountList: {
                 attribute: true,
                 type: 'modelList:AccountList'

@@ -12,14 +12,33 @@ Component.entryPoint = function(NS){
             getter: function(){
                 var groupList = this.get('groupList'),
                     groupid = this.get('groupid');
+
                 if (!groupList){
                     return null;
                 }
                 return groupList.getById(groupid);
             }
         },
-        groupList: {},
-        accountList: {},
+        groupList: {
+            readOnly: true,
+            getter: function(){
+                var app = this.get('appInstance');
+                if (!app){
+                    return null;
+                }
+                return app.get('groupList');
+            }
+        },
+        accountList: {
+            readOnly: true,
+            getter: function(){
+                var app = this.get('appInstance');
+                if (!app){
+                    return null;
+                }
+                return app.get('accountList');
+            }
+        },
         firstAccount: {
             readOnly: true,
             getter: function(){
@@ -43,10 +62,6 @@ Component.entryPoint = function(NS){
             this.set('waiting', true);
             appInstance.groupList(function(err, result){
                 this.set('waiting', false);
-                if (!err){
-                    this.set('groupList', appInstance.get('groupList'));
-                    this.set('accountList', appInstance.get('accountList'));
-                }
                 var group = this.get('group');
                 this.onLoadGroupData(err, group, options.arguments[0]);
             }, this);
