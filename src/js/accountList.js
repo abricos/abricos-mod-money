@@ -43,6 +43,7 @@ Component.entryPoint = function(NS){
             return this.get('account').toJSON();
         },
         onInitAppWidget: function(err, appInstance){
+            appInstance.on('appResponses', this._onAppResponses, this);
             this.publish('menuClick');
 
             var tp = this.template,
@@ -51,14 +52,37 @@ Component.entryPoint = function(NS){
 
             tp.setHTML({
                 'tl': account.getTitle(),
-                'cc': account.getCurrency().get('sign'),
-                'val': NS.numberFormat(acc.balance)
+                'cc': account.getCurrency().get('sign')
             });
-
-            tp.replaceClass('val', 'text-success', 'text-danger', acc.balance >= 0);
 
             tp.visible('bedit,brem', account.isEditRole());
             tp.visible('badd', account.isOperRole());
+
+            this.renderBalance(acc.balance);
+        },
+        renderBalance: function(val){
+            var tp = this.template;
+            tp.setHTML({
+                'val': NS.numberFormat(val)
+            });
+
+            tp.replaceClass('val', 'text-success', 'text-danger', val >= 0);
+        },
+        destructor: function(){
+            this.get('appInstance').detach('appResponses', this._onAppResponses, this);
+        },
+        _onAppResponses: function(e){
+            if (e.err || !e.result.balanceList){
+                return;
+            }
+            var account = this.get('account');
+
+            e.result.balanceList.each(function(b){
+                if (account.get('id') !== b.get('id')){
+                    return;
+                }
+                this.renderBalance(b.get('balance'));
+            }, this);
         },
         _isSelectedSetter: function(isSelected){
             this.template.toggleClass('sel', 'sel', isSelected);

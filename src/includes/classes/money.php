@@ -203,6 +203,31 @@ class Money {
         return $this->_cache['GroupList'] = $list;
     }
 
+    public function BalanceListToJSON(){
+        $res = $this->BalanceList();
+        return $this->ResultToJSON('balanceList', $res);
+    }
+
+    public function BalanceList(){
+        if (isset($this->_cache['BalanceList'])){
+            return $this->_cache['BalanceList'];
+        }
+        if (!$this->manager->IsViewRole()){
+            return 403;
+        }
+
+        $accountList = $this->AccountList();
+        $list = $this->models->InstanceClass('BalanceList');
+        for ($i = 0; $i < $accountList->Count(); $i++){
+            $account = $accountList->GetByIndex($i);
+            $list->Add($this->models->InstanceClass('Balance', array(
+                "id" => $account->id,
+                "balance" => $account->balance
+            )));
+        }
+        return $this->_cache['BalanceList'] = $list;
+    }
+
     public function OperSaveToJSON($d){
         $res = $this->OperSave($d);
         if (is_integer($res)){
@@ -266,6 +291,10 @@ class Money {
                 $this->GroupListToJSON()
             ), $ret);
         }
+
+        $ret = $this->ImplodeJSON(array(
+            $this->BalanceListToJSON()
+        ), $ret);
 
         return $ret;
     }
