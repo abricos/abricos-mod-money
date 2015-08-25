@@ -81,10 +81,7 @@ Component.entryPoint = function(NS){
             }
         },
         CLICKS: {
-            edit: {event: '_onMenuClick'},
-            create: {event: '_onMenuClick'},
-            remove: {event: '_onMenuClick'},
-            select: {event: '_onMenuClick'}
+            'edit,create,remove,select': '_onMenuClick'
         }
     });
 

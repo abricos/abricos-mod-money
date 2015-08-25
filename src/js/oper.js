@@ -89,6 +89,8 @@ Component.entryPoint = function(NS){
             var tp = this.template,
                 oper = this.get('oper');
 
+            this._hideCreateCategory();
+
             tp.toggleView(!!oper, 'bsave,bcancel', 'bcreate');
 
             tp.one('in').focus();
@@ -179,8 +181,8 @@ Component.entryPoint = function(NS){
             }
         },
         CLICKS: {
-            save: {event: 'save'},
-            cancel: {event: 'clearForm'}
+            save: 'save',
+            cancel: 'clearForm'
         }
     });
 
