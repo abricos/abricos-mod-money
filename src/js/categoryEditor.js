@@ -73,6 +73,29 @@ Component.entryPoint = function(NS){
                 this._activeRemove = null;
             }
         },
+        showCreateRootCategory: function(){
+            this._closeActions();
+
+            var app = this.get('appInstance'),
+                tp = this.template,
+                category = new (app.get('Category'))({
+                    appInstance: app,
+                    id: 0,
+                    pid: 0,
+                    gid: this.get('groupid'),
+                    ise: this.get('isExpense')
+                });
+
+            this._activeEditor = {
+                info: tp.one('table.info'),
+                widget: new NS.CategoryListWidget.EditorWidget({
+                    srcNode: tp.one('table.action').appendChild('<div></div>'),
+                    category: category,
+                    owner: this
+                })
+            };
+        },
+
         showCategoryEditor: function(categoryid, isParent){
             var category = this.getCategory(categoryid);
             if (!category){
@@ -88,7 +111,7 @@ Component.entryPoint = function(NS){
                     appInstance: app,
                     id: 0,
                     pid: categoryid,
-                    gid: d.groupid,
+                    gid: this.get('groupid'),
                     ise: this.get('isExpense')
                 });
             }
@@ -130,7 +153,8 @@ Component.entryPoint = function(NS){
             isExpense: {value: false}
         },
         CLICKS: {
-            'edit,add,remove': '_onRowMenuClick'
+            'edit,add,remove': '_onRowMenuClick',
+            createInRoot: 'showCreateRootCategory'
         }
     });
 
@@ -196,7 +220,6 @@ Component.entryPoint = function(NS){
     ], {
         onInitAppWidget: function(){
             var d = this.get('category').toJSON();
-            console.log(d);
             this.template.setHTML('title', d.title);
         },
         save: function(){
@@ -230,9 +253,6 @@ Component.entryPoint = function(NS){
                 groupid: groupid,
                 isExpense: false
             });
-        },
-        toJSON: function(){
-            return {}
         }
     }, {
         ATTRS: {
