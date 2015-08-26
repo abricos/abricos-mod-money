@@ -102,7 +102,10 @@ class Money {
 
         $modelManager = AbricosModelManager::GetManager('money');
 
-        $res = $modelManager->ToJSON('Group,Account,Category,CategoryList,UserRole,UserRoleList,User,Oper,Balance');
+        $res = $modelManager->ToJSON(
+            'Group,Account,Category,CategoryList,' .
+            'UserRole,UserRoleList,User,Oper,OperList,Balance'
+        );
         if (empty($res)){
             return null;
         }
@@ -226,6 +229,7 @@ class Money {
                 "upddate" => $account->upddate
             )));
         }
+
         return $this->_cache['BalanceList'] = $list;
     }
 
@@ -283,12 +287,6 @@ class Money {
         MoneyQuery::AccountUpdateBalance($this->db, $od->accountid);
 
         $this->ClearCache();
-
-        $account = $this->AccountList()->Get($od->accountid);
-
-        $ret->balance = new stdClass();
-        $ret->balance->accountid = $account->id;
-        $ret->balance->value = $account->balance;
 
         if ($isNewCategory){
             $ret = $this->ImplodeJSON(array(

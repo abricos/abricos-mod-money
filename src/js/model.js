@@ -137,7 +137,10 @@ Component.entryPoint = function(NS){
     });
 
     NS.OperList = Y.Base.create('operList', SYS.AppModelList, [], {
-        appItem: NS.Oper
+        appItem: NS.Oper,
+        comparator: function(model){
+            return (new Date()).getTime() - model.get('date');
+        }
     });
 
     NS.Balance = Y.Base.create('balance', SYS.AppModel, [], {

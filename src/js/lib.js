@@ -48,6 +48,7 @@ Component.entryPoint = function(NS){
             UserRoleList: {value: NS.UserRoleList},
             Category: {value: NS.Category},
             CategoryList: {value: NS.CategoryList},
+            Oper: {value: NS.Oper},
             OperList: {value: NS.OperList},
             BalanceList: {value: NS.BalanceList}
         },

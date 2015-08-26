@@ -32,20 +32,35 @@ Component.entryPoint = function(NS){
             if (e.err || !e.result.balanceList){
                 return;
             }
-            e.result.balanceList.each(function(b){
-            }, this);
+            this.reloadOperList(null, true);
         },
-        reloadOperList: function(period){
+        reloadOperList: function(period, isUpdate){
             period = period || this.get('period');
             var config = {
-                groupid: this.get('groupid'),
-                period: [period[0] / 1000, period[1] / 1000]
-            };
+                    groupid: this.get('groupid'),
+                    period: [period[0] / 1000, period[1] / 1000]
+                },
+                operList = this.get('operList');
+
+            isUpdate = isUpdate && operList;
+
+            if (isUpdate){
+                var lastUpdate = 0;
+                operList.each(function(oper){
+                    lastUpdate = Math.max(lastUpdate, oper.get('upddate'));
+                });
+                config.upddate = lastUpdate;
+            }
+
             this.set('waiting', true);
             this.get('appInstance').operList(config, function(err, result){
                 this.set('waiting', true);
                 if (!err){
-                    this.set('operList', result.operList);
+                    if (isUpdate){
+                        operList.add(result.operList);
+                    } else {
+                        this.set('operList', result.operList);
+                    }
                     this.renderOperList();
                 }
             }, this);
