@@ -20,96 +20,14 @@ Component.entryPoint = function(NS){
 
     var buildTemplate = this.buildTemplate;
 
-    var elChildForeach = function(el, callback){
-        NS.life(callback, el);
 
-        var els = el.childNodes;
-        for (var i = 0; i < els.length; i++){
-            elChildForeach(els[i], callback);
-        }
-    };
-
-    var AccountSelectWidget = function(container, group){
-        this.init(container, group);
-    };
-    AccountSelectWidget.prototype = {
-        init: function(container, group){
-
-            var TM = buildTemplate(this, 'select,selrow');
-
-            var lst = "";
-            group.accounts.foreach(function(acc){
-                lst += TM.replace('selrow', {
-                    'id': acc.id, 'tl': acc.getTitle()
-                });
-            });
-            container.innerHTML = TM.replace('select', {'rows': lst});
-        },
-        destroy: function(){
-            var el = this._TM.getEl('select.id');
-            el.parentNode.removeChild(el);
-        },
-        getValue: function(){
-            return this._TM.getEl('select.id').value;
-        },
-        setValue: function(value){
-            this._TM.getEl('select.id').value = value;
-        },
-        setReadonly: function(readonly){
-            this._TM.getEl('select.id').disabled = readonly ? 'disabled' : '';
-        }
-    };
-    NS.AccountSelectWidget = AccountSelectWidget;
-
-    var AccountRowWidget = function(container, account, cfg){
-        cfg = cfg || {};
-        this.init(container, account, cfg);
-    };
-    AccountRowWidget.prototype = {
-        destroy: function(){
-            var el = this._TM.getEl('row.id');
-            el.parentNode.removeChild(el);
-        },
-
-        onSelectByClick: function(){
-            NS.life(this.cfg['onSelCallback'], this);
-        }
-    };
-    NS.AccountRowWidget = AccountRowWidget;
 
     var AccountGroupRowWidget = function(container, agid, cfg){
         cfg = cfg || {};
         this.init(container, agid, cfg);
     };
     AccountGroupRowWidget.prototype = {
-        onClick: function(el){
-            for (var i = 0; i < this.ws.length; i++){
-                if (this.ws[i].onClick(el)){
-                    return true;
-                }
-            }
-            return false;
-        },
-        renderAccount: function(acc){
-            var __self = this,
-                w = new NS.AccountRowWidget(this._TM.getEl('grow.list'), acc, {
-                        'onEditCallback': function(row){
-                            __self.onMenuEditClick(row);
-                        },
-                        'onRemoveCallback': function(row){
-                            __self.onMenuRemoveClick(row);
-                        },
-                        'onAddOperCallback': function(row){
-                            __self.onSelectByClick(row);
-                        },
-                        'onSelCallback': function(row){
-                            __self.onSelectByClick(row);
-                        }
-                    }
-                );
-            this.ws[this.ws.length] = w;
-            return w;
-        },
+
         render: function(){
             var TM = this._TM, ws = this.ws;
             Dom.setStyle(TM.getEl('grow.id'), 'display', ws.length > 0 ? '' : 'none');
@@ -141,15 +59,7 @@ Component.entryPoint = function(NS){
                 this.ws[i].render();
             }
         },
-        onMenuEditClick: function(row){
-            NS.life(this.cfg['onEditCallback'], row);
-        },
-        onMenuRemoveClick: function(row){
-            NS.life(this.cfg['onRemoveCallback'], row);
-        },
-        onSelectByClick: function(rowWidget){
-            NS.life(this.cfg['onSelCallback'], rowWidget);
-        }
+
     };
     NS.AccountGroupRowWidget = AccountGroupRowWidget;
 
@@ -217,27 +127,7 @@ Component.entryPoint = function(NS){
 
             this.render();
         },
-        onClick: function(el){
-            for (var i = 1; i <= 3; i++){
-                if (this.wgs[i].onClick(el)){
-                    return true;
-                }
-            }
-            var tp = this._TId['widget'];
-            switch (el.id) {
-                case tp['bcreate']:
-                    this.onClickCreate();
-                    return true;
-                case tp['bgpedt']:
-                    this.onClickGroupEdit();
-                    return true;
-                case tp['bgprem']:
-                    this.onClickGroupRemove();
-                    return true;
-            }
 
-            return false;
-        },
         reBuildList: function(){
             for (var i = 1; i <= 3; i++){
                 this.wgs[i]._clearWidgets();
@@ -249,24 +139,7 @@ Component.entryPoint = function(NS){
         },
 
 
-        onSelectAccount: function(account){
-            this.selectChangedEvent.fire(account);
-        },
-        onClickCreate: function(){
-            this.clickCreateEvent.fire();
-        },
-        onClickGroupEdit: function(){
-            this.clickGroupEditEvent.fire(this.group);
-        },
-        onClickEdit: function(acc){
-            this.clickEditEvent.fire(acc);
-        },
-        onClickRemove: function(acc){
-            this.clickRemoveEvent.fire(acc);
-        },
-        onClickGroupRemove: function(){
-            this.clickGroupRemoveEvent.fire(this.group);
-        }
+
     };
     NS.AccountListWidget = AccountListWidget;
 

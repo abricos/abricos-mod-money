@@ -85,8 +85,19 @@ Component.entryPoint = function(NS){
             },
             balanceList: {
                 type: 'modelList:BalanceList',
-                response: function(){
-                    console.log(arguments);
+                onResponse: function(balanceList){
+                    var accountList = this.get('accountList');
+                    if (!accountList){
+                        return;
+                    }
+                    balanceList.each(function(b){
+                        var account = accountList.getById(b.get('id'));
+                        if (account){
+                            return;
+                        }
+                        account.set('balance', b.get('balance'));
+                        account.set('upddate', b.get('upddate'));
+                    });
                 }
             },
         },

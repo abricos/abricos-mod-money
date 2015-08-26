@@ -43,12 +43,10 @@ Component.entryPoint = function(NS){
             return this.get('account').toJSON();
         },
         onInitAppWidget: function(err, appInstance){
-            appInstance.on('appResponses', this._onAppResponses, this);
             this.publish('menuClick');
 
             var tp = this.template,
-                account = this.get('account'),
-                acc = account.toJSON();
+                account = this.get('account');
 
             tp.setHTML({
                 'tl': account.getTitle(),
@@ -58,30 +56,22 @@ Component.entryPoint = function(NS){
             tp.visible('bedit,brem', account.isEditRole());
             tp.visible('badd', account.isOperRole());
 
-            this.renderBalance(acc.balance);
+            this.renderBalance();
         },
-        renderBalance: function(val){
-            var tp = this.template;
+        renderBalance: function(){
+            var tp = this.template,
+                account = this.get('account'),
+                val = account.get('balance');
+
             tp.setHTML({
                 'val': NS.numberFormat(val)
             });
 
             tp.replaceClass('val', 'text-success', 'text-danger', val >= 0);
-        },
-        destructor: function(){
-            this.get('appInstance').detach('appResponses', this._onAppResponses, this);
-        },
-        _onAppResponses: function(e){
-            if (e.err || !e.result.balanceList){
-                return;
-            }
-            var account = this.get('account'),
-                b = e.result.balanceList.getById(account.get('id'));
-
-            if (!b){
-                return;
-            }
-            this.renderBalance(b.get('balance'));
+            return {
+                balance: val,
+                sign: account.getCurrency().get('sign')
+            };
         },
         _isSelectedSetter: function(isSelected){
             this.template.toggleClass('sel', 'sel', isSelected);
@@ -130,7 +120,7 @@ Component.entryPoint = function(NS){
             this._ws = [];
             this.template.hide('grow');
         },
-        renderAccount: function(account){
+        accountAppend: function(account){
             var w = new NS.AccountRowWidget({
                 boundingBox: this.template.append('list', '<div></div>'),
                 account: account
@@ -139,6 +129,32 @@ Component.entryPoint = function(NS){
             this._ws[this._ws.length] = w;
             this.template.show('grow');
             return w;
+        },
+        renderList: function(){
+            var ws = this._ws,
+                sum = {},
+                i, w, account, currencyid;
+
+            for (var i = 0; i < ws.length; i++){
+                var r = ws[i].renderBalance();
+                if (!sum[r.sign]){
+                    sum[r.sign] = 0;
+                }
+                sum[r.sign] += r.balance;
+            }
+
+            var tp = this.template,
+                lst = "";
+
+            for (var cc in sum){
+                var val = sum[cc];
+                lst += tp.replace('gsmrow', {
+                    'ise': val >= 0 ? 'text-success' : 'text-danger',
+                    'sm': NS.numberFormat(val),
+                    'cc': cc
+                });
+            }
+            tp.setHTML('grow.sumlist', lst);
         },
         _onRowMenuClick: function(e){
             this.fire('accountMenuClick', {action: e.action, account: e.account});
@@ -178,6 +194,8 @@ Component.entryPoint = function(NS){
             return {id: this.get('groupid')}
         },
         onBeforeLoadGroupData: function(){
+            this.get('appInstance').on('appResponses', this._onAppResponses, this);
+
             this.publish('menuClick');
             this.publish('accountMenuClick');
 
@@ -191,7 +209,15 @@ Component.entryPoint = function(NS){
             }
             this._widgetsInitialized = true;
         },
+        _onAppResponses: function(e){
+            if (e.err || !e.result.balanceList){
+                return;
+            }
+            this.renderList();
+        },
         destructor: function(){
+            this.get('appInstance').detach('appResponses', this._onAppResponses, this);
+
             if (this._widgetsInitialized){
                 for (var i = 1; i <= 3; i++){
                     this._wgs[i].destroy();
@@ -221,10 +247,16 @@ Component.entryPoint = function(NS){
                         agid = 3;
                         break;
                 }
-                this._wgs[agid].renderAccount(account);
+                this._wgs[agid].accountAppend(account);
             }, this);
 
             this.selectAccount(this.get('firstAccount'));
+            this.renderList();
+        },
+        renderList: function(){
+            for (var i = 1; i <= 3; i++){
+                this._wgs[i].renderList();
+            }
         },
         _onAccountMenuClick: function(e){
             this.fire('accountMenuClick', {account: e.account, action: e.action});
@@ -247,7 +279,7 @@ Component.entryPoint = function(NS){
         },
         _onMenuClick: function(e){
             this.fire('menuClick', {group: this.get('group'), action: e.dataClick});
-        },
+        }
     }, {
         ATTRS: {
             component: {value: COMPONENT},
