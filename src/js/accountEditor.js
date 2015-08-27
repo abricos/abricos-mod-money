@@ -46,6 +46,17 @@ Component.entryPoint = function(NS){
             this.rolesWidget.destroy();
             this.currencyWidget.destroy();
         },
+        _visibleButtons: function(val){
+            var elButtons = Y.one(this.template.gel('buttons'));
+            if (elButtons){
+                if (val){
+                    elButtons.removeClass('hide');
+                } else {
+                    elButtons.addClass('hide');
+                }
+            }
+            return val;
+        },
         onClick: function(e){
             var facade = {
                 action: e.dataClick,
@@ -69,41 +80,76 @@ Component.entryPoint = function(NS){
             templateBlockName: {value: 'row'},
             account: {value: null},
             isVisibleButtons: {
-                setter: function(val){
-                    var elButtons = Y.one(this.template.gel('buttons'));
-                    if (elButtons){
-                        if (val){
-                            elButtons.removeClass('hide');
-                        } else {
-                            elButtons.addClass('hide');
-                        }
-                    }
-                    return val;
-                }
+                setter: '_visibleButtons'
             }
         }
     });
 
-    NS.AccountEditorWidget = Y.Base.create('accountEditorWidget', SYS.AppWidget, [], {}, {
+    NS.AccountEditorWidget = Y.Base.create('accountEditorWidget', SYS.AppWidget, [
+        NS.GroupByIdExt
+    ], {
+        buildTData: function(){
+            return {
+                'stclass': this.get('accountid') > 0 ? 'isedit' : 'isnew'
+            };
+        },
+        onLoadGroupData: function(err, group){
+            if (!group){
+                return;
+            }
+
+            var account = this.get('accountid') > 0 ?
+                this.get('appInstance').get('accountList').getById(this.get('accountid')) :
+                NS.AccountEditorWidget.createAccount(this.get('appInstance'));
+
+            if (!account){
+                return;
+            }
+
+            var tp = this.template;
+
+            this.editorWidget = new NS.AccountEditorRowWidget({
+                boundingBox: tp.gel('editor'),
+                account: account,
+                isVisibleButtons: false
+            });
+
+            tp.toggleView(account.isAdminRole(), 'bsave,bcancel', 'bclose');
+        },
+        destructor: function(){
+            if (this.editorWidget){
+                this.editorWidget.destroy();
+            }
+        }
+    }, {
         ATTRS: {
             component: {value: COMPONENT},
-            templateBlockName: {value: 'widget'},
-            groupid: {value: 0},
-            groupList: {value: null}
+            templateBlockName: {value: 'editor'},
+            accountid: {value: 0}
         }
     });
 
-    NS.AccountEditorListWidget = Y.Base.create('accountEditorListWidget', SYS.AppWidget, [], {
-        onInitAppWidget: function(err, appInstance){
-            this._ws = [];
-            var group = this.get('group'),
-                groupid = group.get('id');
-
-            if (groupid === 0){
-                this.createAccount();
-            } else {
-                group.accountEach(this._renderAccount, this);
+    NS.AccountEditorWidget.createAccount = function(appInstance){
+        return new NS.Account({
+            appInstance: appInstance,
+            tp: 1,
+            cc: Abricos.config.locale === 'ru-RU' ? 'RUB' : 'USD',
+            roles: {
+                list: [{id: UID, r: NS.AURoleType.ADMIN}]
             }
+        });
+    };
+
+    NS.AccountEditorListWidget = Y.Base.create('accountEditorListWidget', SYS.AppWidget, [
+        NS.GroupByIdExt
+    ], {
+        onLoadGroupData: function(err, group){
+            this._ws = [];
+
+            this.get('groupid') === 0
+                ? this.createAccount()
+                : group.accountEach(this._renderAccount, this);
+
         },
         _renderAccount: function(account, isInsert){
             var elList = Y.one(this.template.gel('list')),
@@ -134,14 +180,7 @@ Component.entryPoint = function(NS){
             });
         },
         createAccount: function(){
-            var account = new NS.Account({
-                appInstance: this.get('appInstance'),
-                tp: 1,
-                cc: Abricos.config.locale === 'ru-RU' ? 'RUB' : 'USD',
-                roles: {
-                    list: [{id: UID, r: NS.AURoleType.ADMIN}]
-                }
-            });
+            var account = NS.AccountEditorWidget.createAccount(this.get('appInstance'));
             this._renderAccount(account, true);
         },
         removeAccount: function(account){

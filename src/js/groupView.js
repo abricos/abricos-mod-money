@@ -18,7 +18,7 @@ Component.entryPoint = function(NS){
         },
         destructor: function(){
             if (this._widgetsInitialized){
-                this.accountsWidget.destroy();
+                this.accountListWidget.destroy();
                 this.operWidget.destroy();
                 this.operLogWidget.destroy();
             }
@@ -33,12 +33,13 @@ Component.entryPoint = function(NS){
             var groupid = group.get('id');
             this._widgetsInitialized = true;
 
-            this.accountsWidget = new NS.AccountListWidget({
-                boundingBox: tp.gel('acclist'),
+            var accounts = this.accountListWidget = new NS.AccountListWidget({
+                boundingBox: tp.gel('accountList'),
                 groupid: groupid
             });
-            this.accountsWidget.on('selectedAccountChange', this._onAccountsSelectedChanged, this);
-            this.accountsWidget.on('accountMenuClick', this._onAccountMenuClick, this);
+            accounts.on('selectedAccountChange', this._onAccountsSelectedChanged, this);
+            accounts.on('accountMenuClick', this._onAccountMenuClick, this);
+            accounts.on('menuClick', this._onGroupMenuClick, this);
 
             this.operWidget = new NS.OperationWidget({
                 srcNode: tp.gel('oper'),
@@ -50,13 +51,44 @@ Component.entryPoint = function(NS){
                 groupid: groupid
             });
         },
+        closeAccountEditor: function(){
+            if (!this.accountEditorWidget){
+                return;
+            }
+            this.accountEditorWidget.destroy();
+            this.accountEditorWidget = null;
+        },
+        showAccountEditor: function(accountid){
+            var tp = this.template;
+            tp.show('accountEditor');
+            Brick.use('{C#MODNAME}', 'accountEditor', function(){
+                this._showAccountEditor(accountid);
+            }, this);
+        },
+        _showAccountEditor: function(accountid){
+            this.closeAccountEditor();
+            this.accountEditorWidget = new NS.AccountEditorWidget({
+                srcNode: this.template.append('accountEditor', '<div></div>'),
+                groupid: this.get('groupid'),
+                accountid: accountid | 0
+            });
+        },
         _onAccountsSelectedChanged: function(e){
             this.operWidget.set('selectedAccount', e.newVal);
         },
         _onAccountMenuClick: function(e){
-            switch(e.action){
+            switch (e.action) {
                 case 'select':
-                    this.accountsWidget.selectAccount(e.account);
+                    this.accountListWidget.selectAccount(e.account);
+                    break;
+            }
+        },
+        _onGroupMenuClick: function(e){
+            switch (e.action) {
+                case 'create':
+                    this.showAccountEditor();
+                    break;
+                case 'remove':
                     break;
             }
         }

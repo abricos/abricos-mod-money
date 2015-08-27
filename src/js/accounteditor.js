@@ -87,51 +87,7 @@ Component.entryPoint = function(NS){
         this.init(container, account, closeCallback);
     };
     AccountEditorWidget.prototype = {
-        init: function(container, account, closeCallback){
-            this.closeCallback = closeCallback;
-            var TM = buildTemplate(this, 'editor');
-            container.innerHTML = TM.replace('editor', {
-                'stclass': account.id > 0 ? 'isedit' : 'isnew'
-            });
 
-            var __self = this;
-            E.on(container, 'click', function(e){
-                var el = E.getTarget(e);
-                if (__self.onClick(el)){
-                    E.preventDefault(e);
-                }
-            });
-
-            this.edWidget = null;
-            this.setAccount(account);
-        },
-        destroy: function(){
-            this.edWidget.destroy();
-            var el = this._TM.getEl('editor.id');
-            el.parentNode.removeChild(el);
-        },
-        setAccount: function(account){
-            this.account = account;
-            if (!L.isNull(this.edWidget)){
-                this.edWidget.destroy();
-            }
-            var TM = this._TM, gel = function(n){
-                return TM.getEl('editor.' + n);
-            };
-            this.edWidget =
-                new NS.AccountEditorRowWidget(gel('editor'), account, true, null);
-
-            if (account.isAdminRole()){
-                Dom.setStyle(gel('bsave'), 'display', '');
-                Dom.setStyle(gel('bcancel'), 'display', '');
-                Dom.setStyle(gel('bclose'), 'display', 'none');
-            } else {
-                Dom.setStyle(gel('bsave'), 'display', 'none');
-                Dom.setStyle(gel('bcancel'), 'display', 'none');
-                Dom.setStyle(gel('bclose'), 'display', '');
-            }
-
-        },
         onClick: function(el){
             if (this.edWidget.onClick(el)){
                 return true;

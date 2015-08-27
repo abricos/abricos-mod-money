@@ -325,7 +325,7 @@ Component.entryPoint = function(NS){
         buildTData: function(){
             return {groupid: this.get('groupid')}
         },
-        onLoadGroupData: function(err, group, options){
+        onLoadGroupData: function(err, group){
             if (!group){
                 return;
             }

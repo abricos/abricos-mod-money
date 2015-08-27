@@ -289,7 +289,6 @@ Component.entryPoint = function(NS){
             }
         },
         CLICKS: {
-            'edit': {event: '_onMenuClick'},
             'create': {event: '_onMenuClick'},
             'remove': {event: '_onMenuClick'}
         }

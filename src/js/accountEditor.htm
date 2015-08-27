@@ -1,5 +1,5 @@
 <!--{widget}-->
-<div class="accountedit">
+<div class="accountEditor">
 
     <div id="{i#bslst}" class="form-group">
         <label class="control-label">Счета</label>
@@ -15,25 +15,30 @@
 </div>
 
 <!--{editor}-->
-<div class="{v#stclass}">
-    <div class="aehd">
-        <span class="stedt">{#mod.money.accounteditor.editor.1}</span>
-        <span class="stnew">{#mod.money.accounteditor.editor.2}</span>
+<div class="accountEditor panel panel-default {v#stclass}">
+    <div class="panel-heading">
+        <div class="panel-title">
+            <span class="stedt">{#mod.money.accounteditor.editor.1}</span>
+            <span class="stnew">{#mod.money.accounteditor.editor.2}</span>
+        </div>
     </div>
+    <div class="panel-body">
+        <div id="{i#editor}" class="aewrp"></div>
 
-    <div id="{i#editor}" class="aewrp"></div>
-
-    <div class="ln"></div>
-
-    <div class="text-right">
-			<span id="{i#pcsave}" class="pcsave" style="display: none">
+        <div class="text-right">
+			<span data-wait="show">
 				<img src="/images/loading.gif"/>
 			</span>
-        <button id="{i#bsave}" type="button" class="btn btn-primary">
-            {#mod.money.accounteditor.editor.3}
-        </button>
-        <input id="{i#bcancel}" value="{#mod.money.accounteditor.editor.4}" type="button" class="btn"/>
-        <input id="{i#bclose}" value="{#mod.money.accounteditor.editor.5}" type="button" class="btn"/>
+            <button id="{i#bsave}" data-wait="disable" type="button" class="btn btn-default">
+                {#mod.money.accounteditor.editor.3}
+            </button>
+            <button id="{i#bcancel}" type="button" data-wait="disable" class="btn btn-default">
+                {#mod.money.accounteditor.editor.4}
+            </button>
+            <button id="{i#bclose}" type="button" data-wait="disable" class="btn btn-default">
+                {#mod.money.accounteditor.editor.5}
+            </button>
+        </div>
     </div>
 </div>
 
@@ -106,7 +111,7 @@
             <div id="{i#ulst}"></div>
         </div>
 
-        <div id="{i#buttons}" class="text-right">
+        <div id="{i#buttons}" class="text-right hide">
             <hr/>
             <button data-click="remove" class="btn btn-default" title="{#mod.money.accounteditor.row.1}">
                 {#mod.money.accounteditor.row.2}
