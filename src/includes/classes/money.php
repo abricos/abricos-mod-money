@@ -51,10 +51,14 @@ class Money {
                 return $this->AccountListToJSON();
             case 'accountSave':
                 return $this->AccountSaveToJSON($d->account);
+            case 'accountRemove':
+                return $this->AccountRemoveToJSON($d->account);
             case 'groupList':
                 return $this->GroupListToJSON();
             case 'groupSave':
                 return $this->GroupSaveToJSON($d->group);
+            case 'groupRemove':
+                return $this->GroupRemoveToJSON($d->group);
             case 'categorySave':
                 return $this->CategorySaveToJSON($d->category);
             case 'categoryRemove':
@@ -424,7 +428,6 @@ class Money {
             return $ret;
         }
 
-        $this->ClearCache();
         $ret = $this->FullDataToJSON();
         $ret->accountSave = $res;
 
@@ -436,10 +439,6 @@ class Money {
             return 403;
         }
         $d = $this->AccountSaveDataParse($d);
-        $group = $this->GroupList()->Get($d->groupid);
-        if (!$group || !$group->IsReadRole()){
-            return 403;
-        }
         if ($d->id > 0){
             $account = $this->AccountList()->Get($d->id);
             if (!$account || !$account->IsAdminRole()){
@@ -447,8 +446,14 @@ class Money {
             }
             $this->AccountUpdateMethod($d);
         } else {
+            $group = $this->GroupList()->Get($d->groupid);
+            if (!$group || !$group->IsReadRole()){
+                return 403;
+            }
             $d->id = $this->AccountAppendMethod($group->id, $d);
         }
+
+        $this->ClearCache();
 
         $ret = new stdClass();
         $ret->accountid = $d->id;
@@ -521,6 +526,39 @@ class Money {
         }
         MoneyQuery::AccountUpdateBalance($this->db, $accountid);
     }
+
+    public function AccountRemoveToJSON($d){
+        $res = $this->AccountRemove($d);
+        if (is_integer($res)){
+            $ret = new stdClass();
+            $ret->err = $res;
+            return $ret;
+        }
+
+        $ret = $this->FullDataToJSON();
+        $ret->accountRemove = $res;
+
+        return $ret;
+    }
+
+    public function AccountRemove($d){
+        if (!$this->manager->IsWriteRole()){
+            return 403;
+        }
+        $accountid = intval($d->id);
+        $account = $this->AccountList()->Get($accountid);
+        if (empty($account) || !$account->IsAdminRole()){
+            return 403;
+        }
+        MoneyQuery::AccountRemove($this->db, $accountid);
+
+        $this->ClearCache();
+
+        $ret = new stdClass();
+        $ret->accountid = $accountid;
+        return $ret;
+    }
+
 
     public function UserListToJSON(){
         $res = $this->UserList();

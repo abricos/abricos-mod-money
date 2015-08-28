@@ -11,6 +11,7 @@
                 <a data-url="group.config({v#id})" href="#" class="bc bgcfg" title="Настроить бухгалтерию">
                     &nbsp;
                 </a>
+
                 <div data-click="create" class="bc baccnew" title="{#mod.money.accountlist.widget.2}">
                     &nbsp;
                 </div>
@@ -60,7 +61,7 @@
             <span id="{i#val}"></span>&nbsp;<span id="{i#cc}"></span>
         </div>
     </div>
-    <div class="amenu">
+    <div id="{i#buttons}" class="amenu">
         <div id="{i#bedit}" data-click="edit" class="b" title="{#mod.money.accountlist.row.1}счет">
             <div data-click="edit" class="bedit bc"></div>
         </div>
@@ -71,6 +72,7 @@
             <div data-click="remove" class="brem bc"></div>
         </div>
     </div>
+    <div id="{i#remove}"></div>
 </div>
 
 <!--{select}-->
@@ -78,3 +80,15 @@
 
 <!--{selrow}-->
 <option value="{v#id}">{v#title}</option>
+
+<!--{remove}-->
+<div class="alert alert-danger">
+    Вы действительно хотите удалить счет со всеми операциями?
+    <div class="text-center">
+        <img data-wait="show" src="/images/loading.gif" />
+        <button data-click="remove" data-wait="disable" class="btn btn-danger btn-xs">Удалить</button>
+        <button data-click="cancel" data-wait="disable" class="btn btn-default btn-xs">
+            Отмена
+        </button>
+    </div>
+</div>

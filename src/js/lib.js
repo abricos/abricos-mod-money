@@ -74,6 +74,9 @@ Component.entryPoint = function(NS){
             accountSave: {
                 args: ['account']
             },
+            accountRemove: {
+                args: ['account']
+            },
             userList: {
                 attribute: true,
                 type: 'modelList:UserList'
@@ -113,8 +116,12 @@ Component.entryPoint = function(NS){
                 return this.getURL('ws') + 'about/AccessDeniedWidget/'
             },
             group: {
-                view: function(groupid){
-                    return this.getURL('ws') + 'groupView/GroupViewWidget/' + groupid + '/';
+                view: function(groupid, notCache){
+                    var url = this.getURL('ws') + 'groupView/GroupViewWidget/' + groupid + '/';
+                    if (notCache){
+                        url += (new Date()).getTime();
+                    }
+                    return url;
                 },
                 create: function(){
                     return this.getURL('ws') + 'groupEditor/GroupEditorWidget/0/'

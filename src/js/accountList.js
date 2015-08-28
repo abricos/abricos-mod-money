@@ -88,7 +88,46 @@ Component.entryPoint = function(NS){
 
             return !!isSelected;
         },
+        closeRemove: function(){
+            if (!this._removeWidget){
+                return;
+            }
+            this._removeWidget.destroy();
+            this._removeWidget = null;
+            this.template.show('buttons');
+        },
+        showRemove: function(){
+            this.closeRemove();
+            var tp = this.template;
+            this._removeWidget = new NS.AccountRowWidget.RemoveWidget({
+                srcNode: tp.append('remove', '<div></div>'),
+                CLICKS: {
+                    cancel: {
+                        event: this.closeRemove, context: this
+                    },
+                    remove: {
+                        event: this.remove, context: this
+                    }
+                }
+            });
+            tp.hide('buttons');
+        },
+        remove: function(){
+            this.set('waiting', true);
+            var account = this.get('account');
+
+            this.get('appInstance').accountRemove(account, function(err, result){
+                this.set('waiting', false);
+                if (!err){
+                    this.go('group.view', account.get('groupid'), true);
+                }
+            }, this);
+        },
         _onMenuClick: function(e){
+            if (e.dataClick === 'remove'){
+                this.showRemove();
+                return;
+            }
             this.fire('menuClick', {
                 account: this.get('account'),
                 action: e.dataClick
@@ -112,6 +151,13 @@ Component.entryPoint = function(NS){
         },
         CLICKS: {
             'edit,create,remove,select': '_onMenuClick'
+        }
+    });
+
+    NS.AccountRowWidget.RemoveWidget = Y.Base.create('removeWidget', SYS.AppWidget, [], {}, {
+        ATTRS: {
+            component: {value: COMPONENT},
+            templateBlockName: {value: 'remove'},
         }
     });
 
@@ -233,11 +279,11 @@ Component.entryPoint = function(NS){
 
             this._wgs = {};
             for (var i = 1; i <= 3; i++){
-                this._wgs[i] = new NS.AccountGroupRowWidget({
+                var w = this._wgs[i] = new NS.AccountGroupRowWidget({
                     boundingBox: this.template.append('list', '<div></div>'),
                     groupType: i
                 });
-                this._wgs[i].on('accountMenuClick', this._onAccountMenuClick, this);
+                w.on('accountMenuClick', this._onAccountMenuClick, this);
             }
             this._widgetsInitialized = true;
         },
