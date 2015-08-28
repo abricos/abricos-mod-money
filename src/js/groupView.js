@@ -48,8 +48,10 @@ Component.entryPoint = function(NS){
 
             this.operLogWidget = new NS.OperLogWidget({
                 srcNode: tp.gel('operlog'),
-                groupid: groupid
+                groupid: groupid,
+                rowMenuVisible: true
             });
+            this.operLogWidget.on('rowMenuClick', this._onOperMenuClick, this);
         },
         closeAccountEditor: function(e){
             if (!this.accountEditorWidget){
@@ -100,6 +102,12 @@ Component.entryPoint = function(NS){
             switch (e.action) {
                 case 'create':
                     return this.showAccountEditor();
+            }
+        },
+        _onOperMenuClick: function(e){
+            switch (e.action) {
+                case 'edit':
+                    return this.operWidget.set('oper', e.oper);
             }
         }
     }, {

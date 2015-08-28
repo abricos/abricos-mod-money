@@ -34,10 +34,10 @@ Component.entryPoint = function(NS){
                 'showTime': false
             });
 
-            this.after('accountChange', this.renderAccount, this);
-            this.after('operChange', this.renderOper, this);
+            this.after('accountChange', this.renderWidget, this);
+            this.after('operChange', this.renderWidget, this);
 
-            this.renderAccount();
+            this.renderWidget();
         },
         destructor: function(){
             this.categorySelectWidget.destroy();
@@ -70,27 +70,25 @@ Component.entryPoint = function(NS){
             this.categoryCreateWidget.destroy();
             this.categoryCreateWidget = null;
         },
-
-        renderAccount: function(){
-            var account = this.get('account');
+        inputFocus: function(){
+            this.template.one('in').focus();
+        },
+        renderWidget: function(){
+            var appInstance = this.get('appInstance'),
+                oper = this.get('oper'),
+                account = oper
+                    ? appInstance.get('accountList').getById(oper.get('accountid')) :
+                    this.get('account');
 
             if (!account){
                 return;
             }
+
             var tp = this.template;
             tp.setHTML({
                 atl: account.getTitle(),
                 cc: account.getCurrencySign(),
             });
-
-            this.renderOper();
-        },
-        inputFocus: function(){
-            this.template.one('in').focus();
-        },
-        renderOper: function(){
-            var tp = this.template,
-                oper = this.get('oper');
 
             this._hideCreateCategory();
 
@@ -98,24 +96,29 @@ Component.entryPoint = function(NS){
 
             this.inputFocus();
 
+            this.categorySelectWidget.select(oper ? oper.get('categoryid') : 0);
+
             if (!oper){
-                this.categorySelectWidget.select(0);
                 tp.setValue({
                     in: '',
                     dsc: ''
                 });
             } else {
-                var acc = NS.moneyManager.findAccount(oper.accountid);
-                this.setAccount(acc);
-                gel('in').value = oper.value == 0 ? '' : oper.value;
-                gel('dsc').value = oper.descript;
-                this.dateTimeWidget.setValue(oper.date);
-                this.categorySelectWidget.setValue(oper.categoryid);
+                var attrs = oper.toJSON();
+
+                tp.setValue({
+                    in: attrs.value,
+                    dsc: attrs.descript
+                });
+                this.dateTimeWidget.setValue(new Date(oper.get('date') * 1000));
             }
         },
         clearForm: function(){
-            this.set('oper', null);
-            this.renderOper();
+            if (this.get('oper')){
+                this.set('oper', null);
+            } else {
+                this.renderWidget();
+            }
         },
         onKeyPress: function(e){
             if (e.keyCode !== 13){
@@ -251,21 +254,26 @@ Component.entryPoint = function(NS){
             tp.addClass('t' + name, 'sel');
             this.tabs[name].inputFocus();
         },
-        _updateByOper: function(val){
-            var tabs = this.tabs;
-
-            if (oper.methodid > 0 && oper.method){
-                this.showPage('move');
-                tabs['move'].setOper(oper);
-            } else if (oper.isExpense){
-                this.showPage('expense');
-                tabs['expense'].setOper(oper);
-            } else if (!oper.isExpense){
-                this.showPage('income');
-                tabs['income'].setOper(oper);
+        _updateByOper: function(oper){
+            if (!oper){
+                return;
             }
 
-            return val;
+            var tabs = this.tabs,
+                attrs = oper.toJSON();
+
+            if (attrs.methodid > 0){
+                this.showPage('move');
+                tabs['move'].set('oper', oper);
+            } else if (attrs.isexpense){
+                this.showPage('expense');
+                tabs['expense'].set('oper', oper);
+            } else if (!attrs.isexpense){
+                this.showPage('income');
+                tabs['income'].set('oper', oper);
+            }
+
+            return oper;
         }
     }, {
         ATTRS: {

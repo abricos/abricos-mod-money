@@ -49,12 +49,15 @@
         <th class="acc">{#mod.money.operlist.table.4}</th>
         <th class="cat">{#mod.money.operlist.table.5}</th>
         <th class="dsc">{#mod.money.operlist.table.6}</th>
-        <th class="" colspan="2"></th>
+        {v#menuHead}
     </tr>
     </thead>
     {v#filter}
     <tbody>{v#rows}</tbody>
 </table>
+
+<!--{menuHead}-->
+<th colspan="2"></th>
 
 <!--{rowfilter}-->
 <thead>
@@ -65,7 +68,7 @@
     <th class="acc">{v#acc}</th>
     <th class="cat">{v#cat}</th>
     <th class="dsc"></th>
-    <th colspan="2"></th>
+    <th class="{v#menuHide}" colspan="2"></th>
 </tr>
 </thead>
 
@@ -140,10 +143,10 @@
 <td class="emp"></td>
 
 <!--{rbtns}-->
-<td class="bt btedit">
+<td class="bt btedit {v#menuHide}">
     <div data-click="edit" data-id="{v#id}" class="b bedit" title="{#mod.money.operlist.rbtns.1}"></div>
 </td>
-<td class="bt btrem">
+<td class="bt btrem {v#menuHide}">
     <div data-click="remove" data-id="{v#id}" class="b bremove" title="{#mod.money.operlist.rbtns.2}"></div>
 </td>
 

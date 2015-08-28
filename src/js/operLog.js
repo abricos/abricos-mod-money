@@ -69,7 +69,8 @@ Component.entryPoint = function(NS){
             var app = this.get('appInstance'),
                 accountList = app.get('accountList'),
                 operList = this.get('operList'),
-                group = this.get('group');
+                group = this.get('group'),
+                isMenuVisible = this.get('menuVisible');
 
             if (!operList || !group){
                 return;
@@ -158,15 +159,18 @@ Component.entryPoint = function(NS){
                         'v': NS.numberFormat(Math.abs(val))
                     });
                 }
-
+                var btns = '';
+                if (isMenuVisible){
+                    btns = tp.replace(account.isOperRole() ? 'rbtns' : 'rbtnsn', {
+                        'id': attrs.id
+                    })
+                }
                 lst += tp.replace('row', {
                     id: attrs.id,
                     d: Brick.dateExt.convert(attrs.date, 2, true),
                     dtl: Brick.dateExt.convert(attrs.date, 0, true),
                     dsc: attrs.descript,
-                    btns: tp.replace(account.isOperRole() ? 'rbtns' : 'rbtnsn', {
-                        'id': attrs.id
-                    }),
+                    btns: btns,
                     td: std
                 });
 
@@ -227,10 +231,10 @@ Component.entryPoint = function(NS){
             }
 
             tp.setHTML('table', tp.replace('table', {
+                'menuHead': isMenuVisible ? tp.replace('menuHead') : '',
                 'filter': isFilter ? tp.replace('rowfilter', fdv) : '',
                 'rows': lst
             }));
-
         },
         addFilter: function(action, oper){
             if (!oper){
@@ -289,7 +293,7 @@ Component.entryPoint = function(NS){
     }, {
         ATTRS: {
             component: {value: COMPONENT},
-            templateBlockName: {value: 'list,table,rowfilter,row,rowtdbase,rowtdmove,rowsum,rbtns,rbtnsn,rowfilter,filterval'},
+            templateBlockName: {value: 'list,table,menuHead,rowfilter,row,rowtdbase,rowtdmove,rowsum,rbtns,rbtnsn,rowfilter,filterval'},
             operList: {},
             filter: {value: {}},
             fromDate: {
@@ -315,7 +319,11 @@ Component.entryPoint = function(NS){
                     (val[0] instanceof Date) && (val[1] instanceof Date));
                 }
             },
-            operList: {value: null}
+            operList: {value: null},
+            menuVisible: {
+                writeOnce: true,
+                value: false
+            }
         }
     });
 
@@ -329,6 +337,8 @@ Component.entryPoint = function(NS){
             if (!group){
                 return;
             }
+
+            this.publish('rowMenuClick');
 
             var tp = this.template,
                 groupid = group.get('id');
@@ -346,7 +356,8 @@ Component.entryPoint = function(NS){
             this.listWidget = new NS.OperListWidget({
                 srcNode: tp.gel('list'),
                 groupid: groupid,
-                period: this.periodWidget.getPeriod()
+                period: this.periodWidget.getPeriod(),
+                menuVisible: this.get('rowMenuVisible')
             });
             this.listWidget.on('menuClick', this._onOperListMenuClick, this);
             this.listWidget.on('rowClick', this._onOperRowClick, this);
@@ -369,9 +380,12 @@ Component.entryPoint = function(NS){
                 case 'filter-type':
                 case 'filter-account':
                 case 'filter-category':
-                    this.addFilter(e.action.replace('filter-', ''), e.oper);
-                    break;
+                    return this.addFilter(e.action.replace('filter-', ''), e.oper);
             }
+            this.fire('rowMenuClick', {
+                action: e.action,
+                oper: e.oper
+            });
         },
         _onOperListMenuClick: function(e){
             switch (e.action) {
@@ -384,6 +398,10 @@ Component.entryPoint = function(NS){
         ATTRS: {
             component: {value: COMPONENT},
             templateBlockName: {value: 'widget'},
+            rowMenuVisible: {
+                writeOnce: true,
+                value: false
+            }
         }
     });
 
