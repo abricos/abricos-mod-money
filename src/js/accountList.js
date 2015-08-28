@@ -10,25 +10,61 @@ Component.entryPoint = function(NS){
         COMPONENT = this,
         SYS = Brick.mod.sys;
 
-    NS.AccountSelectWidget = Y.Base.create('accountSelectWidget', SYS.AppWidget, [], {
-        buildTData: function(){
-            var accountList = this.get('accountList'),
-                tp = this.template,
+    NS.AccountSelectWidget = Y.Base.create('accountSelectWidget', SYS.AppWidget, [
+        NS.GroupByIdExt
+    ], {
+        onLoadGroupData: function(){
+            this.publish('accountChange');
+            this.get('appInstance').on('appResponses', this._onAppResponses, this);
+            this.renderList();
+        },
+        destructor: function(){
+            this.get('appInstance').detach('appResponses', this._onAppResponses, this);
+        },
+        _onAppResponses: function(e){
+            if (e.err || !e.result.accountList){
+                return;
+            }
+            this.renderList();
+        },
+        renderList: function(){
+            var tp = this.template,
+                group = this.get('group'),
                 lst = "";
 
-            accountList.each(function(account){
-                lst += tp.replace('selrow', account.toJSON());
+            if (!group){
+                return;
+            }
+            group.accountEach(function(account){
+                lst += tp.replace('selrow', [
+                    {
+                        title: account.getTitle(),
+                        balance: NS.numberFormat(account.get('balance')),
+                        sign: account.getCurrency().get('sign')
+                    },
+                    account.toJSON()
+                ]);
             });
-            return {rows: lst};
+
+            if (tp.one('id')){
+                tp.one('id').detachAll();
+            }
+            this.get('boundingBox').setHTML(tp.replace('select', {
+                rows: lst
+            }));
+            tp.one('id').on('change', this.onSelectedChange, this);
         },
-        getValue: function(){
-            return this.template.gel('id').value;
+        onSelectedChange: function(){
+            this.fire('accountChange', {value: this.selected()});
         },
-        setValue: function(value){
-            this.template.gel('id').value = value;
+        select: function(val){
+            if (!Y.Lang.isNumber(val) || !this.get('group') || !this.template.one('id')){
+                return null;
+            }
+            this.template.setValue('id', val);
         },
-        setReadonly: function(readonly){
-            this.template.gel('id').disabled = readonly ? 'disabled' : '';
+        selected: function(){
+            return this.template.getValue('id') | 0;
         }
     }, {
         ATTRS: {

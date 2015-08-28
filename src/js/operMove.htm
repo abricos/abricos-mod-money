@@ -1,18 +1,20 @@
 <!--{editor}-->
-<div id="{i#id}" class="tabitem opermove">
+<div class="tabitem opermove">
 
     <div class="form-group">
         <label class="control-label">
-            {#mod.money.opermove.editor.1}</label>
+            {#mod.money.opermove.editor.1}
+        </label>
 
-        <div id="{i#fromacc}"></div>
+        <div id="{i#srcAccount}"></div>
     </div>
 
     <div class="form-group">
         <label class="control-label">
-            {#mod.money.opermove.editor.2}</label>
+            {#mod.money.opermove.editor.2}
+        </label>
 
-        <div id="{i#toacc}"></div>
+        <div id="{i#destAccount}"></div>
     </div>
 
     <div class="form-horizontal">
@@ -33,10 +35,9 @@
 
             <div class="col-md-9">
                 <div class="inc">
-                    <input id="{i#in}" class="form-control input-lg" type="text" onclick="this.select();"/>
-
+                    <input id="{i#in}" class="form-control input-lg" data-wait="disable" type="text"
+                           onclick="this.select();"/>
                     <span id="{i#cc}" class="cc"></span>
-                    <img id="{i#pcsave}" src="/images/loading.gif" style="display: none"/>
                 </div>
             </div>
         </div>
@@ -48,8 +49,18 @@
     </div>
 
     <div class="text-right">
-        <input id="{i#bcreate}" value="{#mod.money.opermove.editor.5}" type="button" class="btn btn-primary"/>
-        <input id="{i#bsave}" value="{#mod.money.opermove.editor.6}" type="button" class="btn btn-primary"/>
-        <input id="{i#bcancel}" value="{#mod.money.opermove.editor.7}" type="button" class="btn btn-default"/>
+        <div class="pull-left" data-wait="show">
+            <img src="/images/loading.gif"/> Записываю...
+        </div>
+
+        <button id="{i#bcreate}" data-click="save" data-wait="disable" type="button" class="btn btn-primary">
+            {#mod.money.opermove.editor.5}
+        </button>
+        <button id="{i#bsave}" data-click="save" data-wait="disable" type="button" class="btn btn-primary">
+            {#mod.money.opermove.editor.6}
+        </button>
+        <button id="{i#bcancel}" data-click="cancel" data-wait="disable" type="button" class="btn btn-default">
+            {#mod.money.opermove.editor.7}
+        </button>
     </div>
 </div>

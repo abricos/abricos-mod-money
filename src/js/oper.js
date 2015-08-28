@@ -2,7 +2,7 @@ var Component = new Brick.Component();
 Component.requires = {
     mod: [
         {name: 'widget', files: ['calendar.js']},
-        {name: '{C#MODNAME}', files: ['opermove.js']}
+        {name: '{C#MODNAME}', files: ['operMove.js']}
     ]
 };
 Component.entryPoint = function(NS){
@@ -85,6 +85,9 @@ Component.entryPoint = function(NS){
 
             this.renderOper();
         },
+        inputFocus: function(){
+            this.template.one('in').focus();
+        },
         renderOper: function(){
             var tp = this.template,
                 oper = this.get('oper');
@@ -93,7 +96,7 @@ Component.entryPoint = function(NS){
 
             tp.toggleView(!!oper, 'bsave,bcancel', 'bcreate');
 
-            tp.one('in').focus();
+            this.inputFocus();
 
             if (!oper){
                 this.categorySelectWidget.select(0);
@@ -215,7 +218,10 @@ Component.entryPoint = function(NS){
                     account: account,
                     isExpense: false
                 }),
-                // 'move': new NS.OperMoveEditorWidget(gel('move'), account)
+                'move': new NS.OperMoveEditorWidget({
+                    boundingBox: tp.gel('move'),
+                    groupid: this.get('groupid')
+                })
             };
 
             this.showPage('expense');
@@ -243,7 +249,7 @@ Component.entryPoint = function(NS){
             }
             tp.show(name);
             tp.addClass('t' + name, 'sel');
-            // this.tabs[name].set('oper', null);
+            this.tabs[name].inputFocus();
         },
         _updateByOper: function(val){
             var tabs = this.tabs;
