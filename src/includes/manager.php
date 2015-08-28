@@ -61,166 +61,6 @@ class MoneyManager extends Ab_ModuleManager {
 
     public function AJAX($d){
         return $this->GetMoney()->AJAX($d);
-
-        switch ($d->do){
-            case 'init':
-                return $this->BoardData();
-            case 'groupsave':
-                return $this->GroupSave($d->group);
-            case 'groupremove':
-                return $this->GroupRemove($d->groupid);
-            case 'accountsave':
-                return $this->AccountSave($d->account);
-            case 'accountremove':
-                return $this->AccountRemove($d->accountid);
-            case 'opersave':
-                return $this->OperSave($d->oper);
-            case 'operremove':
-                return $this->OperRemove($d->operid);
-            case 'opermovesave':
-                return $this->OperMoveSave($d->oper);
-            case 'opermoveremove':
-                return $this->OperMoveRemove($d->methodid);
-            case 'operlog':
-                return $this->OperLogList($d->groupid, $d->fromdt, $d->enddt, $d->lastupdate);
-        }
-        return null;
-    }
-
-    public function ToArray($rows, &$ids1 = "", $fnids1 = 'uid', &$ids2 = "", $fnids2 = '', &$ids3 = "", $fnids3 = ''){
-        $ret = array();
-        while (($row = $this->db->fetch_array($rows))){
-            array_push($ret, $row);
-            if (is_array($ids1)){
-                $ids1[$row[$fnids1]] = $row[$fnids1];
-            }
-            if (is_array($ids2)){
-                $ids2[$row[$fnids2]] = $row[$fnids2];
-            }
-            if (is_array($ids3)){
-                $ids3[$row[$fnids3]] = $row[$fnids3];
-            }
-        }
-        return $ret;
-    }
-
-    public function ToArrayId($rows, $field = "id"){
-        $ret = array();
-        while (($row = $this->db->fetch_array($rows))){
-            $ret[$row[$field]] = $row;
-        }
-        return $ret;
-    }
-
-    public function BoardData(){
-        if (!$this->IsViewRole()){
-            return null;
-        }
-
-        $ret = new stdClass();
-
-        $gids = array();
-        $aids = array();
-        $uids = array($this->userid);
-
-        $rows = MoneyQuery::AccountList($this->db, $this->userid);
-        $ret->accounts = $this->ToArray($rows, $aids, "id", $gids, "gid");
-
-        $rows = MoneyQuery::GroupListByIds($this->db, $gids, $this->userid);
-        $ret->groups = $this->ToArray($rows);
-
-        $rows = MoneyQuery::GUserRoleListByGId($this->db, $gids);
-        $ret->groles = $this->ToArray($rows, $uids, "u");
-
-        $rows = MoneyQuery::AUserRoleListByAId($this->db, $aids);
-        $ret->aroles = $this->ToArray($rows, $uids, "u");
-
-        $rows = MoneyQuery::UserListByIds($this->db, $uids);
-        $ret->users = $this->ToArray($rows);
-
-        // для проверки занесенных категорий
-        $ckuids = array();
-        $rows = MoneyQuery::CategoryList($this->db, $gids);
-        $ret->categories = $this->ToArray($rows);
-
-        return $ret;
-    }
-
-    public function GroupSave($gd){
-        if (!$this->IsWriteRole()){
-            return null;
-        }
-
-
-        $dbGroup = null;
-        if ($gd->id == 0){
-        } else {
-
-        }
-
-        if (empty($dbGroup)){
-            return null; // мистика какая то, но все же
-        }
-
-        $rows = MoneyQuery::AccountList($this->db, $this->userid, $gd->id);
-        $dbAccounts = $this->ToArrayId($rows);
-
-        // Добавить/обновить счета
-        foreach ($gd->accounts as $ad){
-            $this->AccountSaveMethod($dbGroup['id'], $ad);
-        }
-
-        // Удалить счета
-        foreach ($dbAccounts as $dbAccount){
-            $find = false;
-            foreach ($gd->accounts as $ad){
-                if ($dbAccount['id'] == $ad->id){
-                    $find = true;
-                    break;
-                }
-            }
-            if (!$find){
-                $this->AccountRemove($dbAccount['id']);
-            }
-        }
-
-        $ret = $this->BoardData();
-        $ret->groupid = $gd->id;
-
-        return $ret;
-    }
-
-    public function GroupRemove($groupid){
-        if (!$this->IsWriteRole()){
-            return null;
-        }
-        $dbGroup = MoneyQuery::GroupById($this->db, $groupid, $this->userid);
-
-        if (empty($dbGroup) || $dbGroup['r'] != MoneyAccountRole::ADMIN){
-            return null;
-        }
-        MoneyQuery::GroupRemove($this->db, $groupid);
-
-        $ret = new stdClass();
-        $ret->deldate = TIMENOW;
-        return $ret;
-    }
-
-    public function AccountRemove($accountid){
-        if (!$this->IsWriteRole()){
-            return null;
-        }
-        $dbAccount = MoneyQuery::Account($this->db, $this->userid, $accountid);
-
-        if (empty($dbAccount) || $dbAccount['r'] != MoneyAccountRole::ADMIN){
-            return null;
-        }
-
-        MoneyQuery::AccountRemove($this->db, $accountid);
-
-        $ret = new stdClass();
-        $ret->deldate = TIMENOW;
-        return $ret;
     }
 
     public function OperRemove($operid){
@@ -323,30 +163,15 @@ class MoneyManager extends Ab_ModuleManager {
         );
     }
 
-    public function OperLogList($groupid, $fromdt, $enddt, $lastupdate = 0){
-        if (!$this->IsViewRole()){
-            return null;
-        }
-
-        $aids = array();
-        $rows = MoneyQuery::AccountList($this->db, $this->userid, $groupid);
-        $accounts = $this->ToArray($rows, $aids, "id");
-
-
-        return $ret;
-    }
-
-
-
     public function Bos_MenuData(){
         if (!$this->IsViewRole()){
             return null;
         }
-        $lng = $this->module->GetI18n();
+        $i18n = $this->module->I18n();
         return array(
             array(
                 "name" => "money",
-                "title" => $lng['bosmenu']['title'],
+                "title" => $i18n->Translate('bosmenu.title'),
                 "icon" => "/modules/money/images/money-24.png",
                 "url" => "money/wspace/ws/"
             )

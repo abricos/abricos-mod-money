@@ -1,5 +1,5 @@
 Brick.util.Language.add('en',{'mod': {'{C#MODNAME}':{
-	'accountlist': {
+	'accountList': {
 		'widget': {
 			'1': 'Edit Accounting',
 			'2': 'Add new account',

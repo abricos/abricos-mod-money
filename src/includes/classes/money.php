@@ -58,7 +58,7 @@ class Money {
             case 'groupSave':
                 return $this->GroupSaveToJSON($d->group);
             case 'groupRemove':
-                return $this->GroupRemoveToJSON($d->group);
+                return $this->GroupRemoveToJSON($d->groupid);
             case 'categorySave':
                 return $this->CategorySaveToJSON($d->category);
             case 'categoryRemove':
@@ -307,6 +307,41 @@ class Money {
         return $ret;
     }
 
+    public function GroupRemoveToJSON($groupid){
+        $res = $this->GroupRemove($groupid);
+        if (is_integer($res)){
+            $ret = new stdClass();
+            $ret->err = $res;
+            return $ret;
+        }
+
+        $ret = $this->FullDataToJSON();
+        $ret->groupSave = $res;
+
+        return $ret;
+    }
+
+    public function GroupRemove($groupid){
+        if (!$this->manager->IsWriteRole()){
+            return 403;
+        }
+
+        $groupid = intval($groupid);
+        $group = $this->GroupList()->Get($groupid);
+
+        if (empty($group) || !$group->IsAdminRole()){
+            return 403;
+        }
+
+        MoneyQuery::GroupRemove($this->db, $groupid);
+
+        $this->ClearCache();
+
+        $ret = new stdClass();
+        $ret->groupid = $groupid;
+        return $ret;
+    }
+
     public function GroupSaveToJSON($d){
         $res = $this->GroupSave($d);
         if (is_integer($res)){
@@ -315,7 +350,6 @@ class Money {
             return $ret;
         }
 
-        $this->ClearCache();
         $ret = $this->FullDataToJSON();
         $ret->groupSave = $res;
 
@@ -337,6 +371,7 @@ class Money {
             return $err;
         }
 
+        $this->ClearCache();
 
         $ret = new stdClass();
         $ret->groupid = $d->id;

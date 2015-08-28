@@ -35,7 +35,11 @@ Component.entryPoint = function(NS){
             this.renderMenuList();
         },
         _onWorkspaceWidgetChange: function(){
-            this._updateSelectedGroup();
+            if (!this.get('workspacePage')){
+                this._showPageByInit();
+            } else {
+                this._updateSelectedGroup();
+            }
         },
         _updateSelectedGroup: function(){
             var tp = this.template,
@@ -94,8 +98,8 @@ Component.entryPoint = function(NS){
 
             groupList.each(function(group){
                 lst += tp.replace('menuItem', [
-                    group.toJSON(),
-                    {title: group.getTitle()}
+                    {title: group.getTitle()},
+                    group.toJSON()
                 ]);
             });
 

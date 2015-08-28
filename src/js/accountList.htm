@@ -22,10 +22,25 @@
             </h3>
         </div>
         <div class="panel-body-disable">
+            <div id="{i#groupRemove}"></div>
+
             <div id="{i#list}" class="mlst"></div>
         </div>
     </div>
 </div>
+
+<!--{groupRemove}-->
+<div class="alert alert-danger">
+    Вы действительно хотите удалить бухгалтерию со всеми счетами и их операциями?
+    <div class="text-center">
+        <img data-wait="show" src="/images/loading.gif"/>
+        <button data-click="remove" data-wait="disable" class="btn btn-danger btn-xs">Удалить</button>
+        <button data-click="cancel" data-wait="disable" class="btn btn-default btn-xs">
+            Отмена
+        </button>
+    </div>
+</div>
+
 
 <!--{grow}-->
 <div id="{i#grow}" class="agrow">
@@ -62,13 +77,13 @@
         </div>
     </div>
     <div id="{i#buttons}" class="amenu">
-        <div id="{i#bedit}" data-click="edit" class="b" title="{#mod.money.accountlist.row.1}счет">
+        <div id="{i#bedit}" data-click="edit" class="b" title="{#mod.money.accountList.row.1}счет">
             <div data-click="edit" class="bedit bc"></div>
         </div>
-        <div id="{i#badd}" data-click="create" class="b" title="{#mod.money.accountlist.row.2}">
+        <div id="{i#badd}" data-click="create" class="b" title="{#mod.money.accountList.row.2}">
             <div data-click="create" class="badd bc"></div>
         </div>
-        <div id="{i#brem}" data-click="remove" class="b" title="{#mod.money.accountlist.row.3}">
+        <div id="{i#brem}" data-click="remove" class="b" title="{#mod.money.accountList.row.3}">
             <div data-click="remove" class="brem bc"></div>
         </div>
     </div>
@@ -85,7 +100,7 @@
 <div class="alert alert-danger">
     Вы действительно хотите удалить счет со всеми операциями?
     <div class="text-center">
-        <img data-wait="show" src="/images/loading.gif" />
+        <img data-wait="show" src="/images/loading.gif"/>
         <button data-click="remove" data-wait="disable" class="btn btn-danger btn-xs">Удалить</button>
         <button data-click="cancel" data-wait="disable" class="btn btn-default btn-xs">
             Отмена

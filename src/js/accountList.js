@@ -125,8 +125,7 @@ Component.entryPoint = function(NS){
         },
         _onMenuClick: function(e){
             if (e.dataClick === 'remove'){
-                this.showRemove();
-                return;
+                return this.showRemove();
             }
             this.fire('menuClick', {
                 account: this.get('account'),
@@ -370,7 +369,43 @@ Component.entryPoint = function(NS){
             }
             return ret;
         },
+        closeRemove: function(){
+            if (!this._removeWidget){
+                return;
+            }
+            this._removeWidget.destroy();
+            this._removeWidget = null;
+        },
+        showRemove: function(){
+            this.closeRemove();
+            var tp = this.template;
+            this._removeWidget = new NS.AccountListWidget.GroupRemoveWidget({
+                srcNode: tp.append('groupRemove', '<div></div>'),
+                CLICKS: {
+                    cancel: {
+                        event: this.closeRemove, context: this
+                    },
+                    remove: {
+                        event: this.remove, context: this
+                    }
+                }
+            });
+        },
+        remove: function(){
+            this.set('waiting', true);
+            var group = this.get('group');
+
+            this.get('appInstance').groupRemove(group.get('id'), function(err, result){
+                this.set('waiting', false);
+                if (!err){
+                    this.go('ws');
+                }
+            }, this);
+        },
         _onMenuClick: function(e){
+            if (e.dataClick === 'remove'){
+                return this.showRemove();
+            }
             this.fire('menuClick', {group: this.get('group'), action: e.dataClick});
         }
     }, {
@@ -382,9 +417,16 @@ Component.entryPoint = function(NS){
             }
         },
         CLICKS: {
-            'create': {event: '_onMenuClick'},
-            'remove': {event: '_onMenuClick'}
+            'create,remove': '_onMenuClick'
         }
     });
+
+    NS.AccountListWidget.GroupRemoveWidget = Y.Base.create('groupRemoveWidget', SYS.AppWidget, [], {}, {
+        ATTRS: {
+            component: {value: COMPONENT},
+            templateBlockName: {value: 'groupRemove'},
+        }
+    });
+
 
 };

@@ -62,6 +62,10 @@ Component.entryPoint = function(NS){
                 isExpense = this.get('isExpense'),
                 stop = 1;
 
+            if (!group){
+                return;
+            }
+
             var buildRows = function(pid, level){
                 if (stop++ > 1000){
                     return;

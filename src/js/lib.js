@@ -61,6 +61,9 @@ Component.entryPoint = function(NS){
             groupSave: {
                 args: ['group']
             },
+            groupRemove: {
+                args: ['groupid']
+            },
             categorySave: {
                 args: ['category']
             },
