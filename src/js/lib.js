@@ -101,7 +101,7 @@ Component.entryPoint = function(NS){
                     }
                     balanceList.each(function(b){
                         var account = accountList.getById(b.get('id'));
-                        if (account){
+                        if (!account){
                             return;
                         }
                         account.set('balance', b.get('balance'));

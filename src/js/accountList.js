@@ -46,8 +46,8 @@ Component.entryPoint = function(NS){
             this.publish('menuClick');
             this.renderAccount();
         },
-        renderAccount: function(account){
-            account = account || this.get('account');
+        renderAccount: function(){
+            var account = this.get('account');
             if (!account){
                 return;
             }
@@ -62,10 +62,10 @@ Component.entryPoint = function(NS){
             tp.visible('bedit,brem', account.isEditRole());
             tp.visible('badd', account.isOperRole());
 
-            this.renderBalance(account);
+            this.renderBalance();
         },
-        renderBalance: function(account){
-            account = account || this.get('account');
+        renderBalance: function(){
+            var account = this.get('account');
             if (!account){
                 return;
             }
@@ -136,12 +136,14 @@ Component.entryPoint = function(NS){
         ATTRS: {
             component: {value: COMPONENT},
             templateBlockName: {value: 'row'},
+            accountid: {
+                writeOnce: true
+            },
             account: {
-                lazyAdd: true,
-                value: null,
-                setter: function(val){
-                    this.renderAccount(val);
-                    return val;
+                readOnly: true,
+                getter: function(){
+                    var accountid = this.get('accountid');
+                    return this.get('appInstance').get('accountList').getById(accountid);
                 }
             },
             isSelected: {
@@ -195,12 +197,11 @@ Component.entryPoint = function(NS){
                     w = iW;
                 }
             }, this);
-            if (w){
-                w.set('account', account);
-            } else {
+            if (!w){
                 w = new NS.AccountRowWidget({
                     boundingBox: tp.append('list', '<div></div>'),
-                    account: account
+                    accountid: account.get('id'),
+                    appInstance: this.get('appInstance')
                 });
                 w.on('menuClick', this._onRowMenuClick, this);
                 this._ws[this._ws.length] = w;

@@ -90,20 +90,16 @@ Component.entryPoint = function(NS){
         _onAccountMenuClick: function(e){
             switch (e.action) {
                 case 'select':
-                    this.accountListWidget.selectAccount(e.account);
-                    return;
+                case 'create':
+                    return this.accountListWidget.selectAccount(e.account);
                 case 'edit':
-                    this.showAccountEditor(e.account.get('id'));
-                    return;
+                    return this.showAccountEditor(e.account.get('id'));
             }
         },
         _onGroupMenuClick: function(e){
             switch (e.action) {
                 case 'create':
-                    this.showAccountEditor();
-                    break;
-                case 'remove':
-                    break;
+                    return this.showAccountEditor();
             }
         }
     }, {

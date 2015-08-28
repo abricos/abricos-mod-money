@@ -247,6 +247,16 @@ class Money {
             return $ret;
         }
 
+        if (isset($res->categoryid)){
+            $res = $this->ImplodeJSON(array(
+                $this->GroupListToJSON()
+            ), $res);
+        }
+
+        $res = $this->ImplodeJSON(array(
+            $this->BalanceListToJSON()
+        ), $res);
+
         return $res;
     }
 
@@ -289,20 +299,13 @@ class Money {
         }
 
         $ret->operid = $od->id;
+        if ($isNewCategory){
+            $ret->categoryid = $od->categoryid;
+        }
 
         MoneyQuery::AccountUpdateBalance($this->db, $od->accountid);
 
         $this->ClearCache();
-
-        if ($isNewCategory){
-            $ret = $this->ImplodeJSON(array(
-                $this->GroupListToJSON()
-            ), $ret);
-        }
-
-        $ret = $this->ImplodeJSON(array(
-            $this->BalanceListToJSON()
-        ), $ret);
 
         return $ret;
     }
@@ -627,16 +630,13 @@ class Money {
         return $this->_cache['UserList'] = $list;
     }
 
-    private function CategoryAppendMethod($groupid, $title, $isExpense, $parentid = 0, $order = 0){
-        if (!$this->manager->IsWriteRole()){
-            return null;
-        }
-        $group = $this->GroupList()->Get($groupid);
-        if (empty($group) || !$group->IsWriteRole()){
-            return null;
-        }
+    private $_fullParser = null;
 
-        $parser = Abricos::TextParser(true);
+    private function CategoryAppendMethod($groupid, $title, $isExpense, $parentid = 0, $order = 0){
+        if (empty($this->_fullParser)){
+            $this->_fullParser = Abricos::TextParser(true);
+        }
+        $parser = $this->_fullParser;
         $title = $parser->Parser($title);
         $isExpense = !empty($isExpense) ? 1 : 0;
         return MoneyQuery::CategoryAppend($this->db, Abricos::$user->id, $groupid, $title, $isExpense, $parentid, $order);
