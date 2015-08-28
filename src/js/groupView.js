@@ -91,7 +91,10 @@ Component.entryPoint = function(NS){
             switch (e.action) {
                 case 'select':
                     this.accountListWidget.selectAccount(e.account);
-                    break;
+                    return;
+                case 'edit':
+                    this.showAccountEditor(e.account.get('id'));
+                    return;
             }
         },
         _onGroupMenuClick: function(e){

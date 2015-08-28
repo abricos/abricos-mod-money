@@ -44,9 +44,15 @@ Component.entryPoint = function(NS){
         },
         onInitAppWidget: function(err, appInstance){
             this.publish('menuClick');
+            this.renderAccount();
+        },
+        renderAccount: function(account){
+            account = account || this.get('account');
+            if (!account){
+                return;
+            }
 
-            var tp = this.template,
-                account = this.get('account');
+            var tp = this.template;
 
             tp.setHTML({
                 'tl': account.getTitle(),
@@ -56,11 +62,15 @@ Component.entryPoint = function(NS){
             tp.visible('bedit,brem', account.isEditRole());
             tp.visible('badd', account.isOperRole());
 
-            this.renderBalance();
+            this.renderBalance(account);
         },
-        renderBalance: function(){
+        renderBalance: function(account){
+            account = account || this.get('account');
+            if (!account){
+                return;
+            }
+
             var tp = this.template,
-                account = this.get('account'),
                 val = account.get('balance');
 
             tp.setHTML({
@@ -88,7 +98,14 @@ Component.entryPoint = function(NS){
         ATTRS: {
             component: {value: COMPONENT},
             templateBlockName: {value: 'row'},
-            account: {value: null},
+            account: {
+                lazyAdd: true,
+                value: null,
+                setter: function(val){
+                    this.renderAccount(val);
+                    return val;
+                }
+            },
             isSelected: {
                 setter: '_isSelectedSetter'
             }
@@ -120,20 +137,35 @@ Component.entryPoint = function(NS){
             this._ws = [];
             this.template.hide('grow');
         },
+        each: function(fn, context){
+            var ws = this._ws;
+            for (var i = 0; i < ws.length; i++){
+                fn.call(context || this, ws[i].get('account'), ws[i]);
+            }
+        },
         accountAppend: function(account){
-            var w = new NS.AccountRowWidget({
-                boundingBox: this.template.append('list', '<div></div>'),
-                account: account
-            });
-            w.on('menuClick', this._onRowMenuClick, this);
-            this._ws[this._ws.length] = w;
-            this.template.show('grow');
+            var w, tp = this.template;
+            this.each(function(iAccount, iW){
+                if (account.get('id') === iAccount.get('id')){
+                    w = iW;
+                }
+            }, this);
+            if (w){
+                w.set('account', account);
+            } else {
+                w = new NS.AccountRowWidget({
+                    boundingBox: tp.append('list', '<div></div>'),
+                    account: account
+                });
+                w.on('menuClick', this._onRowMenuClick, this);
+                this._ws[this._ws.length] = w;
+            }
+            tp.show('grow');
             return w;
         },
         renderList: function(){
             var ws = this._ws,
-                sum = {},
-                i, w, account, currencyid;
+                sum = {};
 
             for (var i = 0; i < ws.length; i++){
                 var r = ws[i].renderBalance();
@@ -246,7 +278,6 @@ Component.entryPoint = function(NS){
             this.renderList();
         },
         _renderAccount: function(account){
-
             if (this.get('groupid') !== account.get('groupid')){
                 return;
             }
@@ -265,6 +296,13 @@ Component.entryPoint = function(NS){
         renderList: function(){
             for (var i = 1; i <= 3; i++){
                 this._wgs[i].renderList();
+            }
+        },
+        each: function(fn, context){
+            for (var i = 1, wgs = this._wgs; i <= 3; i++){
+                wgs[i].each(function(account, w){
+                    fn.call(context || this, account, w, wgs[i]);
+                });
             }
         },
         _onAccountMenuClick: function(e){
