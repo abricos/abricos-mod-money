@@ -71,6 +71,9 @@ Component.entryPoint = function(NS){
                 attribute: true,
                 type: 'modelList:AccountList'
             },
+            accountSave: {
+                args: ['account']
+            },
             userList: {
                 attribute: true,
                 type: 'modelList:UserList'

@@ -70,9 +70,7 @@ Component.entryPoint = function(NS){
 
             var d = this.toJSON();
 
-            var app = this.get('appInstance');
-
-            app.groupSave(d, function(err, result){
+            this.get('appInstance').groupSave(d, function(err, result){
                 this.set('waiting', false);
                 if (!err){
                     this.go('group.view', result.groupSave.groupid);

@@ -47,14 +47,7 @@ Component.entryPoint = function(NS){
             this.currencyWidget.destroy();
         },
         _visibleButtons: function(val){
-            var elButtons = Y.one(this.template.gel('buttons'));
-            if (elButtons){
-                if (val){
-                    elButtons.removeClass('hide');
-                } else {
-                    elButtons.addClass('hide');
-                }
-            }
+            this.template.toggleView(val, 'buttons');
             return val;
         },
         onClick: function(e){
@@ -93,6 +86,10 @@ Component.entryPoint = function(NS){
                 'stclass': this.get('accountid') > 0 ? 'isedit' : 'isnew'
             };
         },
+        initializer: function(){
+            this.publish('save');
+            this.publish('cancel');
+        },
         onLoadGroupData: function(err, group){
             if (!group){
                 return;
@@ -100,7 +97,7 @@ Component.entryPoint = function(NS){
 
             var account = this.get('accountid') > 0 ?
                 this.get('appInstance').get('accountList').getById(this.get('accountid')) :
-                NS.AccountEditorWidget.createAccount(this.get('appInstance'));
+                NS.AccountEditorWidget.createAccount(this.get('appInstance'), group.get('id'));
 
             if (!account){
                 return;
@@ -120,19 +117,39 @@ Component.entryPoint = function(NS){
             if (this.editorWidget){
                 this.editorWidget.destroy();
             }
+        },
+        save: function(){
+            this.set('waiting', true);
+
+            var d = this.editorWidget.toJSON();
+
+            this.get('appInstance').accountSave(d, function(err, result){
+                this.set('waiting', false);
+                if (!err){
+                    this.fire('save', result);
+                }
+            }, this);
         }
     }, {
         ATTRS: {
             component: {value: COMPONENT},
             templateBlockName: {value: 'editor'},
             accountid: {value: 0}
+        },
+        CLICKS:{
+            save: 'save',
+            cancel: {
+                event: function(){
+                    this.fire('cancel');
+                }
+            }
         }
     });
 
-    NS.AccountEditorWidget.createAccount = function(appInstance){
+    NS.AccountEditorWidget.createAccount = function(app, groupid){
         return new NS.Account({
-            appInstance: appInstance,
-            tp: 1,
+            appInstance: app,
+            tp: 1, gid: groupid,
             cc: Abricos.config.locale === 'ru-RU' ? 'RUB' : 'USD',
             roles: {
                 list: [{id: UID, r: NS.AURoleType.ADMIN}]
@@ -180,7 +197,10 @@ Component.entryPoint = function(NS){
             });
         },
         createAccount: function(){
-            var account = NS.AccountEditorWidget.createAccount(this.get('appInstance'));
+            var account = NS.AccountEditorWidget.createAccount(
+                this.get('appInstance'),
+                this.get('groupid')
+            );
             this._renderAccount(account, true);
         },
         removeAccount: function(account){

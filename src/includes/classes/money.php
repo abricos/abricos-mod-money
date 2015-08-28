@@ -49,6 +49,8 @@ class Money {
                 return $this->AppStructureToJSON();
             case 'accountList':
                 return $this->AccountListToJSON();
+            case 'accountSave':
+                return $this->AccountSaveToJSON($d->account);
             case 'groupList':
                 return $this->GroupListToJSON();
             case 'groupSave':
@@ -103,7 +105,7 @@ class Money {
         $modelManager = AbricosModelManager::GetManager('money');
 
         $res = $modelManager->ToJSON(
-            'Group,Account,Category,CategoryList,' .
+            'Group,Account,Category,CategoryList,'.
             'UserRole,UserRoleList,User,Oper,OperList,Balance'
         );
         if (empty($res)){
@@ -414,10 +416,50 @@ class Money {
         return 0;
     }
 
+    public function AccountSaveToJSON($d){
+        $res = $this->AccountSave($d);
+        if (is_integer($res)){
+            $ret = new stdClass();
+            $ret->err = $res;
+            return $ret;
+        }
+
+        $this->ClearCache();
+        $ret = $this->FullDataToJSON();
+        $ret->accountSave = $res;
+
+        return $ret;
+    }
+
+    public function AccountSave($d){
+        if (!$this->manager->IsWriteRole()){
+            return 403;
+        }
+        $d = $this->AccountSaveDataParse($d);
+        $group = $this->GroupList()->Get($d->groupid);
+        if (!$group || !$group->IsReadRole()){
+            return 403;
+        }
+        if ($d->id > 0){
+            $account = $this->AccountList()->Get($d->id);
+            if (!$account || !$account->IsAdminRole()){
+                return 403;
+            }
+            $this->AccountUpdateMethod($d);
+        } else {
+            $d->id = $this->AccountAppendMethod($group->id, $d);
+        }
+
+        $ret = new stdClass();
+        $ret->accountid = $d->id;
+        return $ret;
+    }
+
     private function AccountSaveDataParse($d){
         $fps = Abricos::TextParser(true);
 
         $d->id = intval($d->id);
+        $d->groupid = intval($d->groupid);
         $d->initbalance = doubleval($d->initbalance); // start balance
         $d->title = $fps->Parser($d->title); // title
         $d->descript = $fps->Parser($d->descript); // descript
@@ -437,6 +479,9 @@ class Money {
         foreach ($d->roles as $r){
             MoneyQuery::AUserRoleAppend($this->db, $d->id, $r->u, $r->r);
         }
+
+        MoneyQuery::AccountUpdateBalance($this->db, $d->id);
+
         return $d->id;
     }
 
@@ -474,30 +519,7 @@ class Money {
                 MoneyQuery::AUserRoleRemove($this->db, $accountid, $sRole->id);
             }
         }
-    }
-
-    /*
-    private function AccountSaveMethod($groupid, $ad){
-        if ($ad->id == 0){
-            $ad->id = $this->AccountAppendMethod($groupid, $ad);
-
-        } else {
-
-            // обновлять аккаунт, его роли может только пользователь с правами
-            // админа на этот аккаунт
-            $dbAccount = $dbAccounts[$ad->id];
-            if (empty($dbAccount) || $dbAccount['r'] != MoneyAccountRole::ADMIN){
-                return null;
-            }
-
-        }
-        MoneyQuery::AccountUpdateBalance($this->db, $ad->id);
-        return $ad->id;
-    }
-    /**/
-
-    public function AccountSave($groupid, $sd){
-
+        MoneyQuery::AccountUpdateBalance($this->db, $accountid);
     }
 
     public function UserListToJSON(){

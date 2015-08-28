@@ -29,13 +29,13 @@
 			<span data-wait="show">
 				<img src="/images/loading.gif"/>
 			</span>
-            <button id="{i#bsave}" data-wait="disable" type="button" class="btn btn-default">
+            <button id="{i#bsave}" data-wait="disable" data-click="save" type="button" class="btn btn-default">
                 {#mod.money.accounteditor.editor.3}
             </button>
-            <button id="{i#bcancel}" type="button" data-wait="disable" class="btn btn-default">
+            <button id="{i#bcancel}" type="button" data-click="cancel" data-wait="disable" class="btn btn-default">
                 {#mod.money.accounteditor.editor.4}
             </button>
-            <button id="{i#bclose}" type="button" data-wait="disable" class="btn btn-default">
+            <button id="{i#bclose}" type="button" data-click="cancel" data-wait="disable" class="btn btn-default">
                 {#mod.money.accounteditor.editor.5}
             </button>
         </div>
@@ -52,7 +52,7 @@
                 </label>
 
                 <div class="col-md-9">
-                    <select name="type" class="form-control isROD">
+                    <select name="type" data-wait="disable" class="form-control isROD">
                         <option value="1">{#mod.money.account.type.1}</option>
                         <option value="2">{#mod.money.account.type.2}</option>
                         <option value="3">{#mod.money.account.type.3}</option>
@@ -72,7 +72,7 @@
                 </label>
 
                 <div class="col-md-9 isROD">
-                    <input name="title" class="form-control isROD" type="text"/>
+                    <input name="title" data-wait="disable" class="form-control isROD" type="text"/>
                 </div>
             </div>
 
@@ -82,7 +82,7 @@
                 </label>
 
                 <div class="col-md-8">
-                    <input name="initbalance" type="text" class="form-control isROD"/>
+                    <input name="initbalance" data-wait="disable" type="text" class="form-control isROD"/>
                 </div>
             </div>
 
@@ -100,7 +100,7 @@
                 <label class="col-md-3 control-label">{#mod.money.accounteditor.row.5}</label>
 
                 <div class="col-md-9">
-                    <textarea name="descript" class="form-control isROD"></textarea>
+                    <textarea name="descript" data-wait="disable" class="form-control isROD"></textarea>
                 </div>
             </div>
         </div>
@@ -113,7 +113,7 @@
 
         <div id="{i#buttons}" class="text-right hide">
             <hr/>
-            <button data-click="remove" class="btn btn-default" title="{#mod.money.accounteditor.row.1}">
+            <button data-click="remove" data-wait="disable" class="btn btn-default" title="{#mod.money.accounteditor.row.1}">
                 {#mod.money.accounteditor.row.2}
             </button>
         </div>

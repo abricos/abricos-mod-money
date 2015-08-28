@@ -228,30 +228,39 @@ Component.entryPoint = function(NS){
             if (!group){
                 return;
             }
-            var tp = this.template,
-                groupid = group.get('id');
+            var tp = this.template;
 
             tp.setHTML('gtl', group.getTitle());
 
-            this.get('accountList').each(function(account){
-                if (groupid !== account.get('groupid')){
-                    return;
-                }
-                var agid = 1;
-                switch (account.get('type')) {
-                    case 5:
-                        agid = 2;
-                        break;
-                    case 6:
-                    case 7:
-                        agid = 3;
-                        break;
-                }
-                this._wgs[agid].accountAppend(account);
-            }, this);
+            this.get('accountList').each(this._renderAccount, this);
 
             this.selectAccount(this.get('firstAccount'));
             this.renderList();
+        },
+        renderAccount: function(account){
+            if (Y.Lang.isNumber(account)){
+                account = this.get('appInstance').get('accountList').getById(account);
+            }
+            this._renderAccount(account);
+            this.selectAccount(account);
+            this.renderList();
+        },
+        _renderAccount: function(account){
+
+            if (this.get('groupid') !== account.get('groupid')){
+                return;
+            }
+            var agid = 1;
+            switch (account.get('type')) {
+                case 5:
+                    agid = 2;
+                    break;
+                case 6:
+                case 7:
+                    agid = 3;
+                    break;
+            }
+            this._wgs[agid].accountAppend(account);
         },
         renderList: function(){
             for (var i = 1; i <= 3; i++){

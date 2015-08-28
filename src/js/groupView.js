@@ -51,27 +51,38 @@ Component.entryPoint = function(NS){
                 groupid: groupid
             });
         },
-        closeAccountEditor: function(){
+        closeAccountEditor: function(e){
             if (!this.accountEditorWidget){
                 return;
             }
             this.accountEditorWidget.destroy();
             this.accountEditorWidget = null;
+            this.template.toggleView(false, 'accountEditor', 'operPanel');
+            if (e && e.accountSave){
+                var app = this.get('appInstance'),
+                    account = app.get('accountList').getById(e.accountSave.accountid);
+                this.accountListWidget.renderAccount(account);
+            }
         },
         showAccountEditor: function(accountid){
-            var tp = this.template;
-            tp.show('accountEditor');
             Brick.use('{C#MODNAME}', 'accountEditor', function(){
                 this._showAccountEditor(accountid);
             }, this);
         },
         _showAccountEditor: function(accountid){
             this.closeAccountEditor();
-            this.accountEditorWidget = new NS.AccountEditorWidget({
-                srcNode: this.template.append('accountEditor', '<div></div>'),
-                groupid: this.get('groupid'),
+            var tp = this.template,
+                groupid = this.get('groupid');
+            tp.toggleView(true, 'accountEditor', 'operPanel');
+            var w = this.accountEditorWidget = new NS.AccountEditorWidget({
+                srcNode: tp.append('accountEditor', '<div></div>'),
+                groupid: groupid,
                 accountid: accountid | 0
             });
+            w.on('cancel', this.closeAccountEditor, this);
+            w.on('save', this.closeAccountEditor, this);
+
+            return w;
         },
         _onAccountsSelectedChanged: function(e){
             this.operWidget.set('selectedAccount', e.newVal);

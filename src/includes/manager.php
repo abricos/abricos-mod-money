@@ -223,22 +223,6 @@ class MoneyManager extends Ab_ModuleManager {
         return $ret;
     }
 
-    public function AccountSave($ad){
-        if (!$this->IsWriteRole()){
-            return null;
-        }
-        $accountid = $this->AccountSaveMethod($ad->gid, $ad);
-
-        $ret = new stdClass();
-        $ret->account = MoneyQuery::Account($this->db, $this->userid, $accountid);
-
-        $rows = MoneyQuery::AUserRoleListByAId($this->db, array($accountid));
-        $ret->roles = $this->ToArray($rows);
-
-        return $ret;
-    }
-
-
     public function OperRemove($operid){
         $dbOper = MoneyQuery::OperInfo($this->db, $operid);
         $dbAccount = MoneyQuery::Account($this->db, $this->userid, $dbOper['accountid']);
