@@ -58,35 +58,22 @@ Component.entryPoint = function(NS){
                 attribute: true,
                 type: 'modelList:GroupList'
             },
-            groupSave: {
-                args: ['group']
-            },
-            groupRemove: {
-                args: ['groupid']
-            },
-            categorySave: {
-                args: ['category']
-            },
-            categoryRemove: {
-                args: ['category']
-            },
+            groupSave: {args: ['group']},
+            groupRemove: {args: ['groupid']},
+            categorySave: {args: ['category']},
+            categoryRemove: {args: ['category']},
             accountList: {
                 attribute: true,
                 type: 'modelList:AccountList'
             },
-            accountSave: {
-                args: ['account']
-            },
-            accountRemove: {
-                args: ['account']
-            },
+            accountSave: {args: ['account']},
+            accountRemove: {args: ['account']},
             userList: {
                 attribute: true,
                 type: 'modelList:UserList'
             },
-            operSave: {
-                args: ['oper']
-            },
+            operSave: {args: ['oper']},
+            operMoveSave: {args: ['operMove']},
             operList: {
                 args: ['operListConfig'],
                 attribute: false,
@@ -108,7 +95,7 @@ Component.entryPoint = function(NS){
                         account.set('upddate', b.get('upddate'));
                     });
                 }
-            },
+            }
         },
         URLS: {
             ws: "#app={C#MODNAMEURI}/wspace/ws/",
@@ -143,5 +130,4 @@ Component.entryPoint = function(NS){
             }
         }
     });
-
 };

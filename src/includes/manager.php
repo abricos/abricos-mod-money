@@ -116,53 +116,6 @@ class MoneyManager extends Ab_ModuleManager {
         );
     }
 
-    public function OperMoveSave($od){
-
-        $dbFAccount = MoneyQuery::Account($this->db, $this->userid, $od->faid);
-        $dbTAccount = MoneyQuery::Account($this->db, $this->userid, $od->taid);
-
-        if (empty($dbFAccount) || empty($dbTAccount) || $dbFAccount['r'] < MoneyAccountRole::WRITE || $dbTAccount['r'] < MoneyAccountRole::WRITE || $dbFAccount['gid'] != $dbTAccount['gid']
-        ){
-            return null;
-        }
-
-        $fps = Abricos::TextParser(true);
-        $od->dsc = $fps->Parser($od->dsc);
-        $od->v = abs(doubleval($od->v));
-
-        if ($od->id == 0){
-            MoneyQuery::OperMoveAppend($this->db, $this->userid, $od);
-        } else {
-            $dbMOper = MoneyQuery::OperMoveInfo($this->db, $od->id);
-            if (empty($dbMOper) || $dbMOper['fromaccountid'] != $dbFAccount['id'] || $dbMOper['toaccountid'] != $dbTAccount['id']
-            ){
-                // изменение счета невозможно в этой версии
-                return null;
-            }
-            MoneyQuery::OperMoveUpdate($this->db, $od->id, $od);
-        }
-
-        MoneyQuery::AccountUpdateBalance($this->db, $od->faid);
-        MoneyQuery::AccountUpdateBalance($this->db, $od->taid);
-
-        $account = MoneyQuery::Account($this->db, $this->userid, $od->faid);
-        $ret1 = new stdClass();
-        $ret1->balance = new stdClass();
-        $ret1->balance->accountid = $account['id'];
-        $ret1->balance->value = $account['bc'];
-
-        $account = MoneyQuery::Account($this->db, $this->userid, $od->taid);
-        $ret2 = new stdClass();
-        $ret2->balance = new stdClass();
-        $ret2->balance->accountid = $account['id'];
-        $ret2->balance->value = $account['bc'];
-
-        return array(
-            $ret1,
-            $ret2
-        );
-    }
-
     public function Bos_MenuData(){
         if (!$this->IsViewRole()){
             return null;

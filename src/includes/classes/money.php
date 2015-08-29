@@ -67,6 +67,8 @@ class Money {
                 return $this->UserListToJSON();
             case 'operSave':
                 return $this->OperSaveToJSON($d->oper);
+            case 'operMoveSave':
+                return $this->OperMoveSaveToJSON($d->operMove);
             case 'operList':
                 return $this->OperListToJSON($d->operListConfig);
         }
@@ -304,6 +306,69 @@ class Money {
         }
 
         MoneyQuery::AccountUpdateBalance($this->db, $od->accountid);
+
+        $this->ClearCache();
+
+        return $ret;
+    }
+
+    public function OperMoveSaveToJSON($d){
+        $res = $this->OperMoveSave($d);
+        if (is_integer($res)){
+            $ret = new stdClass();
+            $ret->err = $res;
+            return $ret;
+        }
+
+        $res = $this->ImplodeJSON(array(
+            $this->BalanceListToJSON()
+        ), $res);
+
+        return $res;
+    }
+
+    public function OperMoveSave($d){
+        if (!$this->manager->IsWriteRole()){
+            return 403;
+        }
+        $parser = Abricos::TextParser(true);
+        $d->id = intval($d->id);
+        $d->descript = $parser->Parser($d->descript);
+        $d->value = doubleval($d->value);
+        $d->srcid = intval($d->srcid);
+        $d->destid = intval($d->destid);
+        $d->date = intval($d->date);
+        $d->upddate = intval($d->upddate);
+
+        $srcAccount = $this->AccountList()->Get($d->srcid);
+        $destAccount = $this->AccountList()->Get($d->destid);
+
+        if (empty($srcAccount) || !$srcAccount->IsWriteRole()
+            || empty($destAccount) || !$destAccount->IsWriteRole()
+            || $srcAccount->groupid !== $destAccount->groupid
+        ){
+            return 403;
+        }
+
+        if ($d->id === 0){
+            $d->id = MoneyQuery::OperMoveAppend($this->db, Abricos::$user->id, $d);
+        } else {
+            $dbMOper = MoneyQuery::OperMoveInfo($this->db, $d->id);
+            if (empty($dbMOper)
+                || $dbMOper['fromaccountid'] != $d->srcid
+                || $dbMOper['toaccountid'] != $d->destid
+            ){
+                // изменение счета невозможно в этой версии
+                return null;
+            }
+            MoneyQuery::OperMoveUpdate($this->db, $d->id, $d);
+        }
+
+        MoneyQuery::AccountUpdateBalance($this->db, $d->srcid);
+        MoneyQuery::AccountUpdateBalance($this->db, $d->destid);
+
+        $ret = new stdClass();
+        $ret->opermoveid = $d->id;
 
         $this->ClearCache();
 

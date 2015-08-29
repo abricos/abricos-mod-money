@@ -70,20 +70,36 @@ Component.entryPoint = function(NS){
             if (this.get('waiting')){
                 return;
             }
-            /*
-             this.set('waiting', true);
-             this.get('appInstance').operSave(sd, function(err, result){
-             this.set('waiting', false);
-             if (result.balanceList){
-             var b = result.balanceList.getById(accountid);
-             if (b){
-             account.set('upddate', b.get('upddate'));
-             account.set('balance', b.get('balance'));
-             }
-             }
-             this.clearForm();
-             }, this);
-             /**/
+
+            var tp = this.template,
+                oper = this.get('oper'),
+                dt = this.dateTimeWidget.getValue(),
+                val = tp.getValue('in') + '',
+                accountList = this.get('appInstance').get('accountList'),
+                srcid = this.srcListWidge.selected(),
+                srcAccount = accountList.getById(srcid),
+                destid = this.destListWidget.selected(),
+                destAccount = accountList.getById(srcid);
+
+            if (!srcAccount || !destAccount || srcid === destid){
+                return;
+            }
+
+            var sd = {
+                id: oper ? oper.get('id') : 0,
+                srcid: srcid,
+                destid: destid,
+                value: val.replace(/\s/gi, '').replace(/,/gi, '.'),
+                date: (dt ? dt : new Date()).getTime() / 1000,
+                upddate: Math.min(srcAccount.get('upddate'), destAccount.get('upddate')),
+                descript: tp.getValue('dsc')
+            };
+
+            this.set('waiting', true);
+            this.get('appInstance').operMoveSave(sd, function(err, result){
+                this.set('waiting', false);
+                this.clearForm();
+            }, this);
         },
     }, {
         ATTRS: {

@@ -501,7 +501,6 @@ class MoneyQuery {
     }
 
     public static function OperMoveAppend(Ab_Database $db, $userid, $od){
-
         $sql = "
 			INSERT INTO ".$db->prefix."money_method
 			(methodtype, userid, dateline, upddate) VALUES (
@@ -515,22 +514,22 @@ class MoneyQuery {
         $methodid = $db->insert_id();
 
         // расход
-        $fromOperId = MoneyQuery::OperAppend($db, $userid, $od->faid, true, $od->v, $od->d, 0, $od->dsc, $methodid);
+        $fromOperId = MoneyQuery::OperAppend($db, $userid, $od->srcid, true, $od->value, $od->date, 0, $od->descript, $methodid);
 
         // доход
-        $toOperId = MoneyQuery::OperAppend($db, $userid, $od->taid, false, $od->v, $od->d, 0, $od->dsc, $methodid);
+        $toOperId = MoneyQuery::OperAppend($db, $userid, $od->destid, false, $od->value, $od->date, 0, $od->descript, $methodid);
 
         $sql = "
 			INSERT INTO ".$db->prefix."money_move
 			(methodid, fromaccountid, fromoperid, toaccountid, tooperid, operval, operdate) VALUES (
 				".bkint($methodid).",
-				".bkint($od->faid).",
+				".bkint($od->srcid).",
 				".bkint($fromOperId).",
-				".bkint($od->taid).",
+				".bkint($od->destid).",
 				".bkint($toOperId).",
 		
-				".doubleval($od->v).",
-				".bkint($od->d)."
+				".doubleval($od->value).",
+				".bkint($od->date)."
 			)
 		";
         $db->query_write($sql);
@@ -551,17 +550,17 @@ class MoneyQuery {
     public static function OperMoveUpdate(Ab_Database $db, $methodid, $od){
         $sql = "
 			UPDATE ".$db->prefix."money_move
-			SET operval=".doubleval($od->v).",
-				operdate=".bkint($od->d)."
+			SET operval=".doubleval($od->value).",
+				operdate=".bkint($od->date)."
 			WHERE methodid=".bkint($methodid)." 
-				AND fromaccountid=".bkint($od->faid)."
-				AND toaccountid=".bkint($od->taid)."
+				AND fromaccountid=".bkint($od->srcid)."
+				AND toaccountid=".bkint($od->destid)."
 		";
         $db->query_write($sql);
 
         $dbMOper = MoneyQuery::OperMoveInfo($db, $methodid);
-        MoneyQuery::OperUpdate($db, $dbMOper['fromoperid'], $dbMOper['fromaccountid'], $od->v, $od->d, 0, $od->dsc);
-        MoneyQuery::OperUpdate($db, $dbMOper['tooperid'], $dbMOper['toaccountid'], $od->v, $od->d, 0, $od->dsc);
+        MoneyQuery::OperUpdate($db, $dbMOper['fromoperid'], $dbMOper['fromaccountid'], $od->value, $od->date, 0, $od->descript);
+        MoneyQuery::OperUpdate($db, $dbMOper['tooperid'], $dbMOper['toaccountid'], $od->value, $od->date, 0, $od->descript);
     }
 
     public static function OperMoveRemove(Ab_Database $db, $methodid){
