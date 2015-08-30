@@ -82,40 +82,6 @@ class MoneyManager extends Ab_ModuleManager {
         return $ret;
     }
 
-    public function OperMoveRemove($methodid){
-        $dbMOper = MoneyQuery::OperMoveInfo($this->db, $methodid);
-        $dbFAccount = MoneyQuery::Account($this->db, $this->userid, $dbMOper['fromaccountid']);
-        $dbTAccount = MoneyQuery::Account($this->db, $this->userid, $dbMOper['toaccountid']);
-
-        if (empty($dbFAccount) || empty($dbTAccount) || $dbFAccount['r'] < MoneyAccountRole::WRITE || $dbTAccount['r'] < MoneyAccountRole::WRITE
-        ){
-            return null;
-        }
-
-        MoneyQuery::OperMoveRemove($this->db, $methodid);
-        MoneyQuery::AccountUpdateBalance($this->db, $dbFAccount['id']);
-        MoneyQuery::AccountUpdateBalance($this->db, $dbTAccount['id']);
-
-
-        // TODO: Повторение кода, необходима оптимизация
-        $account = MoneyQuery::Account($this->db, $this->userid, $dbFAccount['id']);
-        $ret1 = new stdClass();
-        $ret1->balance = new stdClass();
-        $ret1->balance->accountid = $account['id'];
-        $ret1->balance->value = $account['bc'];
-
-        $account = MoneyQuery::Account($this->db, $this->userid, $dbTAccount['id']);
-        $ret2 = new stdClass();
-        $ret2->balance = new stdClass();
-        $ret2->balance->accountid = $account['id'];
-        $ret2->balance->value = $account['bc'];
-
-        return array(
-            $ret1,
-            $ret2
-        );
-    }
-
     public function Bos_MenuData(){
         if (!$this->IsViewRole()){
             return null;

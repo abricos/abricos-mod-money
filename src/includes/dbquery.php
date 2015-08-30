@@ -564,15 +564,15 @@ class MoneyQuery {
     }
 
     public static function OperMoveRemove(Ab_Database $db, $methodid){
+		$dbMOper = MoneyQuery::OperMoveInfo($db, $methodid);
+		MoneyQuery::OperRemove($db, $dbMOper['fromoperid'], $dbMOper['fromaccountid']);
+		MoneyQuery::OperRemove($db, $dbMOper['tooperid'], $dbMOper['toaccountid']);
         $sql = "
 			UPDATE ".$db->prefix."money_method
 			SET deldate=".TIMENOW.", upddate=".TIMENOW."
 			WHERE methodid=".bkint($methodid)." 
 		";
         $db->query_write($sql);
-        $dbMOper = MoneyQuery::OperMoveInfo($db, $methodid);
-        MoneyQuery::OperRemove($db, $dbMOper['fromoperid'], $dbMOper['fromaccountid']);
-        MoneyQuery::OperRemove($db, $dbMOper['tooperid'], $dbMOper['toaccountid']);
     }
 
 }

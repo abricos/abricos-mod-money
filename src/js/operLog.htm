@@ -97,6 +97,10 @@
     </td>
     {v#btns}
 </tr>
+<tr>
+    <td id="{i#action}-{v#id}" colspan="8" class="hide">
+    </td>
+</tr>
 
 <!--{rowtdbase}-->
 <td class="tp">
@@ -143,10 +147,10 @@
 <td class="emp"></td>
 
 <!--{rbtns}-->
-<td class="bt btedit {v#menuHide}">
+<td class="bt btedit">
     <div data-click="edit" data-id="{v#id}" class="b bedit" title="{#mod.money.operlist.rbtns.1}"></div>
 </td>
-<td class="bt btrem {v#menuHide}">
+<td class="bt btrem">
     <div data-click="remove" data-id="{v#id}" class="b bremove" title="{#mod.money.operlist.rbtns.2}"></div>
 </td>
 
@@ -157,3 +161,16 @@
     </td>
     <td colspan="5"></td>
 </tr>
+
+<!--{remove}-->
+<div class="alert alert-danger text-center">
+    <p>Вы действительно хотите удалить эту операцию?</p>
+
+    <div class="text-center">
+        <img data-wait="show" src="/images/loading.gif"/>
+        <button data-click="remove" data-wait="disable" class="btn btn-danger btn-xs">Удалить</button>
+        <button data-click="cancel" data-wait="disable" class="btn btn-default btn-xs">
+            Отмена
+        </button>
+    </div>
+</div>

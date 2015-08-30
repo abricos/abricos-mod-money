@@ -270,6 +270,58 @@ Component.entryPoint = function(NS){
             this.set('filter', {});
             this.renderOperList();
         },
+        _actionNode: function(operid){
+            var tp = this.template,
+                elid = tp.gelid('row.action'),
+                el = Y.Node.one('#' + elid + '-' + operid);
+            return el;
+        },
+        closeRemoveWidget: function(){
+            var w = this._removeWidget;
+            if (!w){
+                return;
+            }
+            w._actionNode.addClass('hide');
+            w.destroy();
+            this._removeWidget = null;
+        },
+        showRemoveWidget: function(operid){
+            this.closeRemoveWidget();
+
+            var el = this._actionNode(operid);
+            if (!el){
+                return;
+            }
+            el.removeClass('hide');
+            var w = this._removeWidget = new NS.OperListWidget.RemoveWidget({
+                srcNode: el.appendChild('<div></div>'),
+                CLICKS: {
+                    cancel: {
+                        event: this.closeRemoveWidget, context: this
+                    },
+                    remove: {
+                        event: this.removeOper, context: this
+                    }
+                }
+            });
+            w._actionNode = el;
+            w._operid = operid;
+        },
+        removeOper: function(){
+            var w = this._removeWidget;
+            if (!w){
+                return;
+            }
+            w.set('waiting', true);
+            this.get('appInstance').operRemove(w._operid, function(err, result){
+                if (!err){
+                    this.get('operList').removeById(w._operid);
+                    this.closeRemoveWidget();
+                    this.renderOperList();
+                }
+            }, this);
+
+        },
         _onPeriodChange: function(e){
             this.reloadOperList(e.newVal);
         },
@@ -285,8 +337,9 @@ Component.entryPoint = function(NS){
                 case 'filter-type':
                 case 'filter-account':
                 case 'filter-category':
-                case 'edit':
                 case 'remove':
+                    return this.showRemoveWidget(e.target.getData('id') | 0);
+                case 'edit':
                     var oper = this.get('operList').getById(e.target.getData('id') | 0);
                     this.fire('rowClick', {
                         action: e.dataClick,
@@ -332,6 +385,14 @@ Component.entryPoint = function(NS){
             }
         }
     });
+
+    NS.OperListWidget.RemoveWidget = Y.Base.create('removeWidget', SYS.AppWidget, [], {}, {
+        ATTRS: {
+            component: {value: COMPONENT},
+            templateBlockName: {value: 'remove'},
+        }
+    });
+
 
     NS.OperLogWidget = Y.Base.create('operLogWidget', SYS.AppWidget, [
         NS.GroupByIdExt

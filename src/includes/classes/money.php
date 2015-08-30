@@ -73,6 +73,8 @@ class Money {
                 return $this->OperMoveSaveToJSON($d->operMove);
             case 'operList':
                 return $this->OperListToJSON($d->operListConfig);
+            case 'operRemove':
+                return $this->OperRemoveToJSON($d->operid);
         }
         return null;
     }
@@ -925,6 +927,62 @@ class Money {
         }
         return $list;
     }
+
+    public function OperRemoveToJSON($operid){
+        $res = $this->OperRemove($operid);
+        if (is_integer($res)){
+            $ret = new stdClass();
+            $ret->err = $res;
+            return $ret;
+        }
+
+        $res = $this->ImplodeJSON(array(
+            $this->BalanceListToJSON()
+        ), $res);
+
+        return $res;
+    }
+
+    public function OperRemove($operid){
+        if (!$this->manager->IsWriteRole()){
+            return 403;
+        }
+
+        $dbOper = MoneyQuery::OperInfo($this->db, $operid);
+        if (empty($dbOper)){
+            return;
+        }
+        if (intval($dbOper['methodid']) > 0){
+            $methodid = intval($dbOper['methodid']);
+            $dbMOper = MoneyQuery::OperMoveInfo($this->db, $dbOper['methodid']);
+            $srcAccount = $this->AccountList()->Get($dbMOper['fromaccountid']);
+            $destAccount = $this->AccountList()->Get($dbMOper['toaccountid']);
+
+            if (empty($srcAccount) || !$srcAccount->IsWriteRole()
+                || empty($destAccount) || !$destAccount->IsWriteRole()
+            ){
+                return 403;
+            }
+            MoneyQuery::OperMoveRemove($this->db, $methodid);
+            MoneyQuery::AccountUpdateBalance($this->db, $srcAccount->id);
+            MoneyQuery::AccountUpdateBalance($this->db, $destAccount->id);
+        } else {
+            $account = $this->AccountList()->Get($dbOper['accountid']);
+            if (empty($account) || !$account->IsWriteRole()){
+                return 403;
+            }
+            MoneyQuery::OperRemove($this->db, $operid, $account->id);
+            MoneyQuery::AccountUpdateBalance($this->db, $account->id);
+        }
+
+        $ret = new stdClass();
+        $ret->operid = $operid;
+
+        $this->ClearCache();
+
+        return $ret;
+    }
+
 }
 
 ?>

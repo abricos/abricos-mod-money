@@ -75,6 +75,7 @@ Component.entryPoint = function(NS){
                 type: 'modelList:UserList'
             },
             operSave: {args: ['oper']},
+            operRemove: {args: ['operid']},
             operMoveSave: {args: ['operMove']},
             operList: {
                 args: ['operListConfig'],
