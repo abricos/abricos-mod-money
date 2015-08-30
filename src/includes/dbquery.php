@@ -485,8 +485,8 @@ class MoneyQuery {
         $sql = "
 			SELECT
 				DISTINCT m.methodid as id,
-				m.fromaccountid as faid,
-				m.toaccountid as taid,
+				m.fromaccountid as srcid,
+				m.toaccountid as destid,
 				m.operval as v,
 				m.operdate as d
 			FROM ".$db->prefix."money_move m

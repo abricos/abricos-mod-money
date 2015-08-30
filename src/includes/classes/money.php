@@ -39,6 +39,8 @@ class Money {
         $models->RegisterClass('CategoryList', 'MoneyCategoryList');
         $models->RegisterClass('Oper', 'MoneyOper');
         $models->RegisterClass('OperList', 'MoneyOperList');
+        $models->RegisterClass('OperMove', 'MoneyOperMove');
+        $models->RegisterClass('OperMoveList', 'MoneyOperMoveList');
         $models->RegisterClass('Balance', 'MoneyBalance');
         $models->RegisterClass('BalanceList', 'MoneyBalanceList');
     }
@@ -112,7 +114,7 @@ class Money {
 
         $res = $modelManager->ToJSON(
             'Group,Account,Category,CategoryList,'.
-            'UserRole,UserRoleList,User,Oper,OperList,Balance'
+            'UserRole,UserRoleList,User,Oper,OperList,OperMove,Balance'
         );
         if (empty($res)){
             return null;
@@ -856,8 +858,12 @@ class Money {
     }
 
     public function OperListToJSON($config){
-        $res = $this->OperList($config);
-        $ret = $this->ResultToJSON('operList', $res);
+        $ret = $this->OperList($config);
+        $ret = $this->ResultToJSON('operList', $ret);
+
+        $retMove = $this->OperMoveList($config);
+        $retMove = $this->ResultToJSON('operMoveList', $retMove);
+        $ret->operMoveList = $retMove->operMoveList;
         $ret->operListConfig = $config;
         return $ret;
     }
@@ -887,6 +893,35 @@ class Money {
         $rows = MoneyQuery::OperListByAIds($this->db, $aids, $fromdt, $enddt, $upddate);
         while (($d = $this->db->fetch_array($rows))){
             $list->Add($this->models->InstanceClass('Oper', $d));
+        }
+        return $list;
+    }
+
+    /**
+     * @param $config
+     * @return MoneyOperMoveList
+     */
+    public function OperMoveList($config){
+        if (!$this->manager->IsViewRole()){
+            return 403;
+        }
+        $accountList = $this->AccountList();
+        $aids = array();
+        for ($i = 0; $i < $accountList->Count(); $i++){
+            $account = $accountList->GetByIndex($i);
+            if ($config->groupid === $account->groupid){
+                array_push($aids, $account->id);
+            }
+        }
+        $fromdt = $config->period[0];
+        $enddt = $config->period[1];
+        $upddate = isset($config->upddate) ? $config->upddate : 0;
+
+        $list = $this->models->InstanceClass('OperMoveList');
+
+        $rows = MoneyQuery::OperMoveListByAIds($this->db, $aids, $fromdt, $enddt, $upddate);
+        while (($d = $this->db->fetch_array($rows))){
+            $list->Add($this->models->InstanceClass('OperMove', $d));
         }
         return $list;
     }

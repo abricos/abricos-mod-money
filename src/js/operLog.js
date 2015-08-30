@@ -40,7 +40,8 @@ Component.entryPoint = function(NS){
                     groupid: this.get('groupid'),
                     period: [period[0] / 1000, period[1] / 1000]
                 },
-                operList = this.get('operList');
+                operList = this.get('operList'),
+                operMoveList = this.get('operMoveList');
 
             isUpdate = isUpdate && operList;
 
@@ -58,8 +59,10 @@ Component.entryPoint = function(NS){
                 if (!err){
                     if (isUpdate){
                         operList.add(result.operList);
+                        operMoveList.add(result.operMoveList);
                     } else {
                         this.set('operList', result.operList);
+                        this.set('operMoveList', result.operMoveList);
                     }
                     this.renderOperList();
                 }
@@ -69,6 +72,7 @@ Component.entryPoint = function(NS){
             var app = this.get('appInstance'),
                 accountList = app.get('accountList'),
                 operList = this.get('operList'),
+                operMoveList = this.get('operMoveList'),
                 group = this.get('group'),
                 isMenuVisible = this.get('menuVisible');
 
@@ -148,14 +152,14 @@ Component.entryPoint = function(NS){
                         cat: cat ? cat.get('title') : ''
                     });
                 } else {
-                    var opMove = opers.methods.get(attrs.methodid),
-                        fAcc = MM.findAccount(opMove.fromAccountId),
-                        tAcc = MM.findAccount(opMove.toAccountId);
+                    var opMove = operMoveList.getById(attrs.methodid),
+                        fAcc = accountList.getById(opMove.get('srcid')),
+                        tAcc = accountList.getById(opMove.get('destid'));
 
                     std = tp.replace('rowtdmove', {
-                        'facc': L.isNull(fAcc) ? '' : fAcc.getTitle(),
-                        'tacc': L.isNull(tAcc) ? '' : tAcc.getTitle(),
-                        'cc': account.currency.sign,
+                        'facc': !fAcc ? '' : fAcc.getTitle(),
+                        'tacc': !tAcc ? '' : tAcc.getTitle(),
+                        'cc': sign,
                         'v': NS.numberFormat(Math.abs(val))
                     });
                 }
@@ -320,6 +324,7 @@ Component.entryPoint = function(NS){
                 }
             },
             operList: {value: null},
+            operMoveList: {value: null},
             menuVisible: {
                 writeOnce: true,
                 value: false

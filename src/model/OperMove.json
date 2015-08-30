@@ -1,0 +1,24 @@
+{
+  "version": "0.1.0",
+  "fields": {
+    "id": {
+      "type": "int"
+    },
+    "srcid": {
+      "type": "int"
+    },
+    "destid": {
+      "type": "int"
+    },
+    "value": {
+      "type": "double",
+      "json": "v",
+      "dbField": "v"
+    },
+    "date": {
+      "type": "int",
+      "json": "d",
+      "dbField": "d"
+    }
+  }
+}

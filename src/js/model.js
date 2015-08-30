@@ -143,6 +143,14 @@ Component.entryPoint = function(NS){
         }
     });
 
+    NS.OperMove = Y.Base.create('operMove', SYS.AppModel, [], {
+        structureName: 'OperMove'
+    });
+
+    NS.OperMoveList = Y.Base.create('operMoveList', SYS.AppModelList, [], {
+        appItem: NS.OperMove
+    });
+
     NS.Balance = Y.Base.create('balance', SYS.AppModel, [], {
         structureName: 'Balance'
     });

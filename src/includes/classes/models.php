@@ -165,4 +165,23 @@ class MoneyOperList extends AbricosModelList {
 
 }
 
+/**
+ * Class MoneyOperMove
+ * @property int $srcid Soruce Account ID
+ * @property int destid Dest Account ID
+ * @property double $value Value
+ * @property int $date Value Date
+ */
+class MoneyOperMove extends AbricosModel {
+    protected $_structModule = 'money';
+    protected $_structName = 'OperMove';
+}
+
+/**
+ * Class MoneyOperMoveList
+ */
+class MoneyOperMoveList extends AbricosModelList {
+
+}
+
 ?>

@@ -50,6 +50,8 @@ Component.entryPoint = function(NS){
             CategoryList: {value: NS.CategoryList},
             Oper: {value: NS.Oper},
             OperList: {value: NS.OperList},
+            OperMove: {value: NS.OperMove},
+            OperMoveList: {value: NS.OperMoveList},
             BalanceList: {value: NS.BalanceList}
         },
         REQS: {
@@ -78,6 +80,11 @@ Component.entryPoint = function(NS){
                 args: ['operListConfig'],
                 attribute: false,
                 type: 'modelList:OperList'
+            },
+            operMoveList: {
+                args: ['operListConfig'],
+                attribute: false,
+                type: 'modelList:OperMoveList'
             },
             balanceList: {
                 type: 'modelList:BalanceList',
