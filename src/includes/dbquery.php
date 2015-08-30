@@ -413,7 +413,7 @@ class MoneyQuery {
     }
 
     public static function OperUpdateByObj(Ab_Database $db, $operid, $accountid, $od){
-        return MoneyQuery::OperUpdate($db, $operid, $accountid, $od->value, $od->upddate, $od->categoryid, $od->descript);
+        return MoneyQuery::OperUpdate($db, $operid, $accountid, $od->value, $od->date, $od->categoryid, $od->descript);
     }
 
     public static function OperRemove(Ab_Database $db, $operid, $accountid){

@@ -59,7 +59,7 @@ Component.entryPoint = function(NS){
                 if (!err){
                     if (isUpdate){
                         operList.add(result.operList);
-                        operMoveList.add(result.operMoveList);
+                        operMoveList.add(result.operMoveList); // TODO: update list if not new records
                     } else {
                         this.set('operList', result.operList);
                         this.set('operMoveList', result.operMoveList);
@@ -141,7 +141,7 @@ Component.entryPoint = function(NS){
                 }
 
                 var std = "";
-                if (attrs.methodid == 0){
+                if (attrs.methodid === 0){
                     std = tp.replace('rowtdbase', {
                         id: attrs.id,
                         expcls: attrs.isexpense ? 'red' : 'green',
@@ -152,7 +152,7 @@ Component.entryPoint = function(NS){
                         cat: cat ? cat.get('title') : ''
                     });
                 } else {
-                    var opMove = operMoveList.getById(attrs.methodid),
+                    var opMove = oper.move = operMoveList.getById(attrs.methodid),
                         fAcc = accountList.getById(opMove.get('srcid')),
                         tAcc = accountList.getById(opMove.get('destid'));
 
@@ -287,9 +287,10 @@ Component.entryPoint = function(NS){
                 case 'filter-category':
                 case 'edit':
                 case 'remove':
+                    var oper = this.get('operList').getById(e.target.getData('id') | 0);
                     this.fire('rowClick', {
                         action: e.dataClick,
-                        oper: this.get('operList').getById(e.target.getData('id') | 0)
+                        oper: oper
                     });
                     return true;
             }

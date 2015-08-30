@@ -360,7 +360,7 @@ class Money {
                 || $dbMOper['fromaccountid'] != $d->srcid
                 || $dbMOper['toaccountid'] != $d->destid
             ){
-                // изменение счета невозможно в этой версии
+                // изменение счетов невозможно в этой версии
                 return null;
             }
             MoneyQuery::OperMoveUpdate($this->db, $d->id, $d);

@@ -70,7 +70,17 @@ Component.entryPoint = function(NS){
         ATTRS: {
             component: {value: COMPONENT},
             templateBlockName: {value: 'select,selrow'},
-            accountList: {value: null}
+            accountList: {value: null},
+            readOnly: {
+                value: false,
+                setter: function(val){
+                    var tp = this.template;
+                    if (tp){
+                        tp.one('id').set('disabled', val ? 'disabled' : '');
+                    }
+                    return val;
+                }
+            }
         }
     });
 

@@ -25,7 +25,7 @@ Component.entryPoint = function(NS){
                 'showTime': false
             });
 
-            this.srcListWidge = new NS.AccountSelectWidget({
+            this.srcListWidget = new NS.AccountSelectWidget({
                 srcNode: tp.gel('srcAccount'),
                 groupid: groupid
             });
@@ -36,17 +36,17 @@ Component.entryPoint = function(NS){
             });
             this._widgetInitialized = true;
             this.renderOper();
+            this.after('operChange', this.renderOper, this);
         },
         destructor: function(){
             if (this._widgetInitialized){
                 this.dateTimeWidget.destroy();
-                this.srcListWidge.destroy();
+                this.srcListWidget.destroy();
                 this.destListWidget.destroy();
             }
         },
         clearForm: function(){
-            this.set('oper', null);
-            this.renderOper();
+            this.get('oper') ? this.set('oper', null) : this.renderOper();
         },
         onKeyPress: function(e){
             if (e.keyCode !== 13){
@@ -60,7 +60,20 @@ Component.entryPoint = function(NS){
         },
         renderOper: function(){
             var tp = this.template,
-                oper = this.get('oper');
+                oper = this.get('oper'),
+                move = oper ? oper.move : null;
+
+            this.srcListWidget.select(move ? move.get('srcid') : 0);
+            this.destListWidget.select(move ? move.get('destid') : 0);
+            this.dateTimeWidget.setValue(move ? new Date(move.get('date') * 1000) : new Date());
+
+            tp.setValue({
+                in: oper ? oper.get('value') : '',
+                dsc: oper ? oper.get('descript') : ''
+            });
+
+            this.srcListWidget.set('readOnly', !!move);
+            this.destListWidget.set('readOnly', !!move);
 
             tp.toggleView(!!oper, 'bsave,bcancel', 'bcreate');
 
@@ -76,7 +89,7 @@ Component.entryPoint = function(NS){
                 dt = this.dateTimeWidget.getValue(),
                 val = tp.getValue('in') + '',
                 accountList = this.get('appInstance').get('accountList'),
-                srcid = this.srcListWidge.selected(),
+                srcid = this.srcListWidget.selected(),
                 srcAccount = accountList.getById(srcid),
                 destid = this.destListWidget.selected(),
                 destAccount = accountList.getById(srcid);
@@ -86,7 +99,7 @@ Component.entryPoint = function(NS){
             }
 
             var sd = {
-                id: oper ? oper.get('id') : 0,
+                id: oper ? oper.move.get('id') : 0,
                 srcid: srcid,
                 destid: destid,
                 value: val.replace(/\s/gi, '').replace(/,/gi, '.'),

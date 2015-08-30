@@ -140,14 +140,14 @@ Component.entryPoint = function(NS){
                 accountid = account.get('id');
 
             var sd = {
-                'id': oper ? oper.get('id') : 0,
-                'isexpense': this.get('isExpense'),
-                'accountid': accountid,
-                'value': val.replace(/\s/gi, '').replace(/,/gi, '.'),
+                id: oper ? oper.get('id') : 0,
+                isexpense: this.get('isExpense'),
+                accountid: accountid,
+                value: val.replace(/\s/gi, '').replace(/,/gi, '.'),
                 date: (dt ? dt : new Date()).getTime() / 1000,
-                'upddate': account.get('upddate'),
-                'categoryid': categoryid,
-                'descript': tp.gel('dsc').value
+                upddate: account.get('upddate'),
+                categoryid: categoryid,
+                descript: tp.gel('dsc').value
             };
             if (categoryid === -1){
                 sd['categoryData'] = this.categoryCreateWidget.toJSON();
@@ -258,17 +258,15 @@ Component.entryPoint = function(NS){
             if (!oper){
                 return;
             }
+            var tabs = this.tabs;
 
-            var tabs = this.tabs,
-                attrs = oper.toJSON();
-
-            if (attrs.methodid > 0){
+            if (oper.move){
                 this.showPage('move');
                 tabs['move'].set('oper', oper);
-            } else if (attrs.isexpense){
+            } else if (oper.get('isexpense')){
                 this.showPage('expense');
                 tabs['expense'].set('oper', oper);
-            } else if (!attrs.isexpense){
+            } else if (!oper.get('isexpense')){
                 this.showPage('income');
                 tabs['income'].set('oper', oper);
             }

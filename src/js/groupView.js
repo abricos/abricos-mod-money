@@ -107,7 +107,8 @@ Component.entryPoint = function(NS){
         _onOperMenuClick: function(e){
             switch (e.action) {
                 case 'edit':
-                    return this.operWidget.set('oper', e.oper);
+                    this.operWidget.set('oper', e.oper);
+                    return;
             }
         }
     }, {
