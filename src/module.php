@@ -2,9 +2,9 @@
 /**
  * @package Abricos
  * @subpackage Money
- * @copyright Copyright (C) 2011 Abricos. All rights reserved.
- * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
- * @author Alexander Kuzmin (roosit@abricos.org)
+ * @copyright 2011-2015 Alexander Kuzmin
+ * @license http://opensource.org/licenses/mit-license.php MIT License
+ * @author Alexander Kuzmin <roosit@abricos.org>
  */
 
 
@@ -19,7 +19,7 @@ class MoneyModule extends Ab_Module {
      * Конструктор
      */
     public function __construct() {
-        $this->version = "0.2.0";
+        $this->version = "0.2.1";
         $this->name = "money";
         $this->takelink = "money";
         $this->permission = new MoneyPermission($this);
@@ -39,17 +39,6 @@ class MoneyModule extends Ab_Module {
     public function GetContentName() {
         return 'index';
     }
-
-    /*
-    public function GetAppSourceInfo(){
-        $appInfo = new AppSourceInfo($this);
-
-        $appInfo->resource->Add("/modules/money/images/logo-96x96.png");
-        $appInfo->resource->Add("/modules/money/images/app_icon.png");
-
-        return $appInfo;
-    }
-    /**/
 
     public function Bos_IsMenu() {
         return true;

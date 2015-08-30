@@ -1,4 +1,12 @@
 <?php
+/**
+ * @package Abricos
+ * @subpackage Money
+ * @copyright 2011-2015 Alexander Kuzmin
+ * @license http://opensource.org/licenses/mit-license.php MIT License
+ * @author Alexander Kuzmin <roosit@abricos.org>
+ */
+
 
 require_once 'models.php';
 
