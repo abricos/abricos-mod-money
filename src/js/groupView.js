@@ -1,7 +1,7 @@
 var Component = new Brick.Component();
 Component.requires = {
     mod: [
-        {name: '{C#MODNAME}', files: ['oper.js', 'operLog.js', 'accountList.js']}
+        {name: '{C#MODNAME}', files: ['oper.js', 'operLog.js', 'accountList.js', 'accountInfo.js']}
     ]
 };
 Component.entryPoint = function(NS){
@@ -19,6 +19,7 @@ Component.entryPoint = function(NS){
         destructor: function(){
             if (this._widgetsInitialized){
                 this.accountListWidget.destroy();
+                this.infoWidget.destroy();
                 this.operWidget.destroy();
                 this.operLogWidget.destroy();
             }
@@ -40,6 +41,11 @@ Component.entryPoint = function(NS){
             accounts.on('selectedAccountChange', this._onAccountsSelectedChanged, this);
             accounts.on('accountMenuClick', this._onAccountMenuClick, this);
             accounts.on('menuClick', this._onGroupMenuClick, this);
+
+            this.infoWidget = new NS.AccountInfoWidget({
+                srcNode: tp.gel('accountInfo'),
+                groupid: groupid
+            });
 
             this.operWidget = new NS.OperationWidget({
                 srcNode: tp.gel('oper'),
@@ -88,6 +94,7 @@ Component.entryPoint = function(NS){
         },
         _onAccountsSelectedChanged: function(e){
             this.operWidget.set('selectedAccount', e.newVal);
+            this.infoWidget.set('accountid', e.newVal.get('id'));
         },
         _onAccountMenuClick: function(e){
             switch (e.action) {
