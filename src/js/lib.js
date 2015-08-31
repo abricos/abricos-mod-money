@@ -1,14 +1,15 @@
 var Component = new Brick.Component();
+
 Component.requires = {
     mod: [
         {
             name: 'sys', files: [
             'application.js',
-            'item.js', // TODO: remove
             'number.js'
         ]
         },
         {name: 'uprofile', files: ['lib.js']},
+        {name: 'tag', files: ['lib.js']}, // load if exist
         {name: '{C#MODNAME}', files: ['model.js', 'base.js']}
     ]
 };
@@ -34,11 +35,7 @@ Component.entryPoint = function(NS){
         isAdmin: 50
     });
 
-    SYS.Application.build(COMPONENT, {}, {
-        initializer: function(){
-            this.initCallbackFire();
-        }
-    }, [], {
+    NS.Application = {
         ATTRS: {
             isLoadAppStructure: {value: true},
             GroupList: {value: NS.GroupList},
@@ -137,5 +134,16 @@ Component.entryPoint = function(NS){
                 }
             }
         }
-    });
+    };
+
+    if (Brick.mod.tag.Application){
+        NS.TAG = Brick.mod.tag;
+        Y.mix(NS.Application, Brick.mod.tag.Application, false, null, 0, true);
+    }
+
+    SYS.Application.build(COMPONENT, {}, {
+        initializer: function(){
+            this.initCallbackFire();
+        }
+    }, [], NS.Application);
 };

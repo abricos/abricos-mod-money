@@ -63,25 +63,6 @@ class MoneyManager extends Ab_ModuleManager {
         return $this->GetMoney()->AJAX($d);
     }
 
-    public function OperRemove($operid){
-        $dbOper = MoneyQuery::OperInfo($this->db, $operid);
-        $dbAccount = MoneyQuery::Account($this->db, $this->userid, $dbOper['accountid']);
-        if (empty($dbAccount) || $dbAccount['r'] < MoneyAccountRole::WRITE){
-            return null;
-        }
-
-        MoneyQuery::OperRemove($this->db, $operid, $dbOper['accountid']);
-
-        MoneyQuery::AccountUpdateBalance($this->db, $dbOper['accountid']);
-
-        $account = MoneyQuery::Account($this->db, $this->userid, $dbOper['accountid']);
-        $ret = new stdClass();
-        $ret->balance = new stdClass();
-        $ret->balance->accountid = $account['id'];
-        $ret->balance->value = $account['bc'];
-        return $ret;
-    }
-
     public function Bos_MenuData(){
         if (!$this->IsViewRole()){
             return null;
@@ -96,7 +77,6 @@ class MoneyManager extends Ab_ModuleManager {
             )
         );
     }
-
 }
 
 ?>

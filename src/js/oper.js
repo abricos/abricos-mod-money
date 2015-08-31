@@ -2,6 +2,7 @@ var Component = new Brick.Component();
 Component.requires = {
     mod: [
         {name: 'widget', files: ['calendar.js']},
+        {name: 'tag', files: ['tagListEditor.js']},
         {name: '{C#MODNAME}', files: ['operMove.js']}
     ]
 };
@@ -34,6 +35,13 @@ Component.entryPoint = function(NS){
                 'showTime': false
             });
 
+            if (NS.TAG){
+                this.tagsEditorWidget = new NS.TAG.TagListEditorWidget({
+                    appInstance: appInstance,
+                    srcNode: tp.gel('tagsEditor')
+                });
+            }
+
             this.after('accountChange', this.renderWidget, this);
             this.after('operChange', this.renderWidget, this);
 
@@ -42,6 +50,9 @@ Component.entryPoint = function(NS){
         destructor: function(){
             this.categorySelectWidget.destroy();
             this.dateTimeWidget.destroy();
+            if (this.tagsEditorWidget){
+                this.tagsEditorWidget.destroy();
+            }
         },
         _onCategoryChange: function(e){
             var val = e.value | 0;
