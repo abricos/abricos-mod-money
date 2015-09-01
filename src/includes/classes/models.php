@@ -157,6 +157,7 @@ class MoneyUserList extends AbricosModelList {
  * @property int $date Value Date
  * @property int $categoryid Category ID
  * @property string $descript Description
+ * @property string $tags Tags
  * @property int $methodid Method ID
  * @property int $upddate Update Date
  */

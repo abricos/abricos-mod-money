@@ -142,7 +142,8 @@ if ($updateManager->isInstall()) {
 	
 		  categoryid int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Категория',
 		  descript TEXT COMMENT 'Примечание',
-	
+		  tags TEXT COMMENT 'Теги',
+
 		  dateline int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Дата создания',
 		  upddate int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Дата обновления',
 		  deldate int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Дата удаления',
@@ -212,7 +213,13 @@ if (!$updateManager->isInstall() && $updateManager->isUpdate('0.1.0.1')) {
 			LIMIT 1
 		");
     }
+}
 
+if (!$updateManager->isInstall() && $updateManager->isUpdate('0.2.1.1')){
+	$db->query_write("
+		ALTER TABLE ".$pfx."money_oper
+		ADD tags TEXT COMMENT 'Теги'
+	");
 }
 
 ?>

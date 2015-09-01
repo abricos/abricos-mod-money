@@ -49,6 +49,7 @@
         <th class="acc">{#mod.money.operlist.table.4}</th>
         <th class="cat">{#mod.money.operlist.table.5}</th>
         <th class="dsc">{#mod.money.operlist.table.6}</th>
+        {v#tagHead}
         {v#menuHead}
     </tr>
     </thead>
@@ -56,10 +57,13 @@
     <tbody>{v#rows}</tbody>
 </table>
 
+<!--{tagHead}-->
+<th class="tags">Теги</th>
+
 <!--{menuHead}-->
 <th colspan="2"></th>
 
-<!--{rowfilter}-->
+<!--{rowFilter}-->
 <thead>
 <tr>
     <th class="d">{v#d}</th>
@@ -68,9 +72,16 @@
     <th class="acc">{v#acc}</th>
     <th class="cat">{v#cat}</th>
     <th class="dsc"></th>
-    <th class="{v#menuHide}" colspan="2"></th>
+    {v#tagHead}
+    {v#menuHead}
 </tr>
 </thead>
+
+<!--{filterTagHead}-->
+<th></th>
+
+<!--{filterMenuHead}-->
+<th colspan="2"></th>
 
 <!--{filterval}-->
 <div class="ft">
@@ -95,14 +106,14 @@
             <div class="shadow"></div>
         </div>
     </td>
+    {v#tdTag}
     {v#btns}
 </tr>
 <tr>
-    <td id="{i#action}-{v#id}" colspan="8" class="hide">
-    </td>
+    <td id="{i#action}-{v#id}" colspan="8" class="hide"></td>
 </tr>
 
-<!--{rowtdbase}-->
+<!--{rowTDBase}-->
 <td class="tp">
     <a data-click="filter-type" data-id="{v#id}" href="#" href="#" title="Установить фильтр: Тип">
         {v#tp}
@@ -132,6 +143,17 @@
     </div>
 </td>
 
+<!--{rowTDTag}-->
+<td class="tags">
+    {v#tags}
+</td>
+
+<!--{tag}-->
+<a data-click="filter-tag" data-id="{v#tag}" href="#" title="Установить фильтр: Теги">
+    {v#tag}
+</a>
+
+
 <!--{rowtdmove}-->
 <td class="tp"><span title="{#mod.money.operlist.rowtdmove.1}">{#mod.money.operlist.rowtdmove.2}</span></td>
 <td class="v">{v#v} {v#cc}</td>
@@ -159,7 +181,6 @@
     <td class="v" colspan="3">
         <span class="{v#expcls}">{v#v}</span> {v#cc}
     </td>
-    <td colspan="5"></td>
 </tr>
 
 <!--{remove}-->

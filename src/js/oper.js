@@ -38,7 +38,8 @@ Component.entryPoint = function(NS){
             if (NS.TAG){
                 this.tagsEditorWidget = new NS.TAG.TagListEditorWidget({
                     appInstance: appInstance,
-                    srcNode: tp.gel('tagsEditor')
+                    srcNode: tp.gel('tagsEditor'),
+                    groupid: this.get('groupid')
                 });
             }
 
@@ -108,6 +109,9 @@ Component.entryPoint = function(NS){
             this.inputFocus();
 
             this.categorySelectWidget.select(oper ? oper.get('categoryid') : 0);
+            if (this.tagsEditorWidget){
+                this.tagsEditorWidget.set('sTags', oper ? oper.get('tags') : '');
+            }
 
             if (!oper){
                 tp.setValue({
@@ -162,6 +166,10 @@ Component.entryPoint = function(NS){
             };
             if (categoryid === -1){
                 sd['categoryData'] = this.categoryCreateWidget.toJSON();
+            }
+
+            if (this.tagsEditorWidget){
+                sd['tags'] = this.tagsEditorWidget.get('tags');
             }
 
             this.set('waiting', true);

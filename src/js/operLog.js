@@ -142,7 +142,7 @@ Component.entryPoint = function(NS){
 
                 var std = "";
                 if (attrs.methodid === 0){
-                    std = tp.replace('rowtdbase', {
+                    std = tp.replace('rowTDBase', {
                         id: attrs.id,
                         expcls: attrs.isexpense ? 'red' : 'green',
                         tp: attrs.isexpense ? '-' : '+',
@@ -169,13 +169,29 @@ Component.entryPoint = function(NS){
                         'id': attrs.id
                     })
                 }
+                var sTags = '';
+                if (NS.TAG){
+                    var aTags = attrs.tags.split(','),
+                        lstTag = [];
+                    for (var iTag = 0; iTag < aTags.length; iTag++){
+                        lstTag[lstTag.length] = tp.replace('tag', {
+                            id: attrs.id,
+                            tag: aTags[iTag]
+                        });
+                    }
+                    sTags = tp.replace('rowTDTag', {
+                        tags: lstTag.join(', ')
+                    });
+                }
+
                 lst += tp.replace('row', {
                     id: attrs.id,
                     d: Brick.dateExt.convert(attrs.date, 2, true),
                     dtl: Brick.dateExt.convert(attrs.date, 0, true),
                     dsc: attrs.descript,
                     btns: btns,
-                    td: std
+                    td: std,
+                    tdTag: sTags
                 });
 
             }, this);
@@ -194,7 +210,11 @@ Component.entryPoint = function(NS){
             }
 
             var isFilter = false,
-                fdv = {'d': '', 'tp': '', 'v': '', 'acc': '', 'cat': ''};
+                fdv = {
+                    'd': '', 'tp': '', 'v': '', 'acc': '', 'cat': '',
+                    tagHead: NS.TAG ? tp.replace('filterTagHead') : '',
+                    menuHead: isMenuVisible ? tp.replace('filterMenuHead') : ''
+                };
 
             for (var n in filter){
                 isFilter = true;
@@ -235,9 +255,10 @@ Component.entryPoint = function(NS){
             }
 
             tp.setHTML('table', tp.replace('table', {
-                'menuHead': isMenuVisible ? tp.replace('menuHead') : '',
-                'filter': isFilter ? tp.replace('rowfilter', fdv) : '',
-                'rows': lst
+                menuHead: isMenuVisible ? tp.replace('menuHead') : '',
+                tagHead: NS.TAG ? tp.replace('tagHead') : '',
+                filter: isFilter ? tp.replace('rowFilter', fdv) : '',
+                rows: lst
             }));
         },
         addFilter: function(action, oper){
@@ -337,8 +358,6 @@ Component.entryPoint = function(NS){
                 case 'filter-type':
                 case 'filter-account':
                 case 'filter-category':
-                case 'remove':
-                    return this.showRemoveWidget(e.target.getData('id') | 0);
                 case 'edit':
                     var oper = this.get('operList').getById(e.target.getData('id') | 0);
                     this.fire('rowClick', {
@@ -346,12 +365,17 @@ Component.entryPoint = function(NS){
                         oper: oper
                     });
                     return true;
+                case 'remove':
+                    return this.showRemoveWidget(e.target.getData('id') | 0);
             }
         }
     }, {
         ATTRS: {
             component: {value: COMPONENT},
-            templateBlockName: {value: 'list,table,menuHead,rowfilter,row,rowtdbase,rowtdmove,rowsum,rbtns,rbtnsn,rowfilter,filterval'},
+            templateBlockName: {
+                value: 'list,table,menuHead,tagHead,filterMenuHead,filterTagHead,rowFilter,' +
+                'row,rowTDBase,rowTDTag,tag,rowtdmove,rowsum,rbtns,rbtnsn,filterval'
+            },
             operList: {},
             filter: {value: {}},
             fromDate: {

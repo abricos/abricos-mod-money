@@ -414,7 +414,17 @@ class MoneyQuery {
         $db->query_write($sql);
     }
 
-    public static function OperUpdateByObj(Ab_Database $db, $operid, $accountid, $od){
+	public static function OperTagsUpdate(Ab_Database $db, $operid, $accountid, $tags){
+		$sql = "
+			UPDATE ".$db->prefix."money_oper
+			SET tags='".bkstr($tags)."'
+			WHERE operid=".bkint($operid)." AND accountid=".bkint($accountid)."
+			LIMIT 1
+		";
+		$db->query_write($sql);
+	}
+
+	public static function OperUpdateByObj(Ab_Database $db, $operid, $accountid, $od){
         return MoneyQuery::OperUpdate($db, $operid, $accountid, $od->value, $od->date, $od->categoryid, $od->descript);
     }
 
@@ -453,6 +463,7 @@ class MoneyQuery {
 				o.operdate as d,
 				o.categoryid,
 				o.descript,
+				o.tags,
 				o.methodid,
 				o.upddate
 			FROM ".$db->prefix."money_oper o

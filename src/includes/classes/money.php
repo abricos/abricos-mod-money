@@ -53,6 +53,23 @@ class Money {
         $models->RegisterClass('BalanceList', 'MoneyBalanceList');
     }
 
+    private $_tagManager = null;
+
+    /**
+     * @return Tag|bool|null
+     */
+    public function GetTagManager(){
+        if (!is_null($this->_tagManager)){
+            return $this->_tagManager;
+        }
+        /** @var TagModule $module */
+        $module = Abricos::GetModule('tag');
+        if (empty($module)){
+            return false;
+        }
+        return $this->_tagManager = $module->GetManager()->GetTag();
+    }
+
     public function AJAX($d){
         switch ($d->do){
             case "appStructure":
@@ -83,6 +100,9 @@ class Money {
                 return $this->OperListToJSON($d->operListConfig);
             case 'operRemove':
                 return $this->OperRemoveToJSON($d->operid);
+
+            case 'tagListByQuery':
+                return $this->TagsByQueryToJSON($d->config);
         }
         return null;
     }
@@ -98,20 +118,36 @@ class Money {
             $ret->err = $res;
             return $ret;
         }
-        $ret->$name = $res->ToJSON();
+        if (is_object($res) && method_exists($res, 'ToJSON')){
+            $ret->$name = $res->ToJSON();
+        } else {
+            $ret->$name = $res;
+        }
 
         return $ret;
+    }
+
+    private function MergeObject($o1, $o2){
+        foreach ($o2 as $key => $v2){
+            $v1 = $o1->$key;
+            if (is_array($v1) && is_array($v2)){
+                for ($i = 0; $i < count($v2); $i++){
+                    $v1[] = $v2[$i];
+                }
+                $o1->$key = $v1;
+            } else if (is_object($o1->$key) && is_object($o2->$key)){
+                $this->MergeObject($o1->$key, $o2->$key);
+            } else {
+                $o1->$key = $v2;
+            }
+        }
     }
 
     private function ImplodeJSON($jsons, $ret = null){
         if (empty($ret)){
             $ret = new stdClass();
         }
-        foreach ($jsons as $json){
-            foreach ($json as $key => $value){
-                $ret->$key = $value;
-            }
-        }
+        $this->MergeObject($ret, $jsons);
         return $ret;
     }
 
@@ -132,6 +168,16 @@ class Money {
 
         $ret = new stdClass();
         $ret->appStructure = $res;
+
+        $tagManager = $this->GetTagManager();
+        if (empty($tagManager)){
+            return $ret;
+        }
+
+        $retTag = $tagManager->AppStructureToJSON();
+
+        $ret = $this->ImplodeJSON($retTag, $ret);
+
         return $ret;
     }
 
@@ -307,14 +353,21 @@ class Money {
         }
 
         if ($od->id == 0){
-            $od->id = MoneyQuery::OperAppendByObj($this->db, Abricos::$user->id, $od->accountid, $od);
+            $od->id = MoneyQuery::OperAppendByObj($this->db, Abricos::$user->id, $account->id, $od);
         } else {
-            MoneyQuery::OperUpdateByObj($this->db, $od->id, $od->accountid, $od);
+            MoneyQuery::OperUpdateByObj($this->db, $od->id, $account->id, $od);
         }
 
-        $ret->operid = $od->id;
+        $operid = $ret->operid = $od->id;
         if ($isNewCategory){
             $ret->categoryid = $od->categoryid;
+        }
+
+        $tagManager = $this->GetTagManager();
+        if ($tagManager){
+            $tags = $tagManager->TagsSave('money', 'oper', $operid, $od->tags, $group->id);
+            $tags = implode(",", $tags);
+            MoneyQuery::OperTagsUpdate($this->db, $operid, $account->id, $tags);
         }
 
         MoneyQuery::AccountUpdateBalance($this->db, $od->accountid);
@@ -904,6 +957,7 @@ class Money {
         while (($d = $this->db->fetch_array($rows))){
             $list->Add($this->models->InstanceClass('Oper', $d));
         }
+
         return $list;
     }
 
@@ -991,6 +1045,26 @@ class Money {
         return $ret;
     }
 
+    public function TagsByQueryToJSON($config){
+        $ret = $this->TagsByQuery($config);
+        return $this->ResultToJSON('tagListByQuery', $ret);
+    }
+
+    public function TagsByQuery($config){
+        $tagManager = $this->GetTagManager();
+        if (empty($tagManager)){
+            return 500;
+        }
+
+        $group = $this->GroupList()->Get($config->groupid);
+        if (empty($group)){
+            return 403;
+        }
+
+        $tags = $tagManager->TagsByQuery('money', $config);
+
+        return $tags;
+    }
 }
 
 ?>
