@@ -6,3 +6,7 @@
 - a completely refactoring source for core version 0.5.7
 - show operation log in blank page
 - selection active group in global menu
+
+### 0.2.1.1
+
+- add tags in operation
