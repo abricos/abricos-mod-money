@@ -147,7 +147,12 @@ class Money {
         if (empty($ret)){
             $ret = new stdClass();
         }
-        $this->MergeObject($ret, $jsons);
+        if (!is_array($jsons)){
+            $jsons = array($jsons);
+        }
+        foreach($jsons as $json){
+            $this->MergeObject($ret, $json);
+        }
         return $ret;
     }
 
