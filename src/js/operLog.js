@@ -160,7 +160,7 @@ Component.entryPoint = function(NS){
                 if (attrs.methodid === 0){
                     std = tp.replace('rowTDBase', {
                         id: attrs.id,
-                        expcls: attrs.isexpense ? 'red' : 'green',
+                        expcls: attrs.isexpense ? 'text-danger' : 'text-success',
                         tp: attrs.isexpense ? '-' : '+',
                         v: NS.numberFormat(val),
                         cc: sign,
@@ -218,7 +218,7 @@ Component.entryPoint = function(NS){
                     currency = NS.currencyList.getById(n);
                 lst += tp.replace('rowsum', {
                     'first': first ? 'first' : '',
-                    'expcls': val < 0 ? 'red' : 'green',
+                    'expcls': val < 0 ? 'text-danger' : 'text-success',
                     'v': NS.numberFormat(val),
                     'cc': currency ? currency.get('sign') : ''
                 });
