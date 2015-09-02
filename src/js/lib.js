@@ -1,13 +1,9 @@
 var Component = new Brick.Component();
 
 Component.requires = {
+    yui: ['datatype-number'],
     mod: [
-        {
-            name: 'sys', files: [
-            'application.js',
-            'number.js'
-        ]
-        },
+        {name: 'sys', files: ['application.js']},
         {name: 'uprofile', files: ['lib.js']},
         {name: 'tag', files: ['lib.js']}, // load if exist
         {name: '{C#MODNAME}', files: ['model.js', 'base.js']}
@@ -26,7 +22,7 @@ Component.entryPoint = function(NS){
     };
     NS.numberFormat = function(val, nf){
         nf = nf || NS.NumberFormat;
-        return YAHOO.util.Number.format(val, nf);
+        return Y.Number.format(val, nf);
     };
 
     NS.roles = new Brick.AppRoles('{C#MODNAME}', {
