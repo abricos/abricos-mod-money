@@ -136,7 +136,7 @@ Component.entryPoint = function(NS){
         }
     };
 
-    if (Brick.mod.tag.Application){
+    if (Brick.mod.tag){
         NS.TAG = Brick.mod.tag;
         Y.mix(NS.Application, Brick.mod.tag.Application, false, null, 0, true);
     }

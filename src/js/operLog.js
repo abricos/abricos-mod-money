@@ -131,6 +131,22 @@ Component.entryPoint = function(NS){
                     if (n == 'category' && attrs.categoryid !== v){
                         return;
                     }
+                    if (n === 'tag'){
+                        if (attrs.tags === ''){
+                            return;
+                        }
+                        var aTags = attrs.tags.split(','),
+                            find = false;
+                        for (var i = 0; i < aTags.length; i++){
+                            if (aTags[i] == v){
+                                find = true;
+                                break;
+                            }
+                        }
+                        if (!find){
+                            return;
+                        }
+                    }
                 }
 
                 if (attrs.methodid === 0){
@@ -218,7 +234,7 @@ Component.entryPoint = function(NS){
 
             for (var n in filter){
                 isFilter = true;
-                v = filter[n];
+                var v = filter[n];
 
                 switch (n) {
                     case 'date':
@@ -251,6 +267,12 @@ Component.entryPoint = function(NS){
                             });
                         }
                         break;
+                    case 'tag':
+                        fdv['tag'] = tp.replace('filterval', {
+                            'tp': n,
+                            'v': v
+                        });
+                        break;
                 }
             }
 
@@ -261,7 +283,7 @@ Component.entryPoint = function(NS){
                 rows: lst
             }));
         },
-        addFilter: function(action, oper){
+        addFilter: function(action, oper, value){
             if (!oper){
                 return;
             }
@@ -278,6 +300,9 @@ Component.entryPoint = function(NS){
                     break;
                 case 'category':
                     val = attrs.categoryid;
+                    break;
+                case 'tag':
+                    val = value;
                     break;
             }
             this.get('filter')[action] = val;
@@ -358,15 +383,18 @@ Component.entryPoint = function(NS){
                 case 'filter-type':
                 case 'filter-account':
                 case 'filter-category':
+                case 'filter-tag':
                 case 'edit':
                     var oper = this.get('operList').getById(e.target.getData('id') | 0);
                     this.fire('rowClick', {
                         action: e.dataClick,
-                        oper: oper
+                        oper: oper,
+                        value: e.target.getData('value')
                     });
                     return true;
                 case 'remove':
-                    return this.showRemoveWidget(e.target.getData('id') | 0);
+                    this.showRemoveWidget(e.target.getData('id') | 0);
+                    return true;
             }
         }
     }, {
@@ -459,8 +487,8 @@ Component.entryPoint = function(NS){
         onPeriodChanged: function(){
             this.listWidget.set('period', this.periodWidget.getPeriod());
         },
-        addFilter: function(type, oper){
-            this.listWidget.addFilter(type, oper);
+        addFilter: function(type, oper, value){
+            this.listWidget.addFilter(type, oper, value);
         },
         removeFilter: function(type){
             this.listWidget.removeFilter(type);
@@ -471,7 +499,8 @@ Component.entryPoint = function(NS){
                 case 'filter-type':
                 case 'filter-account':
                 case 'filter-category':
-                    return this.addFilter(e.action.replace('filter-', ''), e.oper);
+                case 'filter-tag':
+                    return this.addFilter(e.action.replace('filter-', ''), e.oper, e.value);
             }
             this.fire('rowMenuClick', {
                 action: e.action,
