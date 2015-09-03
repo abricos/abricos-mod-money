@@ -15,18 +15,22 @@ Component.entryPoint = function(NS){
     NS.WorkspaceWidget = Y.Base.create('workspaceWidget', SYS.AppWidget, [
         SYS.AppWorkspace
     ], {
-        onInitAppWidget: function(err, appInstance){
+        onInitAppWidget: function(err, appInstance, options){
+            var wsPage = new SYS.AppWorkspacePage(options.arguments[0].workspacePage);
+
             this.set('waiting', true);
             appInstance.groupList(function(err, result){
                 this.set('waiting', false);
                 this.renderMenuList();
-                this._showPageByInit();
+
                 appInstance.on('appResponses', this._onAppResponses, this);
-                this.on('workspaceWidgetChange', this._onWorkspaceWidgetChange, this);
+                this.on('workspaceWidgetChange', this._updateSelectedGroup, this);
+
+                this.showWorkspacePage(!wsPage.isEmpty() ? wsPage : null);
             }, this);
         },
         destructor: function(){
-            this.get('appInstance').on('appResponses', this._onAppResponses, this);
+            this.get('appInstance').detach('appResponses', this._onAppResponses, this);
         },
         _onAppResponses: function(e){
             if (e.err || !e.result.groupList){
@@ -34,19 +38,32 @@ Component.entryPoint = function(NS){
             }
             this.renderMenuList();
         },
-        _onWorkspaceWidgetChange: function(){
-            if (!this.get('workspacePage')){
-                this._showPageByInit();
-            } else {
-                this._updateSelectedGroup();
+        defineDefaultPage: function(callback, context){
+            var groupList = this.get('appInstance').get('groupList');
+            if (!groupList){
+                return;
             }
+            var group = groupList.item(0),
+                defPage = {
+                    component: 'groupEditor',
+                    widget: 'GroupEditorWidget'
+                };
+
+            if (group){
+                defPage = {
+                    component: 'groupView',
+                    widget: 'GroupViewWidget',
+                    args: [group.get('id')]
+                };
+            }
+            callback.call(context || this, null, defPage);
         },
-        _updateSelectedGroup: function(){
+        _updateSelectedGroup: function(e){
             var tp = this.template,
                 selectedGroupId = 0,
-                wsPage = this.get('workspacePage') || {};
+                wsPage = new SYS.AppWorkspacePage(e.newVal ? e.newVal.get('workspacePage') : null);
 
-            if (wsPage && wsPage.component === 'groupView' && wsPage.widget === 'GroupViewWidget' && wsPage.args){
+            if (wsPage.component === 'groupView' && wsPage.widget === 'GroupViewWidget'){
                 selectedGroupId = wsPage.args[0] | 0;
             }
 
@@ -58,35 +75,6 @@ Component.entryPoint = function(NS){
                     node.removeClass('active');
                 }
             }, this);
-
-        },
-        _showPageByInit: function(){
-            var wsPage = this.get('workspacePage') || {};
-
-            if (wsPage.component){
-                this.showWorkspacePage();
-                this._updateSelectedGroup();
-                return;
-            }
-
-            var groupList = this.get('appInstance').get('groupList');
-            if (!groupList){
-                return;
-            }
-            var group = groupList.item(0);
-
-            if (!group){
-                this.showWorkspacePage({
-                    component: 'groupEditor',
-                    widget: 'GroupEditorWidget'
-                });
-            } else {
-                this.showWorkspacePage({
-                    component: 'groupView',
-                    widget: 'GroupViewWidget',
-                    args: [group.get('id')]
-                });
-            }
         },
         renderMenuList: function(){
             var groupList = this.get('appInstance').get('groupList');
@@ -108,12 +96,9 @@ Component.entryPoint = function(NS){
         }
     }, {
         ATTRS: {
-            component: {
-                value: COMPONENT
-            },
-            templateBlockName: {
-                value: 'widget,menuItem'
-            }
+            component: {value: COMPONENT},
+            templateBlockName: {value: 'widget,menuItem'},
+            defineDefaultPage: {value: true}
         }
     });
 
