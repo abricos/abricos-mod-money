@@ -10,48 +10,41 @@
 
 require_once 'models.php';
 
-class Money {
 
-    /**
-     * @var MoneyManager
-     */
-    public $manager;
+/**
+ * Class Money
+ *
+ * @property MoneyManager $manager
+ */
+class Money extends AbricosApplication {
 
-    /**
-     * @var Ab_Database
-     */
-    public $db;
+    protected function GetClasses(){
+        return array(
+            'UserRole' => 'MoneyUserRole',
+            'UserRoleList' => 'MoneyUserRoleList',
+            'Group' => 'MoneyGroup',
+            'GroupList' => 'MoneyGroupList',
+            'Account' => 'MoneyAccount',
+            'AccountList' => 'MoneyAccountList',
+            'User' => 'MoneyUser',
+            'UserList' => 'MoneyUserList',
+            'Category' => 'MoneyCategory',
+            'CategoryList' => 'MoneyCategoryList',
+            'Oper' => 'MoneyOper',
+            'OperList' => 'MoneyOperList',
+            'OperMove' => 'MoneyOperMove',
+            'OperMoveList' => 'MoneyOperMoveList',
+            'Balance' => 'MoneyBalance',
+            'BalanceList' => 'MoneyBalanceList'
+        );
+    }
 
-    /**
-     * @var AbricosModelManager
-     */
-    public $models;
+    protected function GetStructures(){
+        return 'Group,Account,Category,CategoryList,'.
+        'UserRole,UserRoleList,User,Oper,OperList,OperMove,Balance';
+    }
 
     protected $_cache = array();
-
-    public function __construct(MoneyManager $manager){
-        $this->manager = $manager;
-        $this->db = $manager->db;
-
-        $models = $this->models = AbricosModelManager::GetManager('money');
-
-        $models->RegisterClass('UserRole', 'MoneyUserRole');
-        $models->RegisterClass('UserRoleList', 'MoneyUserRoleList');
-        $models->RegisterClass('Group', 'MoneyGroup');
-        $models->RegisterClass('GroupList', 'MoneyGroupList');
-        $models->RegisterClass('Account', 'MoneyAccount');
-        $models->RegisterClass('AccountList', 'MoneyAccountList');
-        $models->RegisterClass('User', 'MoneyUser');
-        $models->RegisterClass('UserList', 'MoneyUserList');
-        $models->RegisterClass('Category', 'MoneyCategory');
-        $models->RegisterClass('CategoryList', 'MoneyCategoryList');
-        $models->RegisterClass('Oper', 'MoneyOper');
-        $models->RegisterClass('OperList', 'MoneyOperList');
-        $models->RegisterClass('OperMove', 'MoneyOperMove');
-        $models->RegisterClass('OperMoveList', 'MoneyOperMoveList');
-        $models->RegisterClass('Balance', 'MoneyBalance');
-        $models->RegisterClass('BalanceList', 'MoneyBalanceList');
-    }
 
     private $_tagManager = null;
 
@@ -70,10 +63,8 @@ class Money {
         return $this->_tagManager = $module->GetManager()->GetTag();
     }
 
-    public function AJAX($d){
+    public function ResponseToJSON($d){
         switch ($d->do){
-            case "appStructure":
-                return $this->AppStructureToJSON();
             case 'accountList':
                 return $this->AccountListToJSON();
             case 'accountSave':
@@ -111,68 +102,11 @@ class Money {
         $this->_cache = array();
     }
 
-    private function ResultToJSON($name, $res){
-        $ret = new stdClass();
-
-        if (is_integer($res)){
-            $ret->err = $res;
-            return $ret;
-        }
-        if (is_object($res) && method_exists($res, 'ToJSON')){
-            $ret->$name = $res->ToJSON();
-        } else {
-            $ret->$name = $res;
-        }
-
-        return $ret;
-    }
-
-    private function MergeObject($o1, $o2){
-        foreach ($o2 as $key => $v2){
-            $v1 = $o1->$key;
-            if (is_array($v1) && is_array($v2)){
-                for ($i = 0; $i < count($v2); $i++){
-                    $v1[] = $v2[$i];
-                }
-                $o1->$key = $v1;
-            } else if (is_object($o1->$key) && is_object($o2->$key)){
-                $this->MergeObject($o1->$key, $o2->$key);
-            } else {
-                $o1->$key = $v2;
-            }
-        }
-    }
-
-    private function ImplodeJSON($jsons, $ret = null){
-        if (empty($ret)){
-            $ret = new stdClass();
-        }
-        if (!is_array($jsons)){
-            $jsons = array($jsons);
-        }
-        foreach($jsons as $json){
-            $this->MergeObject($ret, $json);
-        }
-        return $ret;
-    }
-
     public function AppStructureToJSON(){
         if (!$this->manager->IsViewRole()){
             return 403;
         }
-
-        $modelManager = AbricosModelManager::GetManager('money');
-
-        $res = $modelManager->ToJSON(
-            'Group,Account,Category,CategoryList,'.
-            'UserRole,UserRoleList,User,Oper,OperList,OperMove,Balance'
-        );
-        if (empty($res)){
-            return null;
-        }
-
-        $ret = new stdClass();
-        $ret->appStructure = $res;
+        $ret = parent::AppStructureToJSON();
 
         $tagManager = $this->GetTagManager();
         if (empty($tagManager)){

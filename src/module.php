@@ -18,7 +18,7 @@ class MoneyModule extends Ab_Module {
     /**
      * Конструктор
      */
-    public function __construct() {
+    public function __construct(){
         $this->version = "0.2.1.1";
         $this->name = "money";
         $this->takelink = "money";
@@ -28,19 +28,23 @@ class MoneyModule extends Ab_Module {
     /**
      * @return MoneyManager
      */
-    public function GetManager() {
-        if (!isset($this->_manager)) {
+    public function GetManager(){
+        if (!isset($this->_manager)){
             require_once 'includes/manager.php';
             $this->_manager = new MoneyManager($this);
         }
         return $this->_manager;
     }
 
-    public function GetContentName() {
+    public function GetContentName(){
         return 'index';
     }
 
-    public function Bos_IsMenu() {
+    public function Bos_IsMenu(){
+        return true;
+    }
+
+    public function Bos_IsSummary(){
         return true;
     }
 }
@@ -60,7 +64,7 @@ class MoneyAction {
 
 class MoneyPermission extends Ab_UserPermission {
 
-    public function MoneyPermission(MoneyModule $module) {
+    public function MoneyPermission(MoneyModule $module){
         // объявление ролей по умолчанию
         // используется при инсталяции модуля в платформе
         $defRoles = array(
@@ -76,7 +80,7 @@ class MoneyPermission extends Ab_UserPermission {
         parent::__construct($module, $defRoles);
     }
 
-    public function GetRoles() {
+    public function GetRoles(){
         return array(
             MoneyAction::VIEW => $this->CheckAction(MoneyAction::VIEW),
             MoneyAction::WRITE => $this->CheckAction(MoneyAction::WRITE),

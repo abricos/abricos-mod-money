@@ -3,22 +3,21 @@
     <div class="panel panel-default">
         <div class="panel-heading">
             <h3 class="panel-title">
-                <span id="{i#gtl}">&nbsp;</span>
+                <a id="{i#gtl}" data-url="group.view({v#id})">&nbsp;</a>
 
-                <a data-url="group.edit({v#id})" href="#" class="bc bgpedt" title="{#mod.money.accountlist.widget.1}">
+                <a id="{i#bGroupEdit}" data-url="group.edit({v#id})" href="#" class="bc bgpedt" title="{#mod.money.accountlist.widget.1}">
                     &nbsp;
                 </a>
-                <a data-url="group.config({v#id})" href="#" class="bc bgcfg" title="Настроить бухгалтерию">
+                <a id="{i#bGroupConfig}" data-url="group.config({v#id})" href="#" class="bc bgcfg" title="Настроить бухгалтерию">
                     &nbsp;
                 </a>
 
-                <div data-click="create" class="bc baccnew" title="{#mod.money.accountlist.widget.2}">
+                <div id="{i#bAccountCreate}" data-click="create" class="bc baccnew" title="{#mod.money.accountlist.widget.2}">
                     &nbsp;
                 </div>
-                <div data-click="remove" class="bc bgrem" title="{#mod.money.accountlist.widget.3}">
+                <div id="{i#bGroupRemove}" data-click="remove" class="bc bgrem" title="{#mod.money.accountlist.widget.3}">
                     &nbsp;
                 </div>
-
             </h3>
         </div>
         <div class="panel-body-disable">

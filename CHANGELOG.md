@@ -10,3 +10,4 @@
 ### 0.2.1.1
 
 - add tags in operation
+- create summary widget for BosUI home page

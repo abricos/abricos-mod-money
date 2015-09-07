@@ -77,6 +77,21 @@ class MoneyManager extends Ab_ModuleManager {
             )
         );
     }
+
+    public function Bos_SummaryData(){
+        if (!$this->IsViewRole()){
+            return null;
+        }
+        $i18n = $this->module->I18n();
+        return array(
+            array(
+                "module" => "money",
+                "component" => "summary",
+                "widget" => "SummaryWidget",
+                "title" => $i18n->Translate('bosmenu.title')
+            )
+        );
+    }
 }
 
 ?>

@@ -109,6 +109,8 @@ Component.entryPoint = function(NS){
             tp.visible('badd', account.isOperRole());
 
             this.renderBalance();
+
+            tp.toggleView(!this.get('readOnly'), 'buttons');
         },
         renderBalance: function(){
             var account = this.get('account');
@@ -194,7 +196,8 @@ Component.entryPoint = function(NS){
             },
             isSelected: {
                 setter: '_isSelectedSetter'
-            }
+            },
+            readOnly: {value: false}
         },
         CLICKS: {
             'edit,create,remove,select': '_onMenuClick'
@@ -247,7 +250,8 @@ Component.entryPoint = function(NS){
                 w = new NS.AccountRowWidget({
                     boundingBox: tp.append('list', '<div></div>'),
                     accountid: account.get('id'),
-                    appInstance: this.get('appInstance')
+                    appInstance: this.get('appInstance'),
+                    readOnly: this.get('readOnly')
                 });
                 w.on('menuClick', this._onRowMenuClick, this);
                 this._ws[this._ws.length] = w;
@@ -307,7 +311,8 @@ Component.entryPoint = function(NS){
             groupType: {value: 0},
             selectedAccount: {
                 setter: '_selectedAccountSetter'
-            }
+            },
+            readOnly: {value: false}
         }
     });
 
@@ -327,7 +332,8 @@ Component.entryPoint = function(NS){
             for (var i = 1; i <= 3; i++){
                 var w = this._wgs[i] = new NS.AccountGroupRowWidget({
                     boundingBox: this.template.append('list', '<div></div>'),
-                    groupType: i
+                    groupType: i,
+                    readOnly: this.get('readOnly')
                 });
                 w.on('accountMenuClick', this._onAccountMenuClick, this);
             }
@@ -355,6 +361,8 @@ Component.entryPoint = function(NS){
             var tp = this.template;
 
             tp.setHTML('gtl', group.getTitle());
+
+            tp.toggleView(!this.get('readOnly'), 'bGroupEdit,bGroupConfig,bAccountCreate,bGroupRemove');
 
             this.get('accountList').each(this._renderAccount, this);
 
@@ -461,7 +469,8 @@ Component.entryPoint = function(NS){
             templateBlockName: {value: 'widget'},
             selectedAccount: {
                 setter: '_selectedAccountSetter'
-            }
+            },
+            readOnly: {value: false}
         },
         CLICKS: {
             'create,remove': '_onMenuClick'
