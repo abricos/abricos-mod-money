@@ -23,9 +23,10 @@ Component.entryPoint = function(NS){
         onLoadGroupData: function(err, group){
             var appInstance = this.get('appInstance'),
                 tp = this.template,
+                groupList = this.get('groupList'),
                 groupid = this.get('groupid'),
                 group = groupid > 0 ?
-                    this.get('groupList').getById(groupid) :
+                    groupList.getById(groupid) :
                     new NS.Group({
                         appInstance: appInstance,
                         roles: {
@@ -51,8 +52,12 @@ Component.entryPoint = function(NS){
 
             this.accountListWidget = new NS.AccountEditorListWidget({
                 srcNode: tp.gel('accountList'),
-                group: group
+                groupid: groupid
             });
+
+            if (groupList.size() ===0){
+                tp.hide('bcancel,bclose');
+            }
         },
         toJSON: function(){
             var d = {
@@ -76,6 +81,19 @@ Component.entryPoint = function(NS){
                     this.go('group.view', result.groupSave.groupid);
                 }
             }, this);
+        },
+        cancel: function(){
+            var groupList = this.get('appInstance').get('groupList'),
+                groupid = this.get('groupid');
+            if (groupid === 0){
+                var group = groupList.item(0);
+                if (!group){
+                    this.go('ws');
+                    return;
+                }
+                groupid = group.get('id');
+            }
+            this.go('group.view', groupid);
         }
     }, {
         ATTRS: {
@@ -83,9 +101,8 @@ Component.entryPoint = function(NS){
             templateBlockName: {value: 'widget'}
         },
         CLICKS: {
-            save: {
-                event: 'save'
-            }
+            save: 'save',
+            cancel: 'cancel'
         }
     });
 

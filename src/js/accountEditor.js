@@ -162,11 +162,9 @@ Component.entryPoint = function(NS){
     ], {
         onLoadGroupData: function(err, group){
             this._ws = [];
-
             this.get('groupid') === 0
                 ? this.createAccount()
                 : group.accountEach(this._renderAccount, this);
-
         },
         _renderAccount: function(account, isInsert){
             var elList = Y.one(this.template.gel('list')),
