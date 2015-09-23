@@ -9,32 +9,39 @@
         </div>
     </div>
 
-    <div id="{i#e}" class="hide">
-        <span>{#mod.money.userrole.urlist.2}</span>
-
-        <div class="mtp10">
-            <i>
+    <div id="{i#e}" class="hide panel panel-default">
+        <div class="panel-heading">
+            <span>{#mod.money.userrole.urlist.2}</span>
+        </div>
+        <div class="panel-body">
+            <div id="{i#users}"></div>
+            <div class="help-block">
                 {#mod.money.userrole.urlist.3}
-            </i>
+            </div>
+
+            <div class="text-right">
+                <button data-click="ok" type="button" class="btn btn-default btn-sm">
+                    {#mod.money.userrole.urlist.4}
+                </button>
+                <button data-click="cancel" type="button" class="btn btn-default btn-sm">
+                    {#mod.money.userrole.urlist.5}
+                </button>
+            </div>
         </div>
-        <div class="mtp10" id="{i#users}"></div>
-        <div class="right mtp10">
-            <input data-click="ok" type="button" value="{#mod.money.userrole.urlist.4}" class="btn"/>
-            <input data-click="cancel" type="button" value="{#mod.money.userrole.urlist.5}" class="btn"/>
-        </div>
+
     </div>
 </div>
 
 <!--{urrow}-->
 <div class="urrow">
-    <a href="#" class="show-user-profile user-{v#uid}">{v#unm}</a>
+    <a id="{i#user}" href="#"></a>
 	<span id="{i#r}"> - <select id="{i#rs}">
-        <option value="0" style="font-style: italic;"></option>
-        <option value="3">{#mod.money.userrole.urrow.1}</option>
-        <option value="2">{#mod.money.userrole.urrow.2}</option>
-        <option value="1">{#mod.money.userrole.urrow.3}</option>
-    </select>
-		<span id="{i#ro}"></span>
+            <option value="0" style="font-style: italic;"></option>
+            <option value="3">{#mod.money.userrole.urrow.1}</option>
+            <option value="2">{#mod.money.userrole.urrow.2}</option>
+            <option value="1">{#mod.money.userrole.urrow.3}</option>
+        </select>
+        <span id="{i#ro}"></span>
 	</span> <a href="#" data-click="info" class="binfo" title="{#mod.money.userrole.urrow.4}">?</a>
 
     <div id="{i#help}"></div>

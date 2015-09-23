@@ -1,7 +1,7 @@
 var Component = new Brick.Component();
 Component.requires = {
     mod: [
-        {name: 'uprofile', files: ['users.js']},
+        {name: 'uprofile', files: ['userSelect.js']},
         {name: '{C#MODNAME}', files: ['lib.js']}
     ]
 };
@@ -10,6 +10,7 @@ Component.entryPoint = function(NS){
     var Y = Brick.YUI,
         COMPONENT = this,
         SYS = Brick.mod.sys,
+        UP = Brick.mod.uprofile,
         UID = Brick.env.user.id;
 
     NS.RoleHelpWidget = Y.Base.create('roleHelpWidget', SYS.AppWidget, [], {
@@ -25,7 +26,7 @@ Component.entryPoint = function(NS){
         },
         _roleSetter: function(role){
             var tp = this.template,
-                el = Y.one(tp.gel('wrp')),
+                el = tp.one('wrp'),
                 cpfx = 'rid';
             if (!el){
                 return;
@@ -56,25 +57,25 @@ Component.entryPoint = function(NS){
 
     NS.RoleRowWidget = Y.Base.create('roleRowWidget', SYS.AppWidget, [], {
         buildTData: function(){
-            var user = this.getUser();
-            return {
-                uid: user.get('id'),
-                unm: user.getUserName()
-            };
+            return {uid: this.get('userid')};
         },
         onInitAppWidget: function(err, appInstance){
             var tp = this.template,
-                role = this.get('role').get('role'),
-                owner = this.get('owner'),
-                user = this.getUser();
+                role = this.get('role'),
+                rValue = role.get('role'),
+                userid = role.get('id'),
+                owner = this.get('owner');
 
-            var elSel = Y.one(tp.gel('rs'));
-            elSel.set('value', role);
-            if (UID == user.get('id') || owner.get('readOnly')){
-                elSel.addClass('hide');
-                tp.gel('ro').innerHTML = Abricos.Language.get('mod.money.account.role.' + role);
+            tp.one('rs').on('change', this.updateHelp, this);
+            tp.setValue('rs', rValue);
+            if (UID == userid || owner.get('readOnly')){
+                tp.hide('rs');
+                tp.setHTML('ro', Abricos.Language.get('mod.money.account.role.' + rValue));
             }
-            elSel.on('change', this.updateHelp, this);
+
+            appInstance.get('uprofile').user(userid, function(err, result){
+                tp.setHTML('user', result.user.get('viewName'));
+            }, this);
         },
         getRoleValue: function(){
             return this.template.gel('rs').value | 0;
@@ -85,27 +86,6 @@ Component.entryPoint = function(NS){
             }
             var role = this.getRoleValue();
             this.helpWidget.set('role', role);
-        },
-        getUser: function(){
-            var role = this.get('role'),
-                owner = this.get('owner'),
-                userList = owner.get('appInstance').get('userList'),
-                userid = role.get('id'),
-                user = userList.getById(userid);
-
-            if (!user){ // TODO: optimize uprofile module
-                var upUser = Brick.mod.uprofile.viewer.users.get(userid);
-                userList.add([{
-                    id: upUser.id | 0,
-                    unm: upUser.userName,
-                    fnm: upUser.firstName,
-                    lnm: upUser.lastName,
-                    avt: upUser.avatar
-                }]);
-                user = userList.getById(userid);
-            }
-
-            return user;
         },
         showHelp: function(){
             if (this.helpWidget){
@@ -135,7 +115,7 @@ Component.entryPoint = function(NS){
         toJSON: function(){
             return {
                 r: this.getRoleValue(),
-                u: this.getUser().get('id')
+                u: this.get('userid')
             }
         }
     }, {
@@ -143,7 +123,13 @@ Component.entryPoint = function(NS){
             component: {value: COMPONENT},
             templateBlockName: {value: 'urrow'},
             owner: {value: null},
-            role: {value: null}
+            role: {},
+            userid: {
+                readOnly: true,
+                getter: function(){
+                    return this.get('role').get('id');
+                }
+            }
         }
     });
 
@@ -173,58 +159,51 @@ Component.entryPoint = function(NS){
             var tp = this.template, ids = [], ws = this._ws;
 
             for (var i = 0; i < ws.length; i++){
-                ids[ids.length] = ws[i].get('role').get('userid');
+                ids[ids.length] = ws[i].get('userid');
             }
 
-            this.usersWidget =
-                new Brick.mod.uprofile.UserSelectWidget(tp.gel('users'), ids);
+            this.usersWidget = new UP.UserSelectWidget({
+                srcNode: tp.append('users', '<div></div>'),
+                users: ids
+            });
 
-            Y.one(tp.gel('v')).addClass('hide');
-            Y.one(tp.gel('e')).removeClass('hide');
+            tp.toggleView(true, 'e', 'v');
         },
         hideEditor: function(){
             if (!this.usersWidget){
                 return [];
             }
-            var tp = this.template,
-                uIds = this.usersWidget.getSelectedUsers();
+            var uIds = this.usersWidget.get('users');
+            this.usersWidget.destroy();
             this.usersWidget = null;
-            tp.gel('users').innerHTML = '';
 
-            Y.one(tp.gel('v')).removeClass('hide');
-            Y.one(tp.gel('e')).addClass('hide');
+            this.template.toggleView(true, 'v', 'e');
 
             return uIds;
-        },
-        cancelEdChanges: function(){
-            this.hideEditor();
         },
         applyEdChanges: function(){
             var uIds = this.hideEditor(),
                 ws = this._ws,
                 nws = [];
 
+            var appInstance = this.get('appInstance');
+
             uIds[uIds.length] = UID;
 
             for (var i = 0; i < ws.length; i++){
                 var find = false;
                 for (var ii = 0; ii < uIds.length; ii++){
-                    if (ws[i].get('role').get('userid') === uIds[ii]){
+                    if (ws[i].get('userid') === uIds[ii]){
                         find = true;
                     }
                 }
-                if (!find){
-                    ws[i].destroy();
-                } else {
-                    nws[nws.length] = ws[i];
-                }
+                find ? (nws[nws.length] = ws[i]) : ws[i].destroy()
             }
             this._ws = nws;
-            var appInstance = this.get('appInstance');
             for (var ii = 0; ii < uIds.length; ii++){
                 var find = false;
                 for (var i = 0; i < ws.length; i++){
-                    if (ws[i].get('role').get('userid') == uIds[ii]){
+                    if (ws[i].get('userid') === uIds[ii]){
                         find = true;
                     }
                 }
@@ -236,9 +215,9 @@ Component.entryPoint = function(NS){
         },
         _createRole: function(r, uid){
             return new NS.UserRole({
-                appInstance: app,
+                appInstance: this.get('appInstance'),
                 id: uid || UID,
-                r: r|| NS.AURoleType.ADMIN
+                r: r || NS.AURoleType.ADMIN
             });
         },
         toJSON: function(){
@@ -259,7 +238,7 @@ Component.entryPoint = function(NS){
         CLICKS: {
             edit: {event: 'showEditor'},
             ok: {event: 'applyEdChanges'},
-            cancel: {event: 'cancelEdChanges'}
+            cancel: {event: 'hideEditor'}
         }
     });
 

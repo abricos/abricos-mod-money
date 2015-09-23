@@ -45,7 +45,8 @@ Component.entryPoint = function(NS){
             OperList: {value: NS.OperList},
             OperMove: {value: NS.OperMove},
             OperMoveList: {value: NS.OperMoveList},
-            BalanceList: {value: NS.BalanceList}
+            BalanceList: {value: NS.BalanceList},
+            uprofile: {}
         },
         REQS: {
             groupList: {
@@ -139,7 +140,13 @@ Component.entryPoint = function(NS){
 
     SYS.Application.build(COMPONENT, {}, {
         initializer: function(){
-            this.initCallbackFire();
+            var instance = this;
+            Brick.mod.uprofile.initApp({
+                initCallback: function(err, appInstance){
+                    instance.set('uprofile', appInstance);
+                    instance.initCallbackFire();
+                }
+            });
         }
     }, [], NS.Application);
 };

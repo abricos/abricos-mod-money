@@ -55,7 +55,7 @@ Component.entryPoint = function(NS){
                 groupid: groupid
             });
 
-            if (groupList.size() ===0){
+            if (groupList.size() === 0){
                 tp.hide('bcancel,bclose');
             }
         },
@@ -71,10 +71,9 @@ Component.entryPoint = function(NS){
             return d;
         },
         save: function(){
-            this.set('waiting', true);
-
             var d = this.toJSON();
 
+            this.set('waiting', true);
             this.get('appInstance').groupSave(d, function(err, result){
                 this.set('waiting', false);
                 if (!err){
