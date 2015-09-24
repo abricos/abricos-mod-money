@@ -4,7 +4,7 @@ Component.requires = {
     mod: [
         {name: 'sys', files: ['widgets.js']},
         {name: 'widget', files: ['period.js']},
-        {name: '{C#MODNAME}', files: ['category.js']}
+        {name: '{C#MODNAME}', files: ['operChart.js', 'category.js']}
     ]
 };
 Component.entryPoint = function(NS){
@@ -13,60 +13,12 @@ Component.entryPoint = function(NS){
         SYS = Brick.mod.sys;
 
     NS.OperListWidget = Y.Base.create('operListWidget', SYS.AppWidget, [
-        NS.GroupByIdExt
+        NS.GroupByIdExt,
+        NS.OperLogExt
     ], {
-        onBeforeLoadGroupData: function(err, appInstance){
+        initializer: function(){
             this.publish('rowClick');
             this.publish('menuClick');
-
-            this.on('periodChange', this._onPeriodChange, this);
-        },
-        onLoadGroupData: function(err, group, options){
-            this.reloadOperList();
-            this.get('appInstance').on('appResponses', this._onAppResponses, this);
-        },
-        destructor: function(){
-            this.get('appInstance').detach('appResponses', this._onAppResponses, this);
-        },
-        _onAppResponses: function(e){
-            if (e.err || !e.result.balanceList){
-                return;
-            }
-            this.reloadOperList(null, true);
-        },
-        reloadOperList: function(period, isUpdate){
-            period = period || this.get('period');
-            var config = {
-                    groupid: this.get('groupid'),
-                    period: [period[0] / 1000, period[1] / 1000]
-                },
-                operList = this.get('operList'),
-                operMoveList = this.get('operMoveList');
-
-            isUpdate = isUpdate && operList;
-
-            if (isUpdate){
-                var lastUpdate = 0;
-                operList.each(function(oper){
-                    lastUpdate = Math.max(lastUpdate, oper.get('upddate'));
-                });
-                config.upddate = lastUpdate;
-            }
-
-            this.set('waiting', true);
-            this.get('appInstance').operList(config, function(err, result){
-                this.set('waiting', true);
-                if (!err){
-                    if (isUpdate){
-                        operList.add(result.operList);
-                        operMoveList.add(result.operMoveList); // TODO: update list if not new records
-                    } else {
-                        this.set('operList', result.operList);
-                        this.set('operMoveList', result.operMoveList);
-                    }
-                    this.renderOperList();
-                }
-            }, this);
         },
         renderOperList: function(){
             var app = this.get('appInstance'),
@@ -368,9 +320,6 @@ Component.entryPoint = function(NS){
             }, this);
 
         },
-        _onPeriodChange: function(e){
-            this.reloadOperList(e.newVal);
-        },
         onClick: function(e){
             switch (e.dataClick) {
                 case 'clear-filter':
@@ -404,33 +353,7 @@ Component.entryPoint = function(NS){
                 value: 'list,table,menuHead,tagHead,filterMenuHead,filterTagHead,rowFilter,' +
                 'row,rowTDBase,rowTDTag,tag,rowtdmove,rowsum,rbtns,rbtnsn,filterval'
             },
-            operList: {},
             filter: {value: {}},
-            fromDate: {
-                setter: function(val){
-                    this.set('period', [val, this.get('endDate')]);
-                },
-                getter: function(){
-                    return this.get('period')[0];
-                }
-            },
-            endDate: {
-                setter: function(val){
-                    this.set('period', [this.get('fromDate'), val]);
-                },
-                getter: function(){
-                    return this.get('period')[1];
-                }
-            },
-            period: {
-                validator: function(val){
-                    return (Y.Lang.isArray(val) &&
-                    val.length == 2 &&
-                    (val[0] instanceof Date) && (val[1] instanceof Date));
-                }
-            },
-            operList: {value: null},
-            operMoveList: {value: null},
             menuVisible: {
                 writeOnce: true,
                 value: false
@@ -480,9 +403,18 @@ Component.entryPoint = function(NS){
             });
             this.listWidget.on('menuClick', this._onOperListMenuClick, this);
             this.listWidget.on('rowClick', this._onOperRowClick, this);
+
+            this.chartWidget = new NS.OperChartWidget({
+                srcNode: tp.gel('chart'),
+                groupid: groupid,
+                period: this.periodWidget.getPeriod()
+            });
         },
         destructor: function(){
-            this.listWidget.destroy();
+            if (this.listWidget){
+                this.listWidget.destroy();
+                this.chartWidget.destroy();
+            }
         },
         onPeriodChanged: function(){
             this.listWidget.set('period', this.periodWidget.getPeriod());

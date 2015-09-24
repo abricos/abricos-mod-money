@@ -73,6 +73,93 @@ Component.entryPoint = function(NS){
     }
     NS.GroupByIdExt = GroupByIdExt;
 
+    var OperLogExt = function(){
+    };
+    OperLogExt.NAME = 'operLogExt';
+    OperLogExt.ATTRS = {
+        fromDate: {
+            setter: function(val){
+                this.set('period', [val, this.get('endDate')]);
+            },
+            getter: function(){
+                return this.get('period')[0];
+            }
+        },
+        endDate: {
+            setter: function(val){
+                this.set('period', [this.get('fromDate'), val]);
+            },
+            getter: function(){
+                return this.get('period')[1];
+            }
+        },
+        period: {
+            validator: function(val){
+                return (Y.Lang.isArray(val) &&
+                val.length == 2 &&
+                (val[0] instanceof Date) && (val[1] instanceof Date));
+            }
+        },
+        operList: {value: null},
+        operMoveList: {value: null},
+    };
+    OperLogExt.prototype = {
+        onBeforeLoadGroupData: function(err, appInstance){
+            this.on('periodChange', this._onPeriodChange, this);
+        },
+        onLoadGroupData: function(err, group, options){
+            this.reloadOperList();
+            this.get('appInstance').on('appResponses', this._onAppResponses, this);
+        },
+        destructor: function(){
+            this.get('appInstance').detach('appResponses', this._onAppResponses, this);
+        },
+        _onAppResponses: function(e){
+            if (e.err || !e.result.balanceList){
+                return;
+            }
+            this.reloadOperList(null, true);
+        },
+        _onPeriodChange: function(e){
+            this.reloadOperList(e.newVal);
+        },
+        reloadOperList: function(period, isUpdate){
+            period = period || this.get('period');
+            var config = {
+                    groupid: this.get('groupid'),
+                    period: [period[0] / 1000, period[1] / 1000]
+                },
+                operList = this.get('operList'),
+                operMoveList = this.get('operMoveList');
+
+            isUpdate = isUpdate && operList;
+
+            if (isUpdate){
+                var lastUpdate = 0;
+                operList.each(function(oper){
+                    lastUpdate = Math.max(lastUpdate, oper.get('upddate'));
+                });
+                config.upddate = lastUpdate;
+            }
+
+            this.set('waiting', true);
+            this.get('appInstance').operList(config, function(err, result){
+                this.set('waiting', true);
+                if (!err){
+                    if (isUpdate){
+                        operList.add(result.operList);
+                        operMoveList.add(result.operMoveList); // TODO: update list if not new records
+                    } else {
+                        this.set('operList', result.operList);
+                        this.set('operMoveList', result.operMoveList);
+                    }
+                    this.renderOperList();
+                }
+            }, this);
+        },
+    };
+    NS.OperLogExt = OperLogExt;
+
     var SelectedAccountExt = function(){
     };
     SelectedAccountExt.NAME = 'selectedAccountExt';
