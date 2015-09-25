@@ -17,6 +17,7 @@ Component.entryPoint = function(NS){
             var tp = this.template,
                 isExpense = this.get('isExpense'),
                 group = this.get('group'),
+                currency = this.get('currency'),
                 categories = group.get('categories'),
                 cats = {};
 
@@ -53,6 +54,13 @@ Component.entryPoint = function(NS){
                 pieItemList: pieItemList,
                 maxRadius: 100
             });
+
+            var report = pieItemList.toReport();
+
+            tp.setHTML('head', tp.replace(isExpense ? 'colHeadExpense' : 'colHeadIncoming', {
+                sum: NS.numberFormat(report.sum),
+                sign: currency ? currency.get('sign') : ''
+            }));
         },
         destructor: function(){
             if (this.pieChartWidget){
@@ -62,32 +70,35 @@ Component.entryPoint = function(NS){
     }, {
         ATTRS: {
             component: {value: COMPONENT},
-            templateBlockName: {value: 'col'},
+            templateBlockName: {value: 'col,colHeadIncoming,colHeadExpense,legend'},
             group: {},
+            currency: {},
             operList: {},
             isExpense: {}
         }
     });
 
-
     NS.OperChartRowWidget = Y.Base.create('operChartRowWidget', SYS.AppWidget, [], {
         onInitAppWidget: function(){
             var tp = this.template,
                 group = this.get('group'),
+                currency = this.get('currency'),
                 operList = this.get('operList');
 
             this.incomingWidget = new NS.OperChartColWidget({
                 isExpense: false,
                 srcNode: tp.gel('incoming'),
                 operList: operList,
-                group: group
+                group: group,
+                currency: currency
             });
 
             this.expenseWidget = new NS.OperChartColWidget({
                 isExpense: true,
                 srcNode: tp.gel('expense'),
                 operList: operList,
-                group: group
+                group: group,
+                currency: currency
             });
         },
         destructor: function(){
@@ -101,6 +112,7 @@ Component.entryPoint = function(NS){
             component: {value: COMPONENT},
             templateBlockName: {value: 'row'},
             group: {},
+            currency: {},
             operList: {}
         }
     });
@@ -149,6 +161,7 @@ Component.entryPoint = function(NS){
                     bySign[sign] = {
                         srcNode: tp.append('list', '<div></div>'),
                         group: group,
+                        currency: currency,
                         operList: new (app.get('OperList'))({
                             appInstance: app
                         })

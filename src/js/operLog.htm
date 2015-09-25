@@ -27,10 +27,12 @@
             <div class="col-sm-4">
                 <div class="text-right">
                     <div class="btn-group">
-                        <button data-click="viewTable" class="btn btn-sm btn-default active" type="button">
+                        <button id="{i#btnViewTable}" data-click="showTableMode" class="btn btn-sm btn-default active"
+                                type="button">
                             Таблица
                         </button>
-                        <button data-click="viewTable" class="btn btn-sm btn-default" type="button">
+                        <button id="{i#btnViewChart}" data-click="showChartMode" class="btn btn-sm btn-default"
+                                type="button">
                             График
                         </button>
                     </div>
@@ -39,8 +41,9 @@
             </div>
         </div>
 
-        <div id="{i#chart}" class="hide"></div>
-        <div id="{i#list}" class="listw"></div>
+        <div id="{i#chart}"></div>
+        <div id="{i#list}"></div>
+        
     </div>
 </div>
 

@@ -13,6 +13,20 @@
 </div>
 
 <!--{col}-->
-<div class="operPieChart">
+<div id="{i#col}" class="operPieChart">
+    <div id="{i#head}"></div>
     <div id="{i#chart}"></div>
+    <div id="{i#legendList}" class="legendList"></div>
 </div>
+
+<!--{colHeadIncoming}-->
+<div class="heading text-center text-success">
+    Доход: <span class="sum">{v#sum}</span> {v#sign}
+</div>
+
+<!--{colHeadExpense}-->
+<div class="heading text-center text-danger">
+    Расход: <span class="sum">{v#sum}</span> {v#sign}
+</div>
+
+<!--{legend}-->

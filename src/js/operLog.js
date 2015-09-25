@@ -382,8 +382,7 @@ Component.entryPoint = function(NS){
 
             this.publish('rowMenuClick');
 
-            var tp = this.template,
-                groupid = group.get('id');
+            var tp = this.template;
 
             tp.setHTML('title', group.getTitle());
 
@@ -395,24 +394,50 @@ Component.entryPoint = function(NS){
             this.periodWidget.selectType('week');
             this.periodWidget.periodChangedEvent.subscribe(this.onPeriodChanged, this, true);
 
-            this.listWidget = new NS.OperListWidget({
-                srcNode: tp.gel('list'),
-                groupid: groupid,
-                period: this.periodWidget.getPeriod(),
-                menuVisible: this.get('rowMenuVisible')
-            });
-            this.listWidget.on('menuClick', this._onOperListMenuClick, this);
-            this.listWidget.on('rowClick', this._onOperRowClick, this);
+            this.set('viewMode', 'table');
+        },
+        _setterViewMode: function(val){
+            var tp = this.template;
+            if (!tp){
+                return;
+            }
 
-            this.chartWidget = new NS.OperChartWidget({
-                srcNode: tp.gel('chart'),
-                groupid: groupid,
-                period: this.periodWidget.getPeriod()
-            });
+            // tp.toggleView(val === 'table', 'listPanel', 'chartPanel');
+            tp.toggleClass('btnViewTable', 'active', val === 'table');
+            tp.toggleClass('btnViewChart', 'active', val !== 'table');
+
+            if (this.listWidget){
+                this.listWidget.destroy();
+            }
+            if (this.chartWidget){
+                this.chartWidget.destroy();
+            }
+
+            var groupid = this.get('groupid');
+
+            if (val === 'table'){
+                this.listWidget = new NS.OperListWidget({
+                    srcNode: tp.append('list', '<div></div>'),
+                    groupid: groupid,
+                    period: this.periodWidget.getPeriod(),
+                    menuVisible: this.get('rowMenuVisible')
+                });
+                this.listWidget.on('menuClick', this._onOperListMenuClick, this);
+                this.listWidget.on('rowClick', this._onOperRowClick, this);
+            } else {
+                this.chartWidget = new NS.OperChartWidget({
+                    srcNode: tp.append('chart', '<div></div>'),
+                    groupid: groupid,
+                    period: this.periodWidget.getPeriod()
+                });
+            }
+            return val;
         },
         destructor: function(){
             if (this.listWidget){
                 this.listWidget.destroy();
+            }
+            if (this.chartWidget){
                 this.chartWidget.destroy();
             }
         },
@@ -453,6 +478,22 @@ Component.entryPoint = function(NS){
             rowMenuVisible: {
                 writeOnce: true,
                 value: false
+            },
+            viewMode: {
+                // value: 'table',
+                setter: '_setterViewMode'
+            }
+        },
+        CLICKS: {
+            showTableMode: {
+                event: function(){
+                    this.set('viewMode', 'table');
+                }
+            },
+            showChartMode: {
+                event: function(){
+                    this.set('viewMode', 'chart');
+                }
             }
         }
     });
