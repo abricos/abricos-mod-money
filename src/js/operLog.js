@@ -396,26 +396,39 @@ Component.entryPoint = function(NS){
 
             this.set('viewMode', 'table');
         },
+        _savePanelBodyHeight: function(){
+            var tp = this.template,
+                nodePanelBody = tp.one('panelBody'),
+                height = nodePanelBody.get('offsetHeight');
+
+            nodePanelBody.setStyle('min-height', height);
+        },
+        _cleanPanelBodyHeight: function(){
+            var tp = this.template,
+                nodePanelBody = tp.one('panelBody');
+
+            setTimeout(function(){
+                nodePanelBody.setStyle('min-height', 'auto');
+            }, 1000);
+        },
         _setterViewMode: function(val){
             var tp = this.template;
             if (!tp){
                 return;
             }
+            this._savePanelBodyHeight();
 
             // tp.toggleView(val === 'table', 'listPanel', 'chartPanel');
             tp.toggleClass('btnViewTable', 'active', val === 'table');
             tp.toggleClass('btnViewChart', 'active', val !== 'table');
 
-            if (this.listWidget){
-                this.listWidget.destroy();
-            }
-            if (this.chartWidget){
-                this.chartWidget.destroy();
-            }
-
             var groupid = this.get('groupid');
 
             if (val === 'table'){
+                if (this.chartWidget){
+                    this.chartWidget.destroy();
+                    this.chartWidget = null;
+                }
                 this.listWidget = new NS.OperListWidget({
                     srcNode: tp.append('list', '<div></div>'),
                     groupid: groupid,
@@ -425,12 +438,19 @@ Component.entryPoint = function(NS){
                 this.listWidget.on('menuClick', this._onOperListMenuClick, this);
                 this.listWidget.on('rowClick', this._onOperRowClick, this);
             } else {
+                if (this.listWidget){
+                    this.listWidget.destroy();
+                    this.listWidget = null;
+                }
                 this.chartWidget = new NS.OperChartWidget({
                     srcNode: tp.append('chart', '<div></div>'),
                     groupid: groupid,
                     period: this.periodWidget.getPeriod()
                 });
             }
+
+           this._cleanPanelBodyHeight();
+
             return val;
         },
         destructor: function(){
@@ -442,7 +462,16 @@ Component.entryPoint = function(NS){
             }
         },
         onPeriodChanged: function(){
-            this.listWidget.set('period', this.periodWidget.getPeriod());
+            this._savePanelBodyHeight();
+
+            if (this.listWidget){
+                this.listWidget.set('period', this.periodWidget.getPeriod());
+            }
+            if (this.chartWidget){
+                this.chartWidget.set('period', this.periodWidget.getPeriod());
+            }
+
+            this._cleanPanelBodyHeight();
         },
         addFilter: function(type, oper, value){
             this.listWidget.addFilter(type, oper, value);
