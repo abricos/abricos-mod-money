@@ -1,6 +1,7 @@
 var Component = new Brick.Component();
 Component.requires = {
     mod: [
+        {name: 'chart', files: ['pie.js']},
         {name: '{C#MODNAME}', files: ['category.js']}
     ]
 };
@@ -8,36 +9,61 @@ Component.entryPoint = function(NS){
 
     var Y = Brick.YUI,
         COMPONENT = this,
-        SYS = Brick.mod.sys;
+        SYS = Brick.mod.sys,
+        CHART = Brick.mod.chart;
 
     NS.OperChartColWidget = Y.Base.create('operChartColWidget', SYS.AppWidget, [], {
-        onInitAppWidget: function(){
+        onInitAppWidget: function(err, appInstance){
             var tp = this.template,
                 isExpense = this.get('isExpense'),
+                group = this.get('group'),
+                categories = group.get('categories'),
                 cats = {};
 
             this.get('operList').each(function(oper){
-                if (oper.get('isexpense') != isExpense){
+                if (oper.get('isexpense') !== isExpense){
                     return;
                 }
+
                 var categoryid = oper.get('categoryid'),
                     value = oper.get('value');
+
                 if (!cats[categoryid]){
+                    var cat = categories.getById(categoryid);
                     cats[categoryid] = {
+                        id: categoryid,
+                        title: cat ? cat.get('title') : '',
                         value: oper.get('value')
                     };
-                }else{
+                } else {
                     cats[categoryid].value += oper.get('value');
                 }
             }, this);
-            console.log(cats);
+
+            var pieItemList = new CHART.PieItemList({
+                maxPartCount: 8
+            });
+
+            for (var id in cats){
+                pieItemList.add(new CHART.PieItem(cats[id]));
+            }
+
+            this.pieChartWidget = new CHART.PieChartWidget({
+                srcNode: tp.gel('chart'),
+                pieItemList: pieItemList,
+                maxRadius: 100
+            });
         },
         destructor: function(){
+            if (this.pieChartWidget){
+                this.pieChartWidget.destroy();
+            }
         },
     }, {
         ATTRS: {
             component: {value: COMPONENT},
             templateBlockName: {value: 'col'},
+            group: {},
             operList: {},
             isExpense: {}
         }
@@ -47,18 +73,21 @@ Component.entryPoint = function(NS){
     NS.OperChartRowWidget = Y.Base.create('operChartRowWidget', SYS.AppWidget, [], {
         onInitAppWidget: function(){
             var tp = this.template,
+                group = this.get('group'),
                 operList = this.get('operList');
 
             this.incomingWidget = new NS.OperChartColWidget({
                 isExpense: false,
                 srcNode: tp.gel('incoming'),
-                operList: operList
+                operList: operList,
+                group: group
             });
 
             this.expenseWidget = new NS.OperChartColWidget({
                 isExpense: true,
-                srcNode: tp.gel('incoming'),
-                operList: operList
+                srcNode: tp.gel('expense'),
+                operList: operList,
+                group: group
             });
         },
         destructor: function(){
@@ -71,6 +100,7 @@ Component.entryPoint = function(NS){
         ATTRS: {
             component: {value: COMPONENT},
             templateBlockName: {value: 'row'},
+            group: {},
             operList: {}
         }
     });
@@ -117,14 +147,16 @@ Component.entryPoint = function(NS){
 
                 if (!bySign[sign]){
                     bySign[sign] = {
+                        srcNode: tp.append('list', '<div></div>'),
+                        group: group,
                         operList: new (app.get('OperList'))({
                             appInstance: app
-                        }),
-                        srcNode: tp.append('list', '<div></div>')
+                        })
                     };
                 }
                 bySign[sign].operList.add(oper);
             }, this);
+
 
             for (var sign in bySign){
                 ws[ws.length] = new NS.OperChartRowWidget(bySign[sign]);
