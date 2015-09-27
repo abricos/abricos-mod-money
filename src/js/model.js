@@ -23,7 +23,64 @@ Component.entryPoint = function(NS){
     });
 
     NS.CategoryList = Y.Base.create('categoryList', SYS.AppModelList, [], {
-        appItem: NS.Category
+        appItem: NS.Category,
+        getPath: function(categoryid){
+            var category = this.getById(categoryid);
+            if (!category){
+                return null;
+            }
+            if (Y.Lang.isArray(category._cachePath)){
+                return category._cachePath;
+            }
+            var parentid = category.get('parentid'),
+                parent,
+                path = [];
+
+            while (parentid > 0){
+                parent = this.getById(parentid);
+                if (parent){
+                    path[path.length] = parentid;
+                    parentid = parent.get('parentid');
+                } else {
+                    parentid = 0;
+                }
+            }
+            path.reverse();
+
+            return category._cachePath = path;
+        },
+        eachChild: function(parentid, fn, context){
+            parentid = parentid | 0;
+
+            this.each(function(category){
+                if (category.get('parentid') === parentid){
+                    fn.call(context || this, category);
+                }
+            }, this);
+        },
+        isIncluded: function(checkid, parentid){
+            checkid = checkid | 0;
+            parentid = parentid | 0;
+
+            if (parentid > 0 && checkid === parentid){
+                return true;
+            }
+            if (parentid === 0){
+                return !!this.getById(checkid);
+            }
+
+            var path = this.getPath(checkid);
+            if (!path){
+                return false;
+            }
+
+            for (var i = 0; i < path.length; i++){
+                if (path[i] === parentid){
+                    return true;
+                }
+            }
+            return false;
+        }
     });
 
     var UserRolesBase = function(){

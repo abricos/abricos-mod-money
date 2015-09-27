@@ -26,6 +26,7 @@ Component.entryPoint = function(NS){
                 operList = this.get('operList'),
                 operMoveList = this.get('operMoveList'),
                 group = this.get('group'),
+                categoryList = group.get('categories'),
                 isMenuVisible = this.get('menuVisible');
 
             if (!operList || !group){
@@ -45,7 +46,7 @@ Component.entryPoint = function(NS){
                     account = accountList.getById(attrs.accountid),
                     currency = account ? NS.currencyList.getById(account.get('currency')) : null,
                     sign = currency ? currency.get('sign') : '',
-                    cat = group.get('categories').getById(attrs.categoryid),
+                    cat = categoryList.getById(attrs.categoryid),
                     val = attrs.value,
                     ccid = account.get('currency');
 
@@ -59,7 +60,7 @@ Component.entryPoint = function(NS){
                 }
 
                 // проверка на фильтр
-                var v = "";
+                var v;
                 for (var n in filter){
                     v = filter[n];
 
@@ -80,7 +81,7 @@ Component.entryPoint = function(NS){
                     if (n == 'account' && attrs.accountid !== v){
                         return;
                     }
-                    if (n == 'category' && attrs.categoryid !== v){
+                    if (n === 'category' && !categoryList.isIncluded(attrs.categoryid, v)){
                         return;
                     }
                     if (n === 'tag'){
