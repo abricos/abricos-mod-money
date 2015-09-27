@@ -84,11 +84,13 @@ Component.entryPoint = function(NS){
             var currency = this.getCurrency();
             return currency ? currency.get('sign') : "";
         }
-
     });
 
     NS.AccountList = Y.Base.create('accountList', SYS.AppModelList, [], {
-        appItem: NS.Account
+        appItem: NS.Account,
+        comparator: function(account){
+            return account.getTitle();
+        }
     });
 
     NS.Group = Y.Base.create('group', SYS.AppModel, [
