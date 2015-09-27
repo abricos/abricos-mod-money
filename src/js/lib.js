@@ -21,7 +21,7 @@ Component.entryPoint = function(NS){
         suffix: ' '
     };
     NS.numberFormat = function(val, nf){
-        nf = nf || NS.NumberFormat;
+        nf = Y.merge(NS.NumberFormat, nf || {});
         return Y.Number.format(val, nf);
     };
 

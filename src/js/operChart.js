@@ -61,7 +61,7 @@ Component.entryPoint = function(NS){
             }
 
             tp.setHTML('head', tp.replace(isExpense ? 'colHeadExpense' : 'colHeadIncoming', {
-                sum: NS.numberFormat(report.sum),
+                sum: NS.numberFormat(report.sum, {decimalPlaces: 0}),
                 sign: currency ? currency.get('sign') : ''
             }));
 
@@ -69,7 +69,7 @@ Component.entryPoint = function(NS){
                 lst += tp.replace('legend', {
                     title: report.titles[i],
                     percent: report.percents[i],
-                    value: NS.numberFormat(report.values[i]),
+                    value: NS.numberFormat(report.values[i], {decimalPlaces: 0}),
                     color: report.colors[i].replace('hsb', 'hsl')
                 });
             }
