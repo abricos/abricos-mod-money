@@ -15,7 +15,7 @@
 <!--{col}-->
 <div id="{i#col}" class="operPieChart">
     <div id="{i#head}"></div>
-    <div id="{i#chart}"></div>
+    <div id="{i#chart}" class="chart"></div>
     <div id="{i#legendList}" class="legendList"></div>
 </div>
 
@@ -30,3 +30,14 @@
 </div>
 
 <!--{legend}-->
+<div class="legend row" style="background-color: {v#color};">
+    <div class="col-sm-8">
+        {v#title}
+    </div>
+    <div class="col-sm-1 text-right">
+        {v#percent}%
+    </div>
+    <div class="col-sm-3 text-right">
+        {v#value}
+    </div>
+</div>

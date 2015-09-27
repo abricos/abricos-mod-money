@@ -49,18 +49,32 @@ Component.entryPoint = function(NS){
                 pieItemList.add(new CHART.PieItem(cats[id]));
             }
 
-            this.pieChartWidget = new CHART.PieChartWidget({
-                srcNode: tp.gel('chart'),
-                pieItemList: pieItemList,
-                maxRadius: 100
-            });
+            var report = pieItemList.toReport(),
+                lst = "";
 
-            var report = pieItemList.toReport();
+            if (report.values.length > 1){
+                this.pieChartWidget = new CHART.PieChartWidget({
+                    srcNode: tp.gel('chart'),
+                    pieItemList: pieItemList,
+                    maxRadius: 100
+                });
+            }
 
             tp.setHTML('head', tp.replace(isExpense ? 'colHeadExpense' : 'colHeadIncoming', {
                 sum: NS.numberFormat(report.sum),
                 sign: currency ? currency.get('sign') : ''
             }));
+
+            for (var i = 0; i < report.values.length; i++){
+                lst += tp.replace('legend', {
+                    title: report.titles[i],
+                    percent: report.percents[i],
+                    value: NS.numberFormat(report.values[i]),
+                    color: report.colors[i].replace('hsb', 'hsl')
+                });
+            }
+
+            tp.setHTML('legendList', lst);
         },
         destructor: function(){
             if (this.pieChartWidget){

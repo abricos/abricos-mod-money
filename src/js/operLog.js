@@ -413,9 +413,10 @@ Component.entryPoint = function(NS){
         },
         _setterViewMode: function(val){
             var tp = this.template;
-            if (!tp){
+            if (!tp || val === this._viewMode){
                 return;
             }
+            this._viewMode = val;
             this._savePanelBodyHeight();
 
             // tp.toggleView(val === 'table', 'listPanel', 'chartPanel');
