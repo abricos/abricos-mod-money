@@ -111,6 +111,28 @@ Component.entryPoint = function(NS){
 
                 var std = "";
                 if (attrs.methodid === 0){
+
+                    var catPath = "";
+                    if (cat){
+                        var aCatPath = categoryList.getPath(cat.get('id')),
+                            aCatLst = [];
+
+                        for (var i = 0, parentCat; i < aCatPath.length; i++){
+                            parentCat = categoryList.getById(aCatPath[i]);
+                            aCatLst[aCatLst.length] = tp.replace('catItem', {
+                                id: parentCat.get('id'),
+                                operid: attrs.id,
+                                cat: parentCat.get('title')
+                            });
+                        }
+                        aCatLst[aCatLst.length] = tp.replace('catItem', {
+                            id: cat.get('id'),
+                            operid: attrs.id,
+                            cat: cat.get('title')
+                        });
+
+                        catPath = aCatLst.join(' / ');
+                    }
                     std = tp.replace('rowTDBase', {
                         id: attrs.id,
                         expcls: attrs.isexpense ? 'text-danger' : 'text-success',
@@ -118,7 +140,7 @@ Component.entryPoint = function(NS){
                         v: NS.numberFormat(val),
                         cc: sign,
                         acc: account ? account.getTitle() : '',
-                        cat: cat ? cat.get('title') : ''
+                        catPath: catPath
                     });
                 } else {
                     var opMove = oper.move = operMoveList.getById(attrs.methodid),
@@ -178,9 +200,9 @@ Component.entryPoint = function(NS){
                 first = false;
             }
 
-            var isFilter = false,
+            var isFilter,
                 fdv = {
-                    'd': '', 'tp': '', 'v': '', 'acc': '', 'cat': '',
+                    d: '', tp: '', v: '', acc: '', cat: '', tag: '',
                     tagHead: NS.TAG ? tp.replace('filterTagHead') : '',
                     menuHead: isMenuVisible ? tp.replace('filterMenuHead') : ''
                 };
@@ -192,14 +214,14 @@ Component.entryPoint = function(NS){
                 switch (n) {
                     case 'date':
                         fdv['d'] = tp.replace('filterval', {
-                            'tp': n,
-                            'v': Brick.dateExt.convert(v, 2, true)
+                            tp: n,
+                            v: Brick.dateExt.convert(v, 2, true)
                         });
                         break;
                     case 'type':
                         fdv['tp'] = tp.replace('filterval', {
-                            'tp': n,
-                            'v': v ? '-' : '+'
+                            tp: n,
+                            v: v ? '-' : '+'
                         });
                         break;
                     case 'account':
@@ -222,8 +244,8 @@ Component.entryPoint = function(NS){
                         break;
                     case 'tag':
                         fdv['tag'] = tp.replace('filterval', {
-                            'tp': n,
-                            'v': v
+                            tp: n,
+                            v: v
                         });
                         break;
                 }
@@ -252,7 +274,7 @@ Component.entryPoint = function(NS){
                     val = attrs.accountid;
                     break;
                 case 'category':
-                    val = attrs.categoryid;
+                    val = value;
                     break;
                 case 'tag':
                     val = value;
@@ -352,7 +374,7 @@ Component.entryPoint = function(NS){
             component: {value: COMPONENT},
             templateBlockName: {
                 value: 'list,table,menuHead,tagHead,filterMenuHead,filterTagHead,rowFilter,' +
-                'row,rowTDBase,rowTDTag,tag,rowtdmove,rowsum,rbtns,rbtnsn,filterval'
+                'row,rowTDBase,rowTDTag,tag,rowtdmove,rowsum,rbtns,rbtnsn,filterval,catItem'
             },
             filter: {value: {}},
             menuVisible: {
@@ -451,7 +473,7 @@ Component.entryPoint = function(NS){
                 });
             }
 
-           this._cleanPanelBodyHeight();
+            this._cleanPanelBodyHeight();
 
             return val;
         },

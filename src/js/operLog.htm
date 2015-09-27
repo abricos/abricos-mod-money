@@ -146,15 +146,17 @@
 </td>
 <td class="cat">
     <div class="fixrw">
-        <a data-click="filter-category" data-id="{v#id}"
-           href="#"
-           title='{#mod.money.operlist.rowtdbase.2}'>
-            {v#cat}
-        </a>
-
-        <div class="shadow"></div>
+        {v#catPath}
     </div>
 </td>
+
+<!--{catItem}-->
+<a data-click="filter-category" data-id="{v#operid}"
+   data-value="{v#id}" href="#"
+   title='{#mod.money.operlist.rowtdbase.2}'>
+    {v#cat}
+</a>
+
 
 <!--{rowTDTag}-->
 <td class="tags">
