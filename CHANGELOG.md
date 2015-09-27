@@ -1,5 +1,12 @@
 # Changelog
 
+### 0.2.1.1
+
+- add tags in operation
+- create summary widget for BosUI home page
+- oper log report: include childs caterogy in filter #3
+- add pie chart in report
+
 ### 0.2.1
 
 - license changed to MIT
@@ -7,7 +14,3 @@
 - show operation log in blank page
 - selection active group in global menu
 
-### 0.2.1.1
-
-- add tags in operation
-- create summary widget for BosUI home page

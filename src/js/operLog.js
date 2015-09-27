@@ -203,7 +203,6 @@ Component.entryPoint = function(NS){
             var isFilter,
                 fdv = {
                     d: '', tp: '', v: '', acc: '', cat: '', tag: '',
-                    tagHead: NS.TAG ? tp.replace('filterTagHead') : '',
                     menuHead: isMenuVisible ? tp.replace('filterMenuHead') : ''
                 };
 
@@ -228,8 +227,8 @@ Component.entryPoint = function(NS){
                         var acc = accountList.getById(v);
                         if (acc){
                             fdv['acc'] = tp.replace('filterval', {
-                                'tp': n,
-                                'v': acc.getTitle()
+                                tp: n,
+                                v: acc.getTitle()
                             });
                         }
                         break;
@@ -237,8 +236,8 @@ Component.entryPoint = function(NS){
                         var cat = group.get('categories').getById(v);
                         if (cat){
                             fdv['cat'] = tp.replace('filterval', {
-                                'tp': n,
-                                'v': cat.get('title')
+                                tp: n,
+                                v: cat.get('title')
                             });
                         }
                         break;
@@ -254,7 +253,11 @@ Component.entryPoint = function(NS){
             tp.setHTML('table', tp.replace('table', {
                 menuHead: isMenuVisible ? tp.replace('menuHead') : '',
                 tagHead: NS.TAG ? tp.replace('tagHead') : '',
-                filter: isFilter ? tp.replace('rowFilter', fdv) : '',
+                filter: isFilter ? tp.replace('rowFilter', [{
+                    tagHead: NS.TAG ? tp.replace('filterTagHead') : '',
+                },
+                    fdv
+                ]) : '',
                 rows: lst
             }));
         },
