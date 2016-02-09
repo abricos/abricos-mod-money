@@ -134,8 +134,6 @@ class MoneyAccount extends MoneyUserRoleModel {
  * @method MoneyAccount GetByIndex(int $i)
  */
 class MoneyAccountList extends AbricosModelList {
-    protected $_structModule = 'money';
-    protected $_structName = 'AccountList';
 }
 
 class MoneyUser extends AbricosModel {
@@ -149,6 +147,7 @@ class MoneyUserList extends AbricosModelList {
 
 /**
  * Class MoneyOper
+ *
  * @property int $accountid Account ID
  * @property int $userid User ID
  * @property int $groupid Group ID
@@ -175,6 +174,7 @@ class MoneyOperList extends AbricosModelList {
 
 /**
  * Class MoneyOperMove
+ *
  * @property int $srcid Soruce Account ID
  * @property int destid Dest Account ID
  * @property double $value Value

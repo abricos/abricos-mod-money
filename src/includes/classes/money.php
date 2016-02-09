@@ -7,9 +7,7 @@
  * @author Alexander Kuzmin <roosit@abricos.org>
  */
 
-
 require_once 'models.php';
-
 
 /**
  * Class Money
@@ -146,9 +144,9 @@ class Money extends AbricosApplication {
         }
         $rows = MoneyQuery::AccountList($this->db, Abricos::$user->id);
         /** @var MoneyAccountList $list */
-        $list = $this->models->InstanceClass('AccountList');
+        $list = $this->InstanceClass('AccountList');
         while (($d = $this->db->fetch_array($rows))){
-            $list->Add($this->models->InstanceClass('Account', $d));
+            $list->Add($this->InstanceClass('Account', $d));
         }
 
         $accountIds = $list->ToArray('id');
@@ -159,7 +157,7 @@ class Money extends AbricosApplication {
             if (empty($account)){
                 continue;
             }
-            $account->roles->Add($this->models->InstanceClass('UserRole', $d));
+            $account->roles->Add($this->InstanceClass('UserRole', $d));
         }
 
         return $this->_cache['AccountList'] = $list;
@@ -184,10 +182,10 @@ class Money extends AbricosApplication {
         $groupIds = $this->AccountList()->ToArray('groupid');
 
         /** @var MoneyGroupList $list */
-        $list = $this->models->InstanceClass('GroupList');
+        $list = $this->InstanceClass('GroupList');
         $rows = MoneyQuery::GroupListByIds($this->db, $groupIds, Abricos::$user->id);
         while (($d = $this->db->fetch_array($rows))){
-            $list->Add($this->models->InstanceClass('Group', $d));
+            $list->Add($this->InstanceClass('Group', $d));
         }
 
         $rows = MoneyQuery::GUserRoleListByGId($this->db, $groupIds);
@@ -196,7 +194,7 @@ class Money extends AbricosApplication {
             if (empty($group)){
                 continue;
             }
-            $group->roles->Add($this->models->InstanceClass('UserRole', $d));
+            $group->roles->Add($this->InstanceClass('UserRole', $d));
         }
 
         $rows = MoneyQuery::CategoryList($this->db, $groupIds);
@@ -205,7 +203,7 @@ class Money extends AbricosApplication {
             if (empty($group)){
                 continue;
             }
-            $group->categories->Add($this->models->InstanceClass('Category', $d));
+            $group->categories->Add($this->InstanceClass('Category', $d));
         }
 
         return $this->_cache['GroupList'] = $list;
@@ -225,10 +223,10 @@ class Money extends AbricosApplication {
         }
 
         $accountList = $this->AccountList();
-        $list = $this->models->InstanceClass('BalanceList');
+        $list = $this->InstanceClass('BalanceList');
         for ($i = 0; $i < $accountList->Count(); $i++){
             $account = $accountList->GetByIndex($i);
-            $list->Add($this->models->InstanceClass('Balance', array(
+            $list->Add($this->InstanceClass('Balance', array(
                 "id" => $account->id,
                 "balance" => $account->balance,
                 "upddate" => $account->upddate
@@ -691,10 +689,10 @@ class Money extends AbricosApplication {
             $userIds += $list->GetByIndex($i)->roles->ToArray('id');
         }
 
-        $list = $this->models->InstanceClass('UserList');
+        $list = $this->InstanceClass('UserList');
         $rows = MoneyQuery::UserListByIds($this->db, $userIds);
         while (($d = $this->db->fetch_array($rows))){
-            $list->Add($this->models->InstanceClass('User', $d));
+            $list->Add($this->InstanceClass('User', $d));
         }
         return $this->_cache['UserList'] = $list;
     }
@@ -890,11 +888,11 @@ class Money extends AbricosApplication {
         $enddt = $config->period[1];
         $upddate = isset($config->upddate) ? $config->upddate : 0;
 
-        $list = $this->models->InstanceClass('OperList');
+        $list = $this->InstanceClass('OperList');
 
         $rows = MoneyQuery::OperListByAIds($this->db, $aids, $fromdt, $enddt, $upddate);
         while (($d = $this->db->fetch_array($rows))){
-            $list->Add($this->models->InstanceClass('Oper', $d));
+            $list->Add($this->InstanceClass('Oper', $d));
         }
 
         return $list;
@@ -920,11 +918,11 @@ class Money extends AbricosApplication {
         $enddt = $config->period[1];
         $upddate = isset($config->upddate) ? $config->upddate : 0;
 
-        $list = $this->models->InstanceClass('OperMoveList');
+        $list = $this->InstanceClass('OperMoveList');
 
         $rows = MoneyQuery::OperMoveListByAIds($this->db, $aids, $fromdt, $enddt, $upddate);
         while (($d = $this->db->fetch_array($rows))){
-            $list->Add($this->models->InstanceClass('OperMove', $d));
+            $list->Add($this->InstanceClass('OperMove', $d));
         }
         return $list;
     }
