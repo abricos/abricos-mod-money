@@ -71,6 +71,7 @@ class MoneyManager extends Ab_ModuleManager {
         return array(
             array(
                 "name" => "money",
+                "group" => "personal",
                 "title" => $i18n->Translate('bosmenu.title'),
                 "icon" => "/modules/money/images/money-24.png",
                 "url" => "money/wspace/ws/"
