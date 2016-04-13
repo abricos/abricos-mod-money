@@ -43,7 +43,8 @@
       "json": "upd"
     },
     "roles": {
-      "type": "list:UserRoleList"
+      "type": "modelList:UserRoleList",
+      "notNULL": true
     }
   }
 }

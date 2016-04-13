@@ -21,10 +21,12 @@
       "json": "upd"
     },
     "roles": {
-      "type": "list:UserRoleList"
+      "type": "modelList:UserRoleList",
+      "notNULL": true
     },
     "categories": {
-      "type": "list:CategoryList"
+      "type": "modelList:CategoryList",
+      "notNULL": true
     }
   }
 }
