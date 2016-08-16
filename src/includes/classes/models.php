@@ -191,5 +191,3 @@ class MoneyOperMove extends AbricosModel {
 class MoneyOperMoveList extends AbricosModelList {
 
 }
-
-?>

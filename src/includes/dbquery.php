@@ -589,5 +589,3 @@ class MoneyQuery {
     }
 
 }
-
-?>

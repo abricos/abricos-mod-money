@@ -1003,5 +1003,3 @@ class Money extends AbricosApplication {
         return $tags;
     }
 }
-
-?>

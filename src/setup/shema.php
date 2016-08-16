@@ -215,5 +215,3 @@ if (!$updateManager->isInstall() && $updateManager->isUpdate('0.2.1.1')){
 		ADD tags TEXT COMMENT 'Теги'
 	");
 }
-
-?>

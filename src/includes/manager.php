@@ -94,5 +94,3 @@ class MoneyManager extends Ab_ModuleManager {
         );
     }
 }
-
-?>

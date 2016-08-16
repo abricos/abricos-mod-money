@@ -64,7 +64,7 @@ class MoneyAction {
 
 class MoneyPermission extends Ab_UserPermission {
 
-    public function MoneyPermission(MoneyModule $module){
+    public function __construct(MoneyModule $module){
         // объявление ролей по умолчанию
         // используется при инсталяции модуля в платформе
         $defRoles = array(
@@ -91,5 +91,3 @@ class MoneyPermission extends Ab_UserPermission {
 
 // создать экземляр класса модуля и зарегистрировать его в ядре 
 Abricos::ModuleRegister(new MoneyModule());
-
-?>
