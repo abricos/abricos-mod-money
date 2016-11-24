@@ -7,14 +7,12 @@
  * @author Alexander Kuzmin <roosit@abricos.org>
  */
 
-require_once 'models.php';
-
 /**
  * Class Money
  *
  * @property MoneyManager $manager
  */
-class Money extends AbricosApplication {
+class MoneyApp extends AbricosApplication {
 
     protected function GetClasses(){
         return array(
@@ -41,8 +39,6 @@ class Money extends AbricosApplication {
         return 'Group,Account,Category,CategoryList,'.
         'UserRole,UserRoleList,User,Oper,OperList,OperMove,Balance';
     }
-
-    protected $_cache = array();
 
     private $_tagManager = null;
 
@@ -96,10 +92,6 @@ class Money extends AbricosApplication {
         return null;
     }
 
-    public function ClearCache(){
-        $this->_cache = array();
-    }
-
     public function AppStructureToJSON(){
         if (!$this->manager->IsViewRole()){
             return 403;
@@ -119,7 +111,7 @@ class Money extends AbricosApplication {
     }
 
     public function FullDataToJSON(){
-        $this->ClearCache();
+        $this->CacheClear();
         return $this->ImplodeJSON(array(
             $this->GroupListToJSON(),
             $this->AccountListToJSON(),
@@ -136,8 +128,8 @@ class Money extends AbricosApplication {
      * @return int|MoneyAccountList
      */
     public function AccountList(){
-        if (isset($this->_cache['AccountList'])){
-            return $this->_cache['AccountList'];
+        if ($this->CacheExists('AccountList')){
+            return $this->Cache('AccountList');
         }
         if (!$this->manager->IsViewRole()){
             return 403;
@@ -160,7 +152,9 @@ class Money extends AbricosApplication {
             $account->roles->Add($this->InstanceClass('UserRole', $d));
         }
 
-        return $this->_cache['AccountList'] = $list;
+        $this->SetCache('AccountList', $list);
+
+        return $list;
     }
 
     public function GroupListToJSON(){
@@ -172,8 +166,8 @@ class Money extends AbricosApplication {
      * @return MoneyGroupList
      */
     public function GroupList(){
-        if (isset($this->_cache['GroupList'])){
-            return $this->_cache['GroupList'];
+        if ($this->CacheExists('GroupList')){
+            return $this->Cache('GroupList');
         }
         if (!$this->manager->IsViewRole()){
             return 403;
@@ -206,7 +200,9 @@ class Money extends AbricosApplication {
             $group->categories->Add($this->InstanceClass('Category', $d));
         }
 
-        return $this->_cache['GroupList'] = $list;
+        $this->SetCache('GroupList', $list);
+
+        return $list;
     }
 
     public function BalanceListToJSON(){
@@ -215,8 +211,8 @@ class Money extends AbricosApplication {
     }
 
     public function BalanceList(){
-        if (isset($this->_cache['BalanceList'])){
-            return $this->_cache['BalanceList'];
+        if ($this->CacheExists('BalanceList')){
+            return $this->Cache('BalanceList');
         }
         if (!$this->manager->IsViewRole()){
             return 403;
@@ -233,7 +229,9 @@ class Money extends AbricosApplication {
             )));
         }
 
-        return $this->_cache['BalanceList'] = $list;
+        $this->SetCache('BalanceList', $list);
+
+        return $list;
     }
 
     public function OperSaveToJSON($d){
@@ -309,7 +307,7 @@ class Money extends AbricosApplication {
 
         MoneyQuery::AccountUpdateBalance($this->db, $od->accountid);
 
-        $this->ClearCache();
+        $this->CacheClear();
 
         return $ret;
     }
@@ -372,7 +370,7 @@ class Money extends AbricosApplication {
         $ret = new stdClass();
         $ret->opermoveid = $d->id;
 
-        $this->ClearCache();
+        $this->CacheClear();
 
         return $ret;
     }
@@ -405,7 +403,7 @@ class Money extends AbricosApplication {
 
         MoneyQuery::GroupRemove($this->db, $groupid);
 
-        $this->ClearCache();
+        $this->CacheClear();
 
         $ret = new stdClass();
         $ret->groupid = $groupid;
@@ -441,7 +439,7 @@ class Money extends AbricosApplication {
             return $err;
         }
 
-        $this->ClearCache();
+        $this->CacheClear();
 
         $ret = new stdClass();
         $ret->groupid = $d->id;
@@ -558,7 +556,7 @@ class Money extends AbricosApplication {
             $d->id = $this->AccountAppendMethod($group->id, $d);
         }
 
-        $this->ClearCache();
+        $this->CacheClear();
 
         $ret = new stdClass();
         $ret->accountid = $d->id;
@@ -657,7 +655,7 @@ class Money extends AbricosApplication {
         }
         MoneyQuery::AccountRemove($this->db, $accountid);
 
-        $this->ClearCache();
+        $this->CacheClear();
 
         $ret = new stdClass();
         $ret->accountid = $accountid;
@@ -671,8 +669,8 @@ class Money extends AbricosApplication {
     }
 
     public function UserList(){
-        if (isset($this->_cache['UserList'])){
-            return $this->_cache['UserList'];
+        if ($this->CacheExists('UserList')){
+            return $this->Cache('UserList');
         }
         if (!$this->manager->IsViewRole()){
             return 403;
@@ -694,7 +692,9 @@ class Money extends AbricosApplication {
         while (($d = $this->db->fetch_array($rows))){
             $list->Add($this->InstanceClass('User', $d));
         }
-        return $this->_cache['UserList'] = $list;
+
+        $this->SetCache('UserList', $list);
+        return $list;
     }
 
     private $_fullParser = null;
@@ -752,7 +752,7 @@ class Money extends AbricosApplication {
             MoneyQuery::CategoryUpdate($this->db, $d->groupid, $d->id, $d->title);
         }
 
-        $this->ClearCache();
+        $this->CacheClear();
         $ret = new stdClass();
         $ret->categoryid = $d->id;
 
@@ -808,7 +808,7 @@ class Money extends AbricosApplication {
             MoneyQuery::AccountUpdateBalance($this->db, $accountList->GetByIndex($i)->id);
         }
 
-        $this->ClearCache();
+        $this->CacheClear();
 
         $ret = new stdClass();
         $ret->categoryid = $d->id;
@@ -817,7 +817,7 @@ class Money extends AbricosApplication {
     }
 
     private function CategoryInit($gid){
-        $this->ClearCache();
+        $this->CacheClear();
 
         // TODO: необходимо завести таблицу базовых категорий для все создающихся бухгалтерий
         $ord = 1;
@@ -977,7 +977,7 @@ class Money extends AbricosApplication {
         $ret = new stdClass();
         $ret->operid = $operid;
 
-        $this->ClearCache();
+        $this->CacheClear();
 
         return $ret;
     }

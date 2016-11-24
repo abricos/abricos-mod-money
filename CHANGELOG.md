@@ -1,5 +1,10 @@
 # Changelog
 
+### 0.2.2
+
+- bugfix: calculate total in report
+- update by new core version
+
 ### 0.2.1.1
 
 - add tags in operation

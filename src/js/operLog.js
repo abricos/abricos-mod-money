@@ -106,7 +106,7 @@ Component.entryPoint = function(NS){
                     if (!sum[ccid]){
                         sum[ccid] = 0;
                     }
-                    sum[ccid] += val;
+                    sum[ccid] += attrs.isexpense ? 0 - val : val;
                 }
 
                 var std = "";
@@ -192,10 +192,10 @@ Component.entryPoint = function(NS){
                 var val = sum[n],
                     currency = NS.currencyList.getById(n);
                 lst += tp.replace('rowsum', {
-                    'first': first ? 'first' : '',
-                    'expcls': val < 0 ? 'text-danger' : 'text-success',
-                    'v': NS.numberFormat(val),
-                    'cc': currency ? currency.get('sign') : ''
+                    first: first ? 'first' : '',
+                    expcls: val < 0 ? 'text-danger' : 'text-success',
+                    v: NS.numberFormat(val),
+                    cc: currency ? currency.get('sign') : ''
                 });
                 first = false;
             }
@@ -416,7 +416,7 @@ Component.entryPoint = function(NS){
             this.periodWidget.getPeriod = function(){
                 var period = this.getValue();
                 return [period['fdt'], period['edt']];
-            }
+            };
             this.periodWidget.selectType('week');
             this.periodWidget.periodChangedEvent.subscribe(this.onPeriodChanged, this, true);
 
@@ -536,7 +536,6 @@ Component.entryPoint = function(NS){
                 value: false
             },
             viewMode: {
-                // value: 'table',
                 setter: '_setterViewMode'
             }
         },
@@ -560,5 +559,4 @@ Component.entryPoint = function(NS){
             groupid: (args[0] | 0)
         };
     };
-
 };

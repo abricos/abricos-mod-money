@@ -13,27 +13,14 @@
  */
 class MoneyModule extends Ab_Module {
 
-    private $_manager;
-
     /**
      * Конструктор
      */
     public function __construct(){
-        $this->version = "0.2.1.1";
+        $this->version = "0.2.2";
         $this->name = "money";
         $this->takelink = "money";
         $this->permission = new MoneyPermission($this);
-    }
-
-    /**
-     * @return MoneyManager
-     */
-    public function GetManager(){
-        if (!isset($this->_manager)){
-            require_once 'includes/manager.php';
-            $this->_manager = new MoneyManager($this);
-        }
-        return $this->_manager;
     }
 
     public function GetContentName(){

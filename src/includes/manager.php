@@ -7,8 +7,12 @@
  * @author Alexander Kuzmin <roosit@abricos.org>
  */
 
-require_once 'dbquery.php';
 
+/**
+ * Class MoneyManager
+ *
+ * @method MoneyApp GetApp()
+ */
 class MoneyManager extends Ab_ModuleManager {
 
     /**
@@ -45,22 +49,8 @@ class MoneyManager extends Ab_ModuleManager {
         return $this->IsRoleEnable(MoneyAction::VIEW);
     }
 
-    private $_money = null;
-
-    /**
-     * @return Money
-     */
-    public function GetMoney(){
-        if (!is_null($this->_money)){
-            return $this->_money;
-        }
-        require_once 'classes/money.php';
-        $this->_money = new Money($this);
-        return $this->_money;
-    }
-
     public function AJAX($d){
-        return $this->GetMoney()->AJAX($d);
+        return $this->GetApp()->AJAX($d);
     }
 
     public function Bos_MenuData(){
