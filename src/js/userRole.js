@@ -156,7 +156,9 @@ Component.entryPoint = function(NS){
                 return;
             }
 
-            var tp = this.template, ids = [], ws = this._ws;
+            var tp = this.template,
+                ids = [],
+                ws = this._ws;
 
             for (var i = 0; i < ws.length; i++){
                 ids[ids.length] = ws[i].get('userid');
@@ -164,7 +166,8 @@ Component.entryPoint = function(NS){
 
             this.usersWidget = new UP.UserSelectWidget({
                 srcNode: tp.append('users', '<div></div>'),
-                users: ids
+                users: ids,
+                useFriends: true,
             });
 
             tp.toggleView(true, 'e', 'v');
